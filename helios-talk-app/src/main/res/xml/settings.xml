@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<PreferenceCategory
+		android:layout="@layout/preferences_category"
+		android:title="@string/display_settings_title">
+
+		<ListPreference
+			android:defaultValue="default"
+			android:entryValues="@array/pref_language_values"
+			android:key="pref_key_language"
+			android:summary="%s"
+			android:title="@string/pref_language_title"
+			app:iconSpaceReserved="false" />
+
+		<ListPreference
+			android:defaultValue="@string/pref_theme_dark_value"
+			android:entries="@array/pref_theme_entries"
+			android:entryValues="@array/pref_theme_values"
+			android:key="pref_key_theme"
+			android:summary="%s"
+			android:title="@string/pref_theme_title"
+			app:iconSpaceReserved="false" />
+
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:layout="@layout/preferences_category"
+		android:title="@string/profiling_setting_title">
+
+		<ListPreference
+			app:defaultValue="0"
+			android:defaultValue="false"
+			android:entries="@array/profiling_setting_names"
+			android:entryValues="@array/profiling_values"
+			android:key="pref_key_profiling"
+			android:persistent="false"
+			android:summary="%s"
+			android:title="@string/profiling_setting"
+			app:iconSpaceReserved="false" />
+
+	</PreferenceCategory>
+
+
+	<PreferenceCategory
+		android:layout="@layout/preferences_category"
+		android:title="@string/security_settings_title">
+
+		<SwitchPreference
+			android:enabled="false"
+			android:key="pref_key_lock"
+			android:persistent="false"
+			android:summary="@string/pref_lock_summary"
+			android:title="@string/pref_lock_title"
+			android:widgetLayout="@layout/preference_switch_compat"
+			app:iconSpaceReserved="false" />
+
+		<ListPreference
+			android:defaultValue="@string/pref_lock_timeout_value_default"
+			android:dependency="pref_key_lock"
+			android:entries="@array/pref_key_lock_timeout_entries"
+			android:entryValues="@array/pref_key_lock_timeout_values"
+			android:key="pref_key_lock_timeout"
+			android:persistent="false"
+			android:summary="@string/pref_lock_timeout_summary"
+			android:title="@string/pref_lock_timeout_title"
+			app:iconSpaceReserved="false" />
+
+		<Preference
+			android:key="pref_key_change_password"
+			android:title="@string/change_password"
+			app:iconSpaceReserved="false">
+
+		</Preference>
+
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:layout="@layout/preferences_category"
+		android:title="@string/notification_settings_title">
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="pref_key_notify_sign_in"
+			android:summary="@string/notify_sign_in_summary"
+			android:title="@string/notify_sign_in_title"
+			android:widgetLayout="@layout/preference_switch_compat"
+			app:iconSpaceReserved="false" />
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="pref_key_notify_private_messages"
+			android:persistent="false"
+			android:summary="@string/notify_private_messages_setting_summary"
+			android:title="@string/notify_private_messages_setting_title"
+			android:widgetLayout="@layout/preference_switch_compat"
+			app:iconSpaceReserved="false" />
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="pref_key_notify_group_messages"
+			android:persistent="false"
+			android:summary="@string/notify_group_messages_setting_summary"
+			android:title="@string/notify_group_messages_setting_title"
+			android:widgetLayout="@layout/preference_switch_compat"
+			app:iconSpaceReserved="false" />
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="pref_key_notify_community_posts"
+			android:persistent="false"
+			android:summary="@string/notify_community_posts_setting_summary"
+			android:title="@string/notify_community_posts_setting_title"
+			android:widgetLayout="@layout/preference_switch_compat"
+			app:iconSpaceReserved="false" />
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="pref_key_notify_vibration"
+			android:persistent="false"
+			android:title="@string/notify_vibration_setting"
+			android:widgetLayout="@layout/preference_switch_compat"
+			app:iconSpaceReserved="false" />
+
+		<Preference
+			android:key="pref_key_notify_sound"
+			android:title="@string/notify_sound_setting"
+			app:iconSpaceReserved="false" />
+
+	</PreferenceCategory>
+
+
+
+</PreferenceScreen>

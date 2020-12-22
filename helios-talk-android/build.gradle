@@ -1,0 +1,43 @@
+import com.android.build.gradle.tasks.MergeResources
+
+apply plugin: 'com.android.library'
+
+android {
+	compileSdkVersion 29
+	buildToolsVersion '29.0.2'
+
+	defaultConfig {
+		minSdkVersion 26
+		targetSdkVersion 28
+		versionCode 10207
+		versionName "1.2.7"
+		consumerProguardFiles 'proguard-rules.txt'
+
+		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+	}
+
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
+
+	lintOptions {
+		warning "LintError"
+		warning "InvalidPackage"
+		warning "MissingPermission"
+		warning "InlinedApi", "ObsoleteSdkInt", "Override", "NewApi", "UnusedAttribute"
+	}
+}
+
+dependencies {
+	implementation project(path: ':groupcommunications-db', configuration: 'default')
+
+	annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+
+	compileOnly 'javax.annotation:jsr250-api:1.0'
+
+	testImplementation 'junit:junit:4.12'
+	testImplementation "org.jmock:jmock:2.8.2"
+	testImplementation "org.jmock:jmock-junit4:2.8.2"
+	testImplementation "org.jmock:jmock-legacy:2.8.2"
+}

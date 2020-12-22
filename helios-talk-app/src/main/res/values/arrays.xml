@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="boolean_array">
+		<item>true</item>
+		<item>false</item>
+	</string-array>
+	<string-array name="bt_setting_names">
+		<item>@string/bluetooth_setting_enabled</item>
+		<item>@string/bluetooth_setting_disabled</item>
+	</string-array>
+
+	<string-array name="profiling_setting_names">
+		<item>@string/profiling_settings_disabled</item>
+		<item>@string/profiling_settings_fine</item>
+		<item>@string/profiling_settings_coarse</item>
+	</string-array>
+	<string-array name="profiling_values">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>
+
+	<string-array name="gender_options">
+		<item>@string/gender_not_relevant</item>
+		<item>@string/gender_not_binary</item>
+		<item>@string/gender_female</item>
+		<item>@string/gender_male</item>
+	</string-array>
+
+	<string-array name="tor_network_setting_names">
+		<item>@string/tor_network_setting_automatic</item>
+		<item>@string/tor_network_setting_without_bridges</item>
+		<item>@string/tor_network_setting_with_bridges</item>
+		<item>@string/tor_network_setting_never</item>
+	</string-array>
+	<string-array name="tor_network_setting_values">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+	</string-array>
+
+	<string-array name="pref_language_values">
+		<item>default</item>
+		<item>en-US</item>
+	</string-array>
+	<string-array name="pref_theme_entries">
+		<item>@string/pref_theme_light</item>
+		<item>@string/pref_theme_dark</item>
+		<item>@string/pref_theme_auto</item>
+		<item>@string/pref_theme_system</item>
+	</string-array>
+	<string name="pref_theme_light_value" translatable="false">light</string>
+	<string name="pref_theme_dark_value" translatable="false">dark</string>
+	<string name="pref_theme_auto_value" translatable="false">auto</string>
+	<string name="pref_theme_system_value" translatable="false">system</string>
+	<string-array name="pref_theme_values">
+		<item>@string/pref_theme_light_value</item>
+		<item>@string/pref_theme_dark_value</item>
+		<item>@string/pref_theme_auto_value</item>
+		<item>@string/pref_theme_system_value</item>
+	</string-array>
+
+	<string-array name="pref_key_lock_timeout_entries">
+		<item>@string/pref_lock_timeout_never</item>
+		<item>@string/pref_lock_timeout_1</item>
+		<item>@string/pref_lock_timeout_5</item>
+		<item>@string/pref_lock_timeout_15</item>
+		<item>@string/pref_lock_timeout_30</item>
+		<item>@string/pref_lock_timeout_60</item>
+	</string-array>
+	<string name="pref_lock_timeout_value_default" translatable="false">5</string>
+	<string name="pref_lock_timeout_value_never" translatable="false">-1</string>
+	<string-array name="pref_key_lock_timeout_values">
+		<item>@string/pref_lock_timeout_value_never</item>
+		<item>1</item>
+		<item>5</item>
+		<item>15</item>
+		<item>30</item>
+		<item>60</item>
+	</string-array>
+
+	<string-array name="countries">
+		<item>Not Relevant</item>
+		<item>Albania</item>
+		<item>Andorra</item>
+		<item>Armenia</item>
+		<item>Austria</item>
+		<item>Azerbaijan</item>
+		<item>Belarus</item>
+		<item>Belgium</item>
+		<item>Bosnia and Herzegovina</item>
+		<item>Bulgaria</item>
+		<item>Croatia</item>
+		<item>Cyprus</item>
+		<item>Czechia</item>
+		<item>Denmark</item>
+		<item>Estonia</item>
+		<item>Finland</item>
+		<item>France</item>
+		<item>Georgia</item>
+		<item>Germany</item>
+		<item>Greece</item>
+		<item>Hungary</item>
+		<item>Iceland</item>
+		<item>Ireland</item>
+		<item>Italy </item>
+		<item>Kazakhstan</item>
+		<item>Kosovo</item>
+		<item>Latvia</item>
+		<item>Liechtenstein</item>
+		<item>Lithuania</item>
+		<item>Luxembourg</item>
+		<item>Malta</item>
+		<item>Moldova</item>
+		<item>Monaco</item>
+		<item>Montenegro</item>
+		<item>Netherlands</item>
+		<item>North Macedonia</item>
+		<item>Norway</item>
+		<item>Poland</item>
+		<item>Portugal</item>
+		<item>Romania</item>
+		<item>Russia</item>
+		<item>San Marino</item>
+		<item>Serbia</item>
+		<item>Slovakia</item>
+		<item>Slovenia</item>
+		<item>Spain</item>
+		<item>Sweden</item>
+		<item>Switzerland</item>
+		<item>Turkey</item>
+		<item>Ukraine</item>
+		<item>United Kingdom</item>
+		<item>Vatican City</item>
+		<item></item>
+	</string-array>
+</resources>

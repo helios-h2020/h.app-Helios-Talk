@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/linearLayout4"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+	<eu.h2020.helios_social.happ.helios.talk.view.TextAvatarView
+		android:id="@+id/avatar"
+		android:layout_width="@dimen/listitem_picture_frame_size"
+		android:layout_height="@dimen/listitem_picture_frame_size"
+		android:layout_marginStart="@dimen/listitem_horizontal_margin"
+		android:layout_marginLeft="@dimen/listitem_horizontal_margin"
+		android:layout_marginTop="@dimen/listitem_horizontal_margin"
+		android:layout_marginBottom="@dimen/listitem_horizontal_margin"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<com.vanniktech.emoji.EmojiTextView
+		android:id="@+id/name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/margin_large"
+		android:layout_marginLeft="@dimen/margin_large"
+		android:layout_marginTop="@dimen/margin_small"
+		android:textColor="?android:attr/textColorPrimary"
+		android:textSize="@dimen/text_size_medium"
+		app:layout_constrainedWidth="true"
+		app:layout_constraintBottom_toTopOf="@+id/message"
+		app:layout_constraintEnd_toStartOf="@+id/addButton"
+		app:layout_constraintHorizontal_chainStyle="spread_inside"
+		app:layout_constraintStart_toEndOf="@+id/avatar"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintVertical_chainStyle="packed"
+		tools:text="This is a name of a contact" />
+
+	<TextView
+		android:id="@+id/message"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="8dp"
+		android:layout_marginEnd="16dp"
+		android:layout_marginRight="16dp"
+		android:text="@string/adding_contact_message"
+		app:layout_constrainedWidth="true"
+		app:layout_constraintBottom_toTopOf="@+id/deleteButton"
+		app:layout_constraintEnd_toStartOf="@+id/time"
+		app:layout_constraintStart_toStartOf="@+id/name"
+		app:layout_constraintTop_toBottomOf="@+id/name"
+		tools:textColor="?android:attr/textColorHighlight" />
+
+	<TextView
+		android:id="@+id/time"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="0dp"
+		android:layout_marginEnd="@dimen/margin_large"
+		android:layout_marginRight="@dimen/margin_large"
+		android:textColor="?android:attr/textColorSecondary"
+		android:textSize="@dimen/text_size_small"
+		app:layout_constraintBottom_toTopOf="@+id/divider"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@+id/message"
+		app:layout_constraintTop_toTopOf="@+id/message"
+		app:layout_constraintVertical_bias="0.0"
+		tools:text="Dec 24" />
+
+	<TextView
+		android:id="@+id/outgoingPrompt"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_margin="@dimen/margin_medium"
+		android:text="@string/waiting_pending_contact"
+		app:layout_constraintEnd_toStartOf="@+id/time"
+		app:layout_constraintStart_toStartOf="@+id/name"
+		app:layout_constraintTop_toBottomOf="@+id/message"
+		android:visibility="gone"
+		/>
+
+	<Button
+		android:id="@+id/confirmButton"
+		style="@style/SmallBasicButton"
+		android:layout_width="150dp"
+		android:layout_height="35dp"
+		android:layout_marginTop="@dimen/margin_large"
+		android:background="@drawable/helios_button"
+		android:text="@string/confirm_pending_contact"
+		app:layout_constraintEnd_toStartOf="@+id/deleteButton"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/message"
+		/>
+
+	<Button
+		android:id="@+id/deleteButton"
+		style="@style/SmallBasicButton"
+		android:layout_width="150dp"
+		android:layout_height="35dp"
+		android:background="@drawable/helios_button_grey"
+		android:text="@string/delete_pending_contact"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@+id/confirmButton"
+		app:layout_constraintTop_toTopOf="@+id/confirmButton"
+		app:layout_constraintVertical_bias="0.0"
+		/>
+
+	<View
+		android:id="@+id/divider"
+		style="@style/Divider.ContactList"
+		android:layout_width="0dp"
+		android:layout_marginStart="8dp"
+		android:layout_marginLeft="8dp"
+		android:layout_marginTop="@dimen/margin_small"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@+id/avatar"
+		app:layout_constraintTop_toBottomOf="@+id/deleteButton"
+		/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

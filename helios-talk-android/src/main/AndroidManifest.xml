@@ -1,0 +1,23 @@
+<manifest
+	package="eu.h2020.helios_social.happ.helios.talk.android"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<uses-permission android:name="android.permission.BLUETOOTH"/>
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+	<application
+		android:allowBackup="false"
+		android:label="@string/app_name"
+		android:supportsRtl="true">
+
+	</application>
+
+</manifest>
