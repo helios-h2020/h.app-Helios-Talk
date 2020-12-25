@@ -21,4 +21,10 @@ public class CommunicationConstants {
 
 	public static final String FORUM_MEMBERSHIP_PROTOCOL =
 			"/helios-talk/forum/membership/update-role";
+
+	public static final String REQUEST_PROTOCOL =
+			"/helios-talk/request";
+
+	public static final String RESPONSE_PROTOCOL =
+			"/helios-talk/response";
 }
