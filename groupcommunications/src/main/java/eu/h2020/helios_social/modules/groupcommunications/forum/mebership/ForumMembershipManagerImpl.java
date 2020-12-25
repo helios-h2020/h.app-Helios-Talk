@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
+
 import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseComponent;
 import eu.h2020.helios_social.happ.helios.talk.api.db.Transaction;
 import eu.h2020.helios_social.happ.helios.talk.api.identity.Identity;
@@ -34,6 +36,7 @@ public class ForumMembershipManagerImpl implements ForumMembershipManager {
 	private final Clock clock;
 	private final Executor ioExecutor;
 
+	@Inject
 	public ForumMembershipManagerImpl(@IoExecutor Executor ioExecutor,
 			DatabaseComponent db,
 			IdentityManager identityManager,
