@@ -18,6 +18,9 @@ public interface ContactManager {
 	Contact getContact(ContactId contactId)
 			throws DbException;
 
+	boolean contactExists(ContactId contactId)
+			throws DbException;
+
 	public void deleteContact(ContactId contactId) throws DbException;
 
 	void deletePendingContact(ContactId contactId) throws DbException;
