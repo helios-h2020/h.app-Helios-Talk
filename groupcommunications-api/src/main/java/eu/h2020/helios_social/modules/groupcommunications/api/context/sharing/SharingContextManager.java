@@ -3,10 +3,13 @@ package eu.h2020.helios_social.modules.groupcommunications.api.context.sharing;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 
+/**
+ * Interface for Sharing Context Manager
+ */
 public interface SharingContextManager {
 
 	/**
-	 * Invite contact to Context
+	 * Sends a Context Invitation
 	 *
 	 * @param contextInvitation
 	 */
@@ -14,18 +17,23 @@ public interface SharingContextManager {
 			throws DbException;
 
 	/**
-	 * Accept Context Invite
+	 * Accept all context invitations with the given context identifier
 	 *
 	 * @param pendingContextId
 	 */
 	public void acceptContextInvitation(String pendingContextId)
 			throws DbException;
 
+	/**
+	 * Accepts a context Invitation
+	 * @param contextInvitation
+	 * @throws DbException
+	 */
 	void acceptContextInvitation(ContextInvitation contextInvitation)
 			throws DbException;
 
 	/**
-	 * Reject Context Invite
+	 * Reject Context Invitation
 	 *
 	 * @param contextInvitation
 	 */

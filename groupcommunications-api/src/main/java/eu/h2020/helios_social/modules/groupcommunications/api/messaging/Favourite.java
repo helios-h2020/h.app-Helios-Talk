@@ -1,7 +1,5 @@
 package eu.h2020.helios_social.modules.groupcommunications.api.messaging;
 
-import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
-
 public class Favourite {
 
 	private String messageId;

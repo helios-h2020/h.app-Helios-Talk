@@ -5,9 +5,24 @@ import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 
 public interface GroupInvitationFactory {
 
-	GroupInvitation createIncomingGroupInvitation(ContactId contactId,
-			GroupInfo groupInfo);
+    /**
+     * Creates an incoming Group Invitation given the contact identifier and the corresponding
+     * group info.
+     *
+     * @param contactId
+     * @param groupInfo
+     * @return
+     */
+    GroupInvitation createIncomingGroupInvitation(ContactId contactId,
+                                                  GroupInfo groupInfo);
 
-	GroupInvitation createOutgoingGroupInvitation(ContactId contactId,
-			Group group);
+    /**
+     * Creates an outgoing Group Invitation given the contact identifier and corresponding group.
+     *
+     * @param contactId
+     * @param group
+     * @return
+     */
+    GroupInvitation createOutgoingGroupInvitation(ContactId contactId,
+                                                  Group group);
 }

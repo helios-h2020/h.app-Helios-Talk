@@ -4,7 +4,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.peer.Peer;
 import eu.h2020.helios_social.modules.groupcommunications.api.peer.PeerInfo;
 
 /**
- * A class of Secret Forum members
+ * A class of Private Group members
  */
 public class PrivateGroupMember {
 

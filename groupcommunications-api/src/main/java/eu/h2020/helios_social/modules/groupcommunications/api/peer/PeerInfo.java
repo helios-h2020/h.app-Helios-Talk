@@ -2,7 +2,7 @@ package eu.h2020.helios_social.modules.groupcommunications.api.peer;
 
 /**
  * PeerInfo provides information about a peer that she is not included in the user's connections
- * but she can be communicate with her though public/secret forums
+ * but she can be communicate with her through public/secret forums
  */
 public class PeerInfo {
 

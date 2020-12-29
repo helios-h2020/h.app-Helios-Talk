@@ -8,6 +8,7 @@ dependencies {
 
 	implementation "com.google.dagger:dagger:2.24"
 	implementation 'com.github.helios-h2020:h.core-SocialEgoNetwork:1.1.0'
+	implementation 'com.github.helios-h2020:h.extension-SocialGraphMining:1.0.3'
 	annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
 	implementation 'com.github.javafaker:javafaker:1.0.2'
 }

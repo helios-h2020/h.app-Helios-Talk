@@ -11,7 +11,7 @@ public interface PendingContactFactory {
 			String message);
 
 	/**
-	 * Creates an outgoing {@link PendingContact} from the given the helios-peer-id and alias.
+	 * Creates an incoming {@link PendingContact} from the given the helios-peer-id and alias.
 	 */
 	PendingContact createIncomingPendingContact(String peerId,
 			ConnectionInfo connectionInfo);

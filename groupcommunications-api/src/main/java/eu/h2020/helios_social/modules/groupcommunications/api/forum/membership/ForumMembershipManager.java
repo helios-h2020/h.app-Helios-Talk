@@ -8,8 +8,24 @@ import eu.h2020.helios_social.modules.groupcommunications.api.forum.ForumMemberR
 
 public interface ForumMembershipManager {
 
-	void leaveForum(Forum forum) throws DbException, FormatException;
+    /**
+     * Removes forum from the database
+     *
+     * @param forum
+     * @throws DbException
+     * @throws FormatException
+     */
+    void leaveForum(Forum forum) throws DbException, FormatException;
 
-	void updateForumMemberRole(Forum forum, ForumMember forumMember,
-			ForumMemberRole updatedRole) throws DbException, FormatException;
+    /**
+     * Updates the role of a Forum Member
+     *
+     * @param forum
+     * @param forumMember
+     * @param updatedRole
+     * @throws DbException
+     * @throws FormatException
+     */
+    void updateForumMemberRole(Forum forum, ForumMember forumMember,
+                               ForumMemberRole updatedRole) throws DbException, FormatException;
 }

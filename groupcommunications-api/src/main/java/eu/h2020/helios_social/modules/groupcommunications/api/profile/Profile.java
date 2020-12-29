@@ -2,6 +2,9 @@ package eu.h2020.helios_social.modules.groupcommunications.api.profile;
 
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.AbstractMessage;
 
+/**
+ * A User Profile class
+ */
 public class Profile implements AbstractMessage {
 
 	private String contextId;

@@ -1,5 +1,8 @@
 package eu.h2020.helios_social.modules.groupcommunications.api.group.sharing;
 
+/**
+ * Available Invitation Types
+ */
 public enum GroupInvitationType {
 
 	PrivateGroup(0), Forum(1), LocationForum(2), SeasonalForum(3);
