@@ -60,7 +60,6 @@ public class ProfileRequestReceiver implements HeliosMessagingReceiver {
     public void receiveMessage(@NotNull HeliosNetworkAddress heliosNetworkAddress,
                                @NotNull String protocolId, @NotNull byte[] data) {
         String stringMessage = new String(data, StandardCharsets.UTF_8);
-        System.out.println("received message: " + stringMessage);
         ContactId contactId =
                 new ContactId(heliosNetworkAddress.getNetworkId());
         if (protocolId.equals(REQUEST_PROTOCOL)) {

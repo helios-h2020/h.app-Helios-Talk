@@ -2,6 +2,7 @@ package eu.h2020.helios_social.modules.groupcommunications.profile.sharing;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -20,8 +21,11 @@ import eu.h2020.helios_social.modules.groupcommunications.api.sharing.Request;
 
 import static eu.h2020.helios_social.modules.groupcommunications.api.CommunicationConstants.REQUEST_PROTOCOL;
 import static eu.h2020.helios_social.modules.groupcommunications.api.CommunicationConstants.RESPONSE_PROTOCOL;
+import static java.util.logging.Logger.getLogger;
 
 public class SharingProfileManagerImpl implements SharingProfileManager, EventListener {
+    private static final Logger LOG =
+            getLogger(SharingProfileManagerImpl.class.getName());
 
     private final DatabaseComponent db;
     private final CommunicationManager communicationManager;
@@ -37,7 +41,7 @@ public class SharingProfileManagerImpl implements SharingProfileManager, EventLi
         this.communicationManager = communicationManager;
         this.profileManager = profileManager;
         this.eventBus = eventBus;
-        eventBus.addListener(this);
+        this.eventBus.addListener(this);
     }
 
 
@@ -73,6 +77,7 @@ public class SharingProfileManagerImpl implements SharingProfileManager, EventLi
     public void eventOccurred(Event e) {
         if (e instanceof ProfileRequestReceivedEvent) {
             try {
+                LOG.info("profile request received and now sending response");
                 sendProfileResponse(
                         ((ProfileRequestReceivedEvent) e).getContactId(),
                         ((ProfileRequestReceivedEvent) e).getContextId()
