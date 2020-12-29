@@ -20,12 +20,14 @@ import eu.h2020.helios_social.modules.groupcommunications.contact.ContactModule;
 import eu.h2020.helios_social.modules.groupcommunications.contact.connection.ConnectionRequestReceiver;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextModule;
 import eu.h2020.helios_social.modules.groupcommunications.context.sharing.ContextInvitationReceiver;
+import eu.h2020.helios_social.modules.groupcommunications.event.HeliosEventModule;
 import eu.h2020.helios_social.modules.groupcommunications.forum.ForumModule;
 import eu.h2020.helios_social.modules.groupcommunications.forum.mebership.MembershipReceiver;
 import eu.h2020.helios_social.modules.groupcommunications.group.GroupModule;
 import eu.h2020.helios_social.modules.groupcommunications.group.sharing.GroupInvitationReceiver;
 import eu.h2020.helios_social.modules.groupcommunications.messaging.MessagingModule;
 import eu.h2020.helios_social.modules.groupcommunications.conversation.ConversationModule;
+import eu.h2020.helios_social.modules.groupcommunications.mining.MiningModule;
 import eu.h2020.helios_social.modules.groupcommunications.privateconversation.PrivateMessageReceiver;
 import eu.h2020.helios_social.modules.groupcommunications.privategroup.PrivateGroupModule;
 import eu.h2020.helios_social.modules.groupcommunications.profile.ProfileModule;
@@ -50,7 +52,9 @@ import static eu.h2020.helios_social.modules.groupcommunications.api.contact.con
         GroupModule.class,
         MessagingModule.class,
         ConversationModule.class,
-        ContextModule.class
+        ContextModule.class,
+        MiningModule.class,
+        HeliosEventModule.class
 })
 public class GroupCommunicationsModule {
 
