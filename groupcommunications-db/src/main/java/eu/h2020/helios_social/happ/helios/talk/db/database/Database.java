@@ -9,6 +9,7 @@ import eu.h2020.helios_social.happ.helios.talk.api.db.DataTooNewException;
 import eu.h2020.helios_social.happ.helios.talk.api.db.DataTooOldException;
 import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseComponent;
 import eu.h2020.helios_social.modules.groupcommunications.api.context.sharing.ContextInvitation;
+import eu.h2020.helios_social.modules.groupcommunications.api.event.HeliosEvent;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.ForumMember;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.ForumMemberRole;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
@@ -105,6 +106,9 @@ interface Database<T> {
 	void addGroup(T txn, Group group, byte[] descriptor, GroupType groupType)
 			throws DbException;
 
+	void addEvent(T txn, HeliosEvent event)
+			throws DbException;
+
 	void addForumMember(T txn, ForumMember forumMember)
 			throws DbException;
 
@@ -146,6 +150,9 @@ interface Database<T> {
 	boolean containsContact(T txn, ContactId contactId)
 			throws DbException;
 
+	boolean containsEvent(T txn, String eventId)
+			throws DbException;
+
 	boolean containsContext(T txn, String contextId)
 			throws DbException;
 
@@ -155,13 +162,20 @@ interface Database<T> {
 	Contact getContact(T txn, ContactId cid)
 			throws DbException;
 
+	HeliosEvent getEvent(T txn, String eventId)
+			throws DbException;
+
 	boolean containsContactGroup(T txn, ContactId contactId,
-			String contextId)
+								 String contextId)
 			throws DbException;
 
 	Collection<Contact> getContacts(T txn) throws DbException;
 
 	Collection<String> getContactIds(T txn, String contextId)
+			throws DbException;
+
+	Collection<HeliosEvent> getEvents(T txn, String
+			contextId)
 			throws DbException;
 
 	Integer getContextColor(T txn, String contextId)
@@ -218,6 +232,9 @@ interface Database<T> {
 			String[] contextIds) throws DbException;
 
 	void removeContact(T txn, ContactId c)
+			throws DbException;
+
+	void removeEvent(T txn, String eventId)
 			throws DbException;
 
 	void removeContext(T txn, String contextId) throws DbException;
