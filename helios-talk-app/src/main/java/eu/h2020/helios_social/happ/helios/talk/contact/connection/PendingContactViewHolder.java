@@ -26,7 +26,6 @@ class PendingContactViewHolder extends ViewHolder {
 	private final Button deleteButton;
 	private final TextView outgoingRequet;
 
-
 	PendingContactViewHolder(View v, PendingContactListener listener) {
 		super(v);
 		avatar = v.findViewById(R.id.avatar);

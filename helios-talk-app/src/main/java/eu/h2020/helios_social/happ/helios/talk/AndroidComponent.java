@@ -31,6 +31,7 @@ import java.util.concurrent.Executor;
 import javax.inject.Singleton;
 
 import androidx.lifecycle.ViewModelProvider;
+
 import dagger.Component;
 import eu.h2020.helios_social.modules.groupcommunications.GroupCommunicationsEagerSingletons;
 import eu.h2020.helios_social.modules.groupcommunications.GroupCommunicationsModule;
@@ -45,114 +46,116 @@ import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageTracker;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessagingManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.mining.MiningManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.privateconversation.PrivateMessageFactory;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.GroupMessageFactory;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.sharing.GroupInvitationFactory;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.sharing.SharingGroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.ProfileManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.profile.sharing.SharingProfileManager;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextFactory;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
 
 @Singleton
 @Component(modules = {
-		GroupCommunicationsModule.class,
-		HeliosTalkDbModule.class,
-		HeliosTalkAndroidModule.class,
-		HeliosTalkAccountModule.class,
-		AppModule.class,
-		//AttachmentModule.class,
-		//ProfileModule.class
+        GroupCommunicationsModule.class,
+        HeliosTalkDbModule.class,
+        HeliosTalkAndroidModule.class,
+        HeliosTalkAccountModule.class,
+        AppModule.class,
 })
 public interface AndroidComponent
-		extends HeliosTalkDbEagerSingletons, HeliosTalkAndroidEagerSingletons,
-		GroupCommunicationsEagerSingletons, AndroidEagerSingletons {
+        extends HeliosTalkDbEagerSingletons, HeliosTalkAndroidEagerSingletons,
+        GroupCommunicationsEagerSingletons, AndroidEagerSingletons {
 
-	// Exposed objects
-	@CryptoExecutor
-	Executor cryptoExecutor();
+    // Exposed objects
+    @CryptoExecutor
+    Executor cryptoExecutor();
 
-	PasswordStrengthEstimator passwordStrengthIndicator();
+    PasswordStrengthEstimator passwordStrengthIndicator();
 
-	@DatabaseExecutor
-	Executor databaseExecutor();
+    @DatabaseExecutor
+    Executor databaseExecutor();
 
-	MessageTracker messageTracker();
+    MessageTracker messageTracker();
 
-	LifecycleManager lifecycleManager();
+    LifecycleManager lifecycleManager();
 
-	IdentityManager identityManager();
+    IdentityManager identityManager();
 
-	EventBus eventBus();
+    EventBus eventBus();
 
-	AndroidNotificationManager androidNotificationManager();
+    AndroidNotificationManager androidNotificationManager();
 
-	ContextFactory contextFactory();
+    ContextFactory contextFactory();
 
-	ConnectionManager connectionManager();
+    ConnectionManager connectionManager();
 
-	PendingContactFactory pendingContactFactory();
+    PendingContactFactory pendingContactFactory();
 
-	ContactManager contactManager();
+    ContactManager contactManager();
 
-	ConversationManager conversationManager();
+    ConversationManager conversationManager();
 
-	MessagingManager messagingManager();
+    MessagingManager messagingManager();
 
-	PrivateMessageFactory privateMessageFactory();
+    PrivateMessageFactory privateMessageFactory();
 
-	GroupManager groupManager();
+    GroupManager groupManager();
 
-	GroupInvitationFactory groupInviteFactory();
+    GroupInvitationFactory groupInviteFactory();
 
-	/*GroupInvitationManager groupInvitationManager();*/
+    /*GroupInvitationManager groupInvitationManager();*/
 
-	GroupFactory groupFactory();
+    GroupFactory groupFactory();
 
-	GroupMessageFactory groupMessageFactory();
+    GroupMessageFactory groupMessageFactory();
 
-	ContextManager contextManager();
+    ContextManager contextManager();
 
-	SharingContextManager sharingContextManager();
+    SharingContextManager sharingContextManager();
 
-	ContextInvitationFactory contextInviteFactory();
+    ContextInvitationFactory contextInviteFactory();
 
-	ProfileManager profileManager();
+    ProfileManager profileManager();
 
-	//ForumManager forumManager();
+    SharingProfileManager sharingProfileManager();
 
-	SharingGroupManager sharingGroupManager();
+    //ForumManager forumManager();
 
-	SettingsManager settingsManager();
+    SharingGroupManager sharingGroupManager();
 
-	AndroidExecutor androidExecutor();
+    SettingsManager settingsManager();
 
-	Clock clock();
+    AndroidExecutor androidExecutor();
 
-	DozeWatchdog dozeWatchdog();
+    Clock clock();
 
-	@IoExecutor
-	Executor ioExecutor();
+    DozeWatchdog dozeWatchdog();
 
-	AccountManager accountManager();
+    @IoExecutor
+    Executor ioExecutor();
 
-	LockManager lockManager();
+    AccountManager accountManager();
 
-	LocationUtils locationUtils();
+    LockManager lockManager();
 
-	ViewModelProvider.Factory viewModelFactory();
+    LocationUtils locationUtils();
 
-	ContextualEgoNetwork contextualEgoNetwork();
+    ViewModelProvider.Factory viewModelFactory();
 
-	//MiningManager miningManager();
+    ContextualEgoNetwork contextualEgoNetwork();
 
-	CommunicationManager communicationManager();
+    MiningManager miningManager();
 
-	void inject(SignInReminderReceiver heliosTalkService);
+    CommunicationManager communicationManager();
 
-	void inject(HeliosTalkService heliosTalkService);
+    void inject(SignInReminderReceiver heliosTalkService);
 
-	void inject(NotificationCleanupService notificationCleanupService);
+    void inject(HeliosTalkService heliosTalkService);
 
-	void inject(EmojiTextInputView textInputView);
+    void inject(NotificationCleanupService notificationCleanupService);
+
+    void inject(EmojiTextInputView textInputView);
 
 }

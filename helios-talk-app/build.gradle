@@ -24,7 +24,7 @@ android {
 		targetSdkVersion 28
 		versionCode 10207
 		versionName "0.4.5"
-		applicationId "eu.h2020.helios_social.helios.talk"
+		applicationId "eu.h2020.helios_social.helios.talk.std"
 	}
 
 	buildTypes {

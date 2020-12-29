@@ -33,6 +33,7 @@ import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroup
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroupModule;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteFragment;
+import eu.h2020.helios_social.happ.helios.talk.profile.ContactProfileActivity;
 import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
 import eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity;
 import eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment;
@@ -57,10 +58,6 @@ public interface ActivityComponent {
 	void inject(SetupActivity activity);
 
 	void inject(NavDrawerActivity activity);
-
-/*	void inject(ContactExchangeActivity activity);
-
-	void inject(KeyAgreementActivity activity);*/
 
 	void inject(ConversationActivity activity);
 
@@ -152,5 +149,5 @@ public interface ActivityComponent {
 
 	void inject(ProfileActivity profileActivity);
 
-	/*void inject(ContactProfileActivity contactProfileActivity);*/
+	void inject(ContactProfileActivity contactProfileActivity);
 }

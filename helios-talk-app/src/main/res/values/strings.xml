@@ -1,687 +1,697 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-	<string name="app_name" translatable="false">helios. TALK</string>
-	<string name="app_package" translatable="false">eu.h2020.helios_social.happ.helios.talk</string>
+    <string name="app_name" translatable="false">helios. TALK</string>
+    <string name="app_package" translatable="false">eu.h2020.helios_social.happ.helios.talk</string>
 
-	<!-- Setup -->
-	<string name="setup_title">Welcome to helios. TALK</string>
-	<string name="setup_name_explanation">Your nickname will be shown next to any content you post. You can\'t change it after creating your account.</string>
-	<string name="setup_next">Next</string>
-	<string name="signup_next">Sign Up</string>
-	<string name="setup_password_intro">Choose a Password</string>
-	<string name="setup_password_explanation">Your helios. account is stored encrypted on your device, not in the cloud. If you forget your password or uninstall helios. TALK, there\'s no way to recover your account.\n\nChoose a long password that\'s hard to guess, such as four random words, or ten random letters, numbers and symbols.</string>
-	<string name="setup_doze_title">Background Connections</string>
-	<string name="setup_doze_intro">To receive messages, helios. TALK needs to stay connected in the background.</string>
-	<string name="setup_doze_explanation">To receive messages, helios. TALK needs to stay connected in the background. Please disable battery optimizations so helios. TALK. can stay connected.</string>
-	<string name="setup_doze_button">Allow Connections</string>
-	<string name="choose_nickname">Choose your nickname</string>
-	<string name="choose_password">Choose your password</string>
-	<string name="confirm_password">Confirm your password</string>
-	<string name="name_too_long">Name is too long</string>
-	<string name="message_too_long">Message is too long</string>
-	<string name="password_too_weak">Password is too weak</string>
-	<string name="passwords_do_not_match">Passwords do not match</string>
-	<string name="create_account_button">Create Account</string>
-	<string name="more_info">More Information</string>
-	<string name="don_t_ask_again">Don\'t ask again</string>
+    <!-- Setup -->
+    <string name="setup_title">Welcome to helios. TALK</string>
+    <string name="setup_name_explanation">Your nickname will be shown next to any content you post. You can\'t change it after creating your account.</string>
+    <string name="setup_next">Next</string>
+    <string name="signup_next">Sign Up</string>
+    <string name="setup_password_intro">Choose a Password</string>
+    <string name="setup_password_explanation">Your helios. account is stored encrypted on your device, not in the cloud. If you forget your password or uninstall helios. TALK, there\'s no way to recover your account.\n\nChoose a long password that\'s hard to guess, such as four random words, or ten random letters, numbers and symbols.</string>
+    <string name="setup_doze_title">Background Connections</string>
+    <string name="setup_doze_intro">To receive messages, helios. TALK needs to stay connected in the background.</string>
+    <string name="setup_doze_explanation">To receive messages, helios. TALK needs to stay connected in the background. Please disable battery optimizations so helios. TALK. can stay connected.</string>
+    <string name="setup_doze_button">Allow Connections</string>
+    <string name="choose_nickname">Choose your nickname</string>
+    <string name="choose_password">Choose your password</string>
+    <string name="confirm_password">Confirm your password</string>
+    <string name="name_too_long">Name is too long</string>
+    <string name="message_too_long">Message is too long</string>
+    <string name="password_too_weak">Password is too weak</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="create_account_button">Create Account</string>
+    <string name="more_info">More Information</string>
+    <string name="don_t_ask_again">Don\'t ask again</string>
 
-	<string name="setup_huawei_text">Please tap the button below and make sure helios. TALK is protected in the \"Protected Apps\" screen.</string>
-	<string name="setup_huawei_button">Protect helios. TALK</string>
-	<string name="setup_huawei_help">If helios. TALK is not added to the protected apps list, it will be unable to run in the background.</string>
-	<string name="warning_dozed">%s was unable to run in the background</string>
+    <string name="setup_huawei_text">Please tap the button below and make sure helios. TALK is protected in the \"Protected Apps\" screen.</string>
+    <string name="setup_huawei_button">Protect helios. TALK</string>
+    <string name="setup_huawei_help">If helios. TALK is not added to the protected apps list, it will be unable to run in the background.</string>
+    <string name="warning_dozed">%s was unable to run in the background</string>
 
-	<!-- Login -->
-	<string name="enter_password">Password</string>
-	<string name="try_again">Wrong password, try again</string>
-	<string name="dialog_title_cannot_check_password">Cannot Check Password</string>
-	<string name="dialog_message_cannot_check_password">helios. TALK cannot check your password. Please try rebooting your device to solve this problem.</string>
-	<string name="sign_in_button">Sign In</string>
-	<string name="forgotten_password">I have forgotten my password</string>
-	<string name="dialog_title_lost_password">Lost Password</string>
-	<string name="dialog_message_lost_password">Your helios. TALK account is stored encrypted on your device, not in the cloud, so we can\'t reset your password. Would you like to delete your account and start again?\n\nCaution: Your identities, contacts and messages will be permanently lost.</string>
-	<string name="startup_failed_notification_title">helios. TALK could not start</string>
-	<string name="startup_failed_notification_text">Tap for more information.</string>
-	<string name="startup_failed_activity_title">helios. TALK Startup Failure</string>
-	<string name="startup_failed_db_error">For some reason, your helios. TALK database is corrupted beyond repair. Your account, your data and all your contacts are lost. Unfortunately, you need to reinstall helios. TALK or set up a new account by choosing \'I have forgotten my password\' at the password prompt.</string>
-	<string name="startup_failed_data_too_old_error">Your account was created with an old version of this app and cannot be opened with this version. You must either reinstall the old version or set up a new account by choosing \'I have forgotten my password\' at the password prompt.</string>
-	<string name="startup_failed_data_too_new_error">This version of the app is too old. Please upgrade to the latest version and try again.</string>
-	<string name="startup_failed_service_error">helios. TALK was unable to start a required plugin. Reinstalling helios. TALK usually solves this problem. However, please note that you will then lose your account and all data associated with it since helios. TALK is not using central servers to store your data on.</string>
-	<plurals name="expiry_warning">
-		<item quantity="one">This is a test version of helios. TALK. Your account will expire in %d day and cannot be renewed.</item>
-		<item quantity="other">This is a test version of helios. TALK. Your account will expire in %d days and cannot be renewed.</item>
-	</plurals>
-	<string name="expiry_date_reached">This software has expired.\nThank you for testing!</string>
-	<string name="download_helios">To continue using helios. TALK, please download the latest release.</string>
-	<string name="create_new_account">You will need to create a new account, but you can use the same nickname.</string>
-	<string name="download_helios_button">Download Latest Release</string>
-	<string name="startup_open_database">Decrypting Database…</string>
-	<string name="welcome">Welcome to helios.</string>
-	<string name="startup_migrate_database">Upgrading Database…</string>
-	<string name="startup_compact_database">Compacting Database…</string>
+    <!-- Login -->
+    <string name="enter_password">Password</string>
+    <string name="try_again">Wrong password, try again</string>
+    <string name="dialog_title_cannot_check_password">Cannot Check Password</string>
+    <string name="dialog_message_cannot_check_password">helios. TALK cannot check your password. Please try rebooting your device to solve this problem.</string>
+    <string name="sign_in_button">Sign In</string>
+    <string name="forgotten_password">I have forgotten my password</string>
+    <string name="dialog_title_lost_password">Lost Password</string>
+    <string name="dialog_message_lost_password">Your helios. TALK account is stored encrypted on your device, not in the cloud, so we can\'t reset your password. Would you like to delete your account and start again?\n\nCaution: Your identities, contacts and messages will be permanently lost.</string>
+    <string name="startup_failed_notification_title">helios. TALK could not start</string>
+    <string name="startup_failed_notification_text">Tap for more information.</string>
+    <string name="startup_failed_activity_title">helios. TALK Startup Failure</string>
+    <string name="startup_failed_db_error">For some reason, your helios. TALK database is corrupted beyond repair. Your account, your data and all your contacts are lost. Unfortunately, you need to reinstall helios. TALK or set up a new account by choosing \'I have forgotten my password\' at the password prompt.</string>
+    <string name="startup_failed_data_too_old_error">Your account was created with an old version of this app and cannot be opened with this version. You must either reinstall the old version or set up a new account by choosing \'I have forgotten my password\' at the password prompt.</string>
+    <string name="startup_failed_data_too_new_error">This version of the app is too old. Please upgrade to the latest version and try again.</string>
+    <string name="startup_failed_service_error">helios. TALK was unable to start a required plugin. Reinstalling helios. TALK usually solves this problem. However, please note that you will then lose your account and all data associated with it since helios. TALK is not using central servers to store your data on.</string>
+    <plurals name="expiry_warning">
+        <item quantity="one">This is a test version of helios. TALK. Your account will expire in %d day and cannot be renewed.</item>
+        <item quantity="other">This is a test version of helios. TALK. Your account will expire in %d days and cannot be renewed.</item>
+    </plurals>
+    <string name="expiry_date_reached">This software has expired.\nThank you for testing!</string>
+    <string name="download_helios">To continue using helios. TALK, please download the latest release.</string>
+    <string name="create_new_account">You will need to create a new account, but you can use the same nickname.</string>
+    <string name="download_helios_button">Download Latest Release</string>
+    <string name="startup_open_database">Decrypting Database…</string>
+    <string name="welcome">Welcome to helios.</string>
+    <string name="startup_migrate_database">Upgrading Database…</string>
+    <string name="startup_compact_database">Compacting Database…</string>
 
-	<!-- Navigation Drawer -->
-	<string name="nav_drawer_open_description">Open the navigation drawer</string>
-	<string name="nav_drawer_close_description">Close the navigation drawer</string>
-	<string name="contact_list_button">Contacts</string>
-	<string name="groups_button">Private Groups</string>
-	<string name="communities_button">Communities</string>
-	<string name="conversations_title">Conversations</string>
-	<!-- This is part of the main menu. The app will be locked when this is tapped. -->
-	<string name="lock_button">Lock App</string>
-	<string name="settings_button">Settings</string>
-	<string name="sign_out_button">Sign Out</string>
+    <!-- Navigation Drawer -->
+    <string name="nav_drawer_open_description">Open the navigation drawer</string>
+    <string name="nav_drawer_close_description">Close the navigation drawer</string>
+    <string name="contact_list_button">Contacts</string>
+    <string name="groups_button">Private Groups</string>
+    <string name="communities_button">Communities</string>
+    <string name="conversations_title">Conversations</string>
+    <!-- This is part of the main menu. The app will be locked when this is tapped. -->
+    <string name="lock_button">Lock App</string>
+    <string name="settings_button">Settings</string>
+    <string name="sign_out_button">Sign Out</string>
 
-	<!-- Transports -->
-	<string name="transport_tor">Internet</string>
-	<string name="transport_bt">Bluetooth</string>
-	<string name="transport_lan">Wi-Fi</string>
+    <!-- Transports -->
+    <string name="transport_tor">Internet</string>
+    <string name="transport_bt">Bluetooth</string>
+    <string name="transport_lan">Wi-Fi</string>
 
-	<!-- Notifications -->
-	<string name="reminder_notification_title">Signed out of helios. TALK</string>
-	<string name="reminder_notification_text">Tap to sign back in.</string>
-	<string name="reminder_notification_channel_title">helios. TALK Sign-in Reminder</string>
-	<string name="reminder_notification_dismiss">Dismiss</string>
-	<string name="ongoing_notification_title">Signed into helios. TALK</string>
-	<string name="ongoing_notification_text">Touch to open helios. TALK.</string>
-	<plurals name="private_message_notification_text">
-		<item quantity="one">New private message.</item>
-		<item quantity="other">%d new private messages.</item>
-	</plurals>
-	<plurals name="group_message_notification_text">
-		<item quantity="one">New group message.</item>
-		<item quantity="other">%d new group messages.</item>
-	</plurals>
-	<plurals name="community_post_notification_text">
-		<item quantity="one">New community post.</item>
-		<item quantity="other">%d new community posts.</item>
-	</plurals>
-	<plurals name="blog_post_notification_text">
-		<item quantity="one">New blog post.</item>
-		<item quantity="other">%d new blog posts.</item>
-	</plurals>
+    <!-- Notifications -->
+    <string name="reminder_notification_title">Signed out of helios. TALK</string>
+    <string name="reminder_notification_text">Tap to sign back in.</string>
+    <string name="reminder_notification_channel_title">helios. TALK Sign-in Reminder</string>
+    <string name="reminder_notification_dismiss">Dismiss</string>
+    <string name="ongoing_notification_title">Signed into helios. TALK</string>
+    <string name="ongoing_notification_text">Touch to open helios. TALK.</string>
+    <plurals name="private_message_notification_text">
+        <item quantity="one">New private message.</item>
+        <item quantity="other">%d new private messages.</item>
+    </plurals>
+    <plurals name="group_message_notification_text">
+        <item quantity="one">New group message.</item>
+        <item quantity="other">%d new group messages.</item>
+    </plurals>
+    <plurals name="community_post_notification_text">
+        <item quantity="one">New community post.</item>
+        <item quantity="other">%d new community posts.</item>
+    </plurals>
+    <plurals name="blog_post_notification_text">
+        <item quantity="one">New blog post.</item>
+        <item quantity="other">%d new blog posts.</item>
+    </plurals>
+    <string name="connections">Connections Requests</string>
+    <string name="context_group_invitations">Context/Group Invitations</string>
+    <plurals name="connections_message_notification_text">
+        <item quantity="one">New Connection Request from "%s".</item>
+        <item quantity="other">%d new Connection Requests.</item>
+    </plurals>
+    <plurals name="context_group_invitations_notification_text">
+        <item quantity="one">New Context/Group Invitations.</item>
+        <item quantity="other">%d new Context/Group Invitations.</item>
+    </plurals>
 
-	<!-- Misc -->
-	<string name="now">now</string>
-	<string name="show">Show</string>
-	<string name="hide">Hide</string>
-	<string name="ok">OK</string>
-	<string name="cancel">Cancel</string>
-	<string name="got_it">Got it</string>
-	<string name="delete">Delete</string>
-	<string name="accept">Accept</string>
-	<string name="join">Join Call</string>
-	<string name="decline">Decline</string>
-	<string name="options">Options</string>
-	<string name="online">Online</string>
-	<string name="offline">Offline</string>
-	<string name="send">Send</string>
-	<string name="allow">Allow</string>
-	<string name="open">Open</string>
-	<string name="no_data">No data</string>
-	<string name="ellipsis">…</string>
-	<string name="text_too_long">The entered text is too long</string>
-	<string name="show_onboarding">Show Help Dialog</string>
-	<string name="fix">Fix</string>
-	<string name="help">Help</string>
-	<string name="sorry">Sorry</string>
-	<string name="error_start_activity">Unavailable on your system</string>
-	<string name="no_favourites">No favourites to show. You need to like messages to access them here.</string>
+    <!-- Misc -->
+    <string name="now">now</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="got_it">Got it</string>
+    <string name="delete">Delete</string>
+    <string name="accept">Accept</string>
+    <string name="join">Join Call</string>
+    <string name="decline">Decline</string>
+    <string name="options">Options</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="send">Send</string>
+    <string name="allow">Allow</string>
+    <string name="open">Open</string>
+    <string name="no_data">No data</string>
+    <string name="ellipsis">…</string>
+    <string name="text_too_long">The entered text is too long</string>
+    <string name="show_onboarding">Show Help Dialog</string>
+    <string name="fix">Fix</string>
+    <string name="help">Help</string>
+    <string name="sorry">Sorry</string>
+    <string name="error_start_activity">Unavailable on your system</string>
+    <string name="no_favourites">No favourites to show. You need to like messages to access them here.</string>
 
-	<!-- Contacts and Private Conversations-->
-	<string name="no_contacts">No contacts to show</string>
-	<string name="no_conversations">No conversations to show</string>
-	<string name="no_contacts_action">Tap the + icon to add a contact</string>
-	<string name="date_no_private_messages">No messages.</string>
-	<string name="no_private_messages">No messages to show</string>
-	<string name="message_hint">Type message</string>
-	<string name="image_caption_hint">Add a caption (optional)</string>
-	<string name="image_attach">Attach image</string>
-	<string name="image_attach_error">Could not attach image(s)</string>
-	<string name="image_attach_error_too_big">Image too big. Limit is %d MB.</string>
-	<string name="image_attach_error_invalid_mime_type">Image format unsupported: %s</string>
-	<string name="set_contact_alias">Change contact name</string>
-	<string name="set_contact_alias_hint">Contact name</string>
-	<string name="set_alias_button">Change</string>
-	<string name="delete_all_messages">Delete all messages</string>
-	<string name="dialog_title_delete_all_messages">Confirm Message Deletion</string>
-	<string name="dialog_message_delete_all_messages">Are you sure that you want to delete all messages?</string>
-	<string name="dialog_title_not_all_messages_deleted">Could not delete all messages</string>
-	<string name="dialog_message_not_deleted_ongoing_both">Messages related to ongoing invitations and introductions cannot be deleted until they conclude.</string>
-	<string name="dialog_message_not_deleted_ongoing_introductions">Messages related to ongoing introductions cannot be deleted until they conclude.</string>
-	<string name="dialog_message_not_deleted_ongoing_invitations">Messages related to ongoing invitations cannot be deleted until they conclude.</string>
-	<string name="dialog_message_not_deleted_partly_downloaded">Partly downloaded messages cannot be deleted until they have finished downloading.</string>
-	<string name="dialog_message_not_deleted_not_all_selected_both">To delete an invitation or introduction, you need to select the request and the response.</string>
-	<string name="dialog_message_not_deleted_not_all_selected_introductions">To delete an introduction, you need to select the request and the response.</string>
-	<string name="dialog_message_not_deleted_not_all_selected_invitations">To delete an invitation, you need to select the request and the response.</string>
-	<string name="delete_contact">Delete contact</string>
-	<string name="dialog_title_delete_contact">Confirm Contact Deletion</string>
-	<string name="dialog_message_delete_contact">Are you sure that you want to remove this contact and all messages exchanged with this contact?</string>
-	<string name="contact_deleted_toast">Contact deleted</string>
-	<!-- This is shown in the action bar when opening an image in fullscreen that the user sent -->
-	<string name="you">You</string>
-	<string name="save_image">Save image</string>
-	<string name="dialog_title_save_image">Save Image?</string>
-	<string name="dialog_message_save_image">Saving this image will allow other apps to access it.\n\nAre you sure you want to save?</string>
-	<string name="save_image_success">Image was saved</string>
-	<string name="save_image_error">Could not save image</string>
-	<string name="dialog_title_no_image_support">Images Unavailable</string>
-	<string name="dialog_message_no_image_support">Your contact\'s helios. TALK does not yet support image attachments. Once they upgrade you\'ll see a different icon.</string>
-	<string name="dialog_title_image_support">You can now send images to this contact</string>
-	<string name="dialog_message_image_support">Tap this icon to attach images.</string>
-	<string name="messaging_too_many_attachments_toast">Only the first %d images will be sent</string>
+    <!-- Contacts and Private Conversations-->
+    <string name="no_contacts">No contacts to show</string>
+    <string name="no_conversations">No conversations to show</string>
+    <string name="no_contacts_action">Tap the + icon to add a contact</string>
+    <string name="date_no_private_messages">No messages.</string>
+    <string name="no_private_messages">No messages to show</string>
+    <string name="message_hint">Type message</string>
+    <string name="image_caption_hint">Add a caption (optional)</string>
+    <string name="image_attach">Attach image</string>
+    <string name="image_attach_error">Could not attach image(s)</string>
+    <string name="image_attach_error_too_big">Image too big. Limit is %d MB.</string>
+    <string name="image_attach_error_invalid_mime_type">Image format unsupported: %s</string>
+    <string name="set_contact_alias">Change contact name</string>
+    <string name="set_contact_alias_hint">Contact name</string>
+    <string name="set_alias_button">Change</string>
+    <string name="delete_all_messages">Delete all messages</string>
+    <string name="dialog_title_delete_all_messages">Confirm Message Deletion</string>
+    <string name="dialog_message_delete_all_messages">Are you sure that you want to delete all messages?</string>
+    <string name="dialog_title_not_all_messages_deleted">Could not delete all messages</string>
+    <string name="dialog_message_not_deleted_ongoing_both">Messages related to ongoing invitations and introductions cannot be deleted until they conclude.</string>
+    <string name="dialog_message_not_deleted_ongoing_introductions">Messages related to ongoing introductions cannot be deleted until they conclude.</string>
+    <string name="dialog_message_not_deleted_ongoing_invitations">Messages related to ongoing invitations cannot be deleted until they conclude.</string>
+    <string name="dialog_message_not_deleted_partly_downloaded">Partly downloaded messages cannot be deleted until they have finished downloading.</string>
+    <string name="dialog_message_not_deleted_not_all_selected_both">To delete an invitation or introduction, you need to select the request and the response.</string>
+    <string name="dialog_message_not_deleted_not_all_selected_introductions">To delete an introduction, you need to select the request and the response.</string>
+    <string name="dialog_message_not_deleted_not_all_selected_invitations">To delete an invitation, you need to select the request and the response.</string>
+    <string name="delete_contact">Delete contact</string>
+    <string name="dialog_title_delete_contact">Confirm Contact Deletion</string>
+    <string name="dialog_message_delete_contact">Are you sure that you want to remove this contact and all messages exchanged with this contact?</string>
+    <string name="contact_deleted_toast">Contact deleted</string>
+    <!-- This is shown in the action bar when opening an image in fullscreen that the user sent -->
+    <string name="you">You</string>
+    <string name="save_image">Save image</string>
+    <string name="dialog_title_save_image">Save Image?</string>
+    <string name="dialog_message_save_image">Saving this image will allow other apps to access it.\n\nAre you sure you want to save?</string>
+    <string name="save_image_success">Image was saved</string>
+    <string name="save_image_error">Could not save image</string>
+    <string name="dialog_title_no_image_support">Images Unavailable</string>
+    <string name="dialog_message_no_image_support">Your contact\'s helios. TALK does not yet support image attachments. Once they upgrade you\'ll see a different icon.</string>
+    <string name="dialog_title_image_support">You can now send images to this contact</string>
+    <string name="dialog_message_image_support">Tap this icon to attach images.</string>
+    <string name="messaging_too_many_attachments_toast">Only the first %d images will be sent</string>
 
-	<!-- Adding Contacts -->
+    <!-- Adding Contacts -->
 
-	<string name="add_contact_title">Add Contact Nearby</string>
-	<string name="face_to_face">You must meet up with the person you want to add as a contact.\n\nThis will prevent anyone from impersonating you or reading your messages in future.</string>
-	<string name="continue_button">Continue</string>
-	<string name="try_again_button">Try Again</string>
-	<string name="waiting_for_contact_to_scan">Waiting for contact to scan and connect\u2026</string>
-	<string name="exchanging_contact_details">Exchanging contact details\u2026</string>
-	<string name="contact_added_toast">Contact added: %s</string>
-	<string name="contact_already_exists">Contact %s already exists</string>
-	<string name="qr_code_invalid">The QR code is invalid</string>
-	<string name="qr_code_too_old">The QR code you have scanned comes from an older version of %s.\n\nPlease ask your contact to upgrade to the latest version and then try again.</string>
-	<string name="qr_code_too_new">The QR code you have scanned comes from a newer version of %s.\n\nPlease upgrade to the latest version and then try again.</string>
-	<string name="camera_error">Camera error</string>
-	<string name="connecting_to_device">Connecting to device\u2026</string>
-	<string name="authenticating_with_device">Authenticating with device\u2026</string>
-	<string name="connection_error_title">Could not connect to your contact</string>
-	<string name="connection_error_explanation">Please check that you\'re both connected to the same Wi-Fi network.</string>
-	<string name="connection_error_feedback">If this problem persists, please <a href="feedback">send feedback</a> to help us improve the app.</string>
+    <string name="add_contact_title">Add Contact Nearby</string>
+    <string name="face_to_face">You must meet up with the person you want to add as a contact.\n\nThis will prevent anyone from impersonating you or reading your messages in future.</string>
+    <string name="continue_button">Continue</string>
+    <string name="try_again_button">Try Again</string>
+    <string name="waiting_for_contact_to_scan">Waiting for contact to scan and connect\u2026</string>
+    <string name="exchanging_contact_details">Exchanging contact details\u2026</string>
+    <string name="contact_added_toast">Contact added: %s</string>
+    <string name="contact_already_exists">Contact %s already exists</string>
+    <string name="qr_code_invalid">The QR code is invalid</string>
+    <string name="qr_code_too_old">The QR code you have scanned comes from an older version of %s.\n\nPlease ask your contact to upgrade to the latest version and then try again.</string>
+    <string name="qr_code_too_new">The QR code you have scanned comes from a newer version of %s.\n\nPlease upgrade to the latest version and then try again.</string>
+    <string name="camera_error">Camera error</string>
+    <string name="connecting_to_device">Connecting to device\u2026</string>
+    <string name="authenticating_with_device">Authenticating with device\u2026</string>
+    <string name="connection_error_title">Could not connect to your contact</string>
+    <string name="connection_error_explanation">Please check that you\'re both connected to the same Wi-Fi network.</string>
+    <string name="connection_error_feedback">If this problem persists, please <a href="feedback">send feedback</a> to help us improve the app.</string>
 
-	<!-- Adding Contacts Remotely -->
+    <!-- Adding Contacts Remotely -->
 
-	<string name="add_new_conversation">New Conversation</string>
-	<string name="add_new_group_conversation">New Group</string>
-	<string name="add_new_community">New Community</string>
-	<string name="add_contact_remotely_title_case">Add Contact at a Distance</string>
-	<string name="add_contact_nearby_title">Add contact nearby</string>
-	<string name="add_contact_remotely_title">Add contact at a distance</string>
-	<string name="contact_name_hint">Give contact a nickname</string>
-	<string name="contact_link_intro">Enter friend\'s link you want to add to your connections</string>
-	<string name="contact_link_hint">Contact\'s link</string>
-	<string name="paste_button">Paste</string>
-	<string name="confirm_pending_contact">Confirm</string>
-	<string name="delete_pending_contact">Delete</string>
-	<string name="waiting_pending_contact">Waiting for connection response...</string>
-	<string name="copy_button">Copy</string>
-	<string name="share_button">Share</string>
-	<string name="send_link_title">Exchange links</string>
-	<string name="add_contact_button">Add Contact</string>
-	<string name="add_contact_send_message">Send Prompt Message</string>
-	<string name="add_contact_choose_a_nickname">Enter a nickname</string>
-	<string name="add_contact_choose_a_message">Enter a short message.</string>
-	<string name="nickname_intro">Give your contact a nickname. </string>
-	<string name="message_intro">Send a message to the contact you want to add to your connections</string>
-	<string name="your_link">Share this link to friends you want to send you a connection request</string>
-	<string name="link_clip_label">helios. TALK link</string>
-	<string name="link_copied_toast">Link copied</string>
-	<string name="adding_contact_error">There was an error adding the contact.</string>
-	<string name="pending_contact_requests_snackbar">There are pending contact requests</string>
-	<string name="connection_requests">Connection Requests</string>
-	<string name="no_pending_connections">No pending Connections…</string>
-	<string name="add_contact_remote_connecting">Connecting…</string>
-	<string name="waiting_for_contact_to_come_online">Waiting for contact to come online…</string>
-	<string name="connecting">Connecting…</string>
-	<string name="adding_contact">Adding contact…</string>
-	<string name="adding_contact_failed">Adding contact has failed</string>
-	<string name="adding_contact_message">I would like to add you to my connections</string>
-	<string name="dialog_title_remove_pending_contact">Confirm Removal</string>
-	<string name="dialog_message_remove_pending_contact">Are you sure you want to reject the connection request?</string>
-	<string name="own_link_error">Enter your contact\'s link, not your own</string>
-	<string name="nickname_missing">Please enter a nickname</string>
-	<string name="invalid_link">Invalid link</string>
-	<string name="unsupported_link">This link comes from a newer version of helios. TALK. Please upgrade to the latest version and try again.</string>
-	<string name="intent_own_link">You opened your own link. Use the one of the contact you want to add!</string>
-	<string name="missing_link">Please enter a link</string>
-	<!-- This is a numeral indicating the first step in a series of screens -->
-	<string name="step_1">1</string>
-	<!-- This is a numeral indicating the second step in a series of screens -->
-	<string name="step_2">2</string>
-	<plurals name="contact_added_notification_text">
-		<item quantity="one">New contact added.</item>
-		<item quantity="other">%d new contacts added.</item>
-	</plurals>
-	<string name="adding_contact_slow_warning">Adding this contact is taking longer than usual</string>
-	<string name="adding_contact_slow_title">Cannot Connect to Contact</string>
-	<string name="adding_contact_slow_text">Adding this contact is taking longer than usual.\n\nPlease check that your contact has received your link and added you:</string>
-	<string name="offline_state">No Internet connection</string>
-	<string name="duplicate_link_dialog_title">Duplicate Link</string>
-	<string name="duplicate_link_dialog_text_1">You already have a pending contact with this link: %s</string>
-	<string name="duplicate_link_dialog_text_1_contact">You already have a contact with this link: %s</string>
-	<!-- This is a question asking whether two nicknames refer to the same person -->
-	<string name="duplicate_link_dialog_text_2">Are %s and %s the same person?</string>
-	<!-- This is a button for answering that two nicknames do indeed refer to the same person. This
-	string will be used in a dialog button, so if the translation of this string is longer than 20
-	characters, please use "Yes" instead, and use "No" for the "Different Person" button -->
-	<string name="same_person_button">Same Person</string>
-	<!-- This is a button for answering that two nicknames refer to different people. This string
-	will be used in a dialog button, so if the translation of this string longer than 20 characters,
-	please use "No" instead, and use "Yes" for the "Same Person" button -->
-	<string name="different_person_button">Different Person</string>
-	<string name="duplicate_link_dialog_text_3">%s and %s sent you the same link.\n\nOne of them may be trying to discover who your contacts are.\n\nDon\'t tell them you received the same link from someone else.</string>
-	<string name="pending_contact_updated_toast">Pending contact updated</string>
+    <string name="add_new_conversation">New Conversation</string>
+    <string name="add_new_group_conversation">New Group</string>
+    <string name="add_new_community">New Community</string>
+    <string name="add_contact_remotely_title_case">Add Contact at a Distance</string>
+    <string name="add_contact_nearby_title">Add contact nearby</string>
+    <string name="add_contact_remotely_title">Add contact at a distance</string>
+    <string name="contact_name_hint">Give contact a nickname</string>
+    <string name="contact_link_intro">Enter friend\'s link you want to add to your connections</string>
+    <string name="contact_link_hint">Contact\'s link</string>
+    <string name="paste_button">Paste</string>
+    <string name="confirm_pending_contact">Confirm</string>
+    <string name="delete_pending_contact">Delete</string>
+    <string name="waiting_pending_contact">Waiting for connection response...</string>
+    <string name="copy_button">Copy</string>
+    <string name="share_button">Share</string>
+    <string name="send_link_title">Exchange links</string>
+    <string name="add_contact_button">Add Contact</string>
+    <string name="add_contact_send_message">Send Prompt Message</string>
+    <string name="add_contact_choose_a_nickname">Enter a nickname</string>
+    <string name="add_contact_choose_a_message">Enter a short message.</string>
+    <string name="nickname_intro">Give your contact a nickname. </string>
+    <string name="message_intro">Send a message to the contact you want to add to your connections</string>
+    <string name="your_link">Share this link to friends you want to send you a connection request</string>
+    <string name="link_clip_label">helios. TALK link</string>
+    <string name="link_copied_toast">Link copied</string>
+    <string name="adding_contact_error">There was an error adding the contact.</string>
+    <string name="pending_contact_requests_snackbar">There are pending contact requests</string>
+    <string name="connection_requests">Connection Requests</string>
+    <string name="no_pending_connections">No pending Connections…</string>
+    <string name="add_contact_remote_connecting">Connecting…</string>
+    <string name="waiting_for_contact_to_come_online">Waiting for contact to come online…</string>
+    <string name="connecting">Connecting…</string>
+    <string name="adding_contact">Adding contact…</string>
+    <string name="adding_contact_failed">Adding contact has failed</string>
+    <string name="adding_contact_message">I would like to add you to my connections</string>
+    <string name="dialog_title_remove_pending_contact">Confirm Removal</string>
+    <string name="dialog_message_remove_pending_contact">Are you sure you want to reject the connection request?</string>
+    <string name="own_link_error">Enter your contact\'s link, not your own</string>
+    <string name="nickname_missing">Please enter a nickname</string>
+    <string name="invalid_link">Invalid link</string>
+    <string name="unsupported_link">This link comes from a newer version of helios. TALK. Please upgrade to the latest version and try again.</string>
+    <string name="intent_own_link">You opened your own link. Use the one of the contact you want to add!</string>
+    <string name="missing_link">Please enter a link</string>
+    <!-- This is a numeral indicating the first step in a series of screens -->
+    <string name="step_1">1</string>
+    <!-- This is a numeral indicating the second step in a series of screens -->
+    <string name="step_2">2</string>
+    <plurals name="contact_added_notification_text">
+        <item quantity="one">New contact added.</item>
+        <item quantity="other">%d new contacts added.</item>
+    </plurals>
+    <string name="adding_contact_slow_warning">Adding this contact is taking longer than usual</string>
+    <string name="adding_contact_slow_title">Cannot Connect to Contact</string>
+    <string name="adding_contact_slow_text">Adding this contact is taking longer than usual.\n\nPlease check that your contact has received your link and added you:</string>
+    <string name="offline_state">No Internet connection</string>
+    <string name="duplicate_link_dialog_title">Duplicate Link</string>
+    <string name="duplicate_link_dialog_text_1">You already have a pending contact with this link: %s</string>
+    <string name="duplicate_link_dialog_text_1_contact">You already have a contact with this link: %s</string>
+    <!-- This is a question asking whether two nicknames refer to the same person -->
+    <string name="duplicate_link_dialog_text_2">Are %s and %s the same person?</string>
+    <!-- This is a button for answering that two nicknames do indeed refer to the same person. This
+    string will be used in a dialog button, so if the translation of this string is longer than 20
+    characters, please use "Yes" instead, and use "No" for the "Different Person" button -->
+    <string name="same_person_button">Same Person</string>
+    <!-- This is a button for answering that two nicknames refer to different people. This string
+    will be used in a dialog button, so if the translation of this string longer than 20 characters,
+    please use "No" instead, and use "Yes" for the "Same Person" button -->
+    <string name="different_person_button">Different Person</string>
+    <string name="duplicate_link_dialog_text_3">%s and %s sent you the same link.\n\nOne of them may be trying to discover who your contacts are.\n\nDon\'t tell them you received the same link from someone else.</string>
+    <string name="pending_contact_updated_toast">Pending contact updated</string>
 
-	<!-- Introductions -->
+    <!-- Introductions -->
 
-	<string name="introduction_onboarding_title">Introduce your contacts</string>
-	<string name="introduction_onboarding_text">You can introduce your contacts to each other, so they don\'t need to meet in person to connect on helios. TALK.</string>
-	<string name="introduction_menu_item">Make Introduction</string>
-	<string name="introduction_activity_title">Select Contact</string>
-	<string name="introduction_not_possible">You already have one introduction in progress with these contacts. Please allow for this to finish first. If you or your contacts are rarely online, this can take some time.</string>
-	<string name="introduction_message_title">Introduce Contacts</string>
-	<string name="introduction_message_hint">Add a message (optional)</string>
-	<string name="introduction_button">Make Introduction</string>
-	<string name="introduction_sent">Your introduction has been sent.</string>
-	<string name="introduction_error">There was an error making the introduction.</string>
-	<string name="introduction_response_error">Error when responding to introduction</string>
-	<string name="introduction_request_sent">You have asked to introduce %1$s to %2$s.</string>
-	<string name="introduction_request_received">%1$s has asked to introduce you to %2$s. Do you want to add %2$s to your contact list?</string>
-	<string name="introduction_request_exists_received">%1$s has asked to introduce you to %2$s, but %2$s is already in your contact list. Since %1$s might not know that, you can still respond:</string>
-	<string name="introduction_request_answered_received">%1$s has asked to introduce you to %2$s.</string>
-	<string name="introduction_response_accepted_sent">You accepted the introduction to %1$s.</string>
-	<string name="introduction_response_accepted_sent_info">Before %1$s gets added to your contacts, they need to accept the introduction as well. This might take some time.</string>
-	<string name="introduction_response_declined_sent">You declined the introduction to %1$s.</string>
-	<string name="introduction_response_accepted_received">%1$s accepted the introduction to %2$s.</string>
-	<string name="introduction_response_declined_received">%1$s declined the introduction to %2$s.</string>
-	<string name="introduction_response_declined_received_by_introducee">%1$s says that %2$s declined the introduction.</string>
+    <string name="introduction_onboarding_title">Introduce your contacts</string>
+    <string name="introduction_onboarding_text">You can introduce your contacts to each other, so they don\'t need to meet in person to connect on helios. TALK.</string>
+    <string name="introduction_menu_item">Make Introduction</string>
+    <string name="introduction_activity_title">Select Contact</string>
+    <string name="introduction_not_possible">You already have one introduction in progress with these contacts. Please allow for this to finish first. If you or your contacts are rarely online, this can take some time.</string>
+    <string name="introduction_message_title">Introduce Contacts</string>
+    <string name="introduction_message_hint">Add a message (optional)</string>
+    <string name="introduction_button">Make Introduction</string>
+    <string name="introduction_sent">Your introduction has been sent.</string>
+    <string name="introduction_error">There was an error making the introduction.</string>
+    <string name="introduction_response_error">Error when responding to introduction</string>
+    <string name="introduction_request_sent">You have asked to introduce %1$s to %2$s.</string>
+    <string name="introduction_request_received">%1$s has asked to introduce you to %2$s. Do you want to add %2$s to your contact list?</string>
+    <string name="introduction_request_exists_received">%1$s has asked to introduce you to %2$s, but %2$s is already in your contact list. Since %1$s might not know that, you can still respond:</string>
+    <string name="introduction_request_answered_received">%1$s has asked to introduce you to %2$s.</string>
+    <string name="introduction_response_accepted_sent">You accepted the introduction to %1$s.</string>
+    <string name="introduction_response_accepted_sent_info">Before %1$s gets added to your contacts, they need to accept the introduction as well. This might take some time.</string>
+    <string name="introduction_response_declined_sent">You declined the introduction to %1$s.</string>
+    <string name="introduction_response_accepted_received">%1$s accepted the introduction to %2$s.</string>
+    <string name="introduction_response_declined_received">%1$s declined the introduction to %2$s.</string>
+    <string name="introduction_response_declined_received_by_introducee">%1$s says that %2$s declined the introduction.</string>
 
-	<!-- Private Groups -->
-	<string name="groups_list_empty">No groups to show</string>
-	<string name="groups_list_empty_action">Tap the + icon to create a group, or ask your contacts to share groups with you</string>
-	<string name="groups_created_by">Created by %s</string>
-	<plurals name="messages">
-		<item quantity="one">%d message</item>
-		<item quantity="other">%d messages</item>
-	</plurals>
-	<string name="groups_group_is_empty">This group is empty</string>
-	<string name="groups_group_is_dissolved">This group has been dissolved</string>
-	<string name="groups_remove">Remove</string>
-	<string name="groups_add">Add</string>
-	<string name="groups_create_group_title">Create Private Group</string>
-	<string name="groups_create_group_button">Create Group</string>
-	<string name="groups_create_group_invitation_button">Send Invitation</string>
-	<string name="groups_create_group_hint">Choose a name for your group</string>
-	<string name="groups_invitation_sent">Group invitation has been sent</string>
-	<string name="groups_member_list">Member List</string>
-	<string name="groups_invite_members">Invite Members</string>
-	<string name="groups_member_created_you">You created the group</string>
-	<string name="groups_member_created">%s created the group</string>
-	<string name="groups_member_joined_you">You joined the group</string>
-	<string name="groups_member_joined">%s joined the group</string>
-	<string name="groups_leave">Leave Group</string>
-	<string name="groups_leave_dialog_title">Confirm Leaving Group</string>
-	<string name="groups_leave_dialog_message">Are you sure that you want to leave this group?</string>
-	<string name="groups_dissolve">Dissolve Group</string>
-	<string name="groups_dissolve_dialog_title">Confirm Dissolving Group</string>
-	<string name="groups_dissolve_dialog_message">Are you sure that you want to dissolve this group?\n\nAll other members will not be able to continue their conversation and might not receive the latest messages.</string>
-	<string name="groups_dissolve_button">Dissolve</string>
-	<string name="groups_dissolved_dialog_title">Group Has Been Dissolved</string>
-	<string name="groups_dissolved_dialog_message">The creator of this group has dissolved it.\n\nYou can no longer write messages to the group and might not receive all posts that have been written.</string>
+    <!-- Private Groups -->
+    <string name="groups_list_empty">No groups to show</string>
+    <string name="groups_list_empty_action">Tap the + icon to create a group, or ask your contacts to share groups with you</string>
+    <string name="groups_created_by">Created by %s</string>
+    <plurals name="messages">
+        <item quantity="one">%d message</item>
+        <item quantity="other">%d messages</item>
+    </plurals>
+    <string name="groups_group_is_empty">This group is empty</string>
+    <string name="groups_group_is_dissolved">This group has been dissolved</string>
+    <string name="groups_remove">Remove</string>
+    <string name="groups_add">Add</string>
+    <string name="groups_create_group_title">Create Private Group</string>
+    <string name="groups_create_group_button">Create Group</string>
+    <string name="groups_create_group_invitation_button">Send Invitation</string>
+    <string name="groups_create_group_hint">Choose a name for your group</string>
+    <string name="groups_invitation_sent">Group invitation has been sent</string>
+    <string name="groups_member_list">Member List</string>
+    <string name="groups_invite_members">Invite Members</string>
+    <string name="groups_member_created_you">You created the group</string>
+    <string name="groups_member_created">%s created the group</string>
+    <string name="groups_member_joined_you">You joined the group</string>
+    <string name="groups_member_joined">%s joined the group</string>
+    <string name="groups_leave">Leave Group</string>
+    <string name="groups_leave_dialog_title">Confirm Leaving Group</string>
+    <string name="groups_leave_dialog_message">Are you sure that you want to leave this group?</string>
+    <string name="groups_dissolve">Dissolve Group</string>
+    <string name="groups_dissolve_dialog_title">Confirm Dissolving Group</string>
+    <string name="groups_dissolve_dialog_message">Are you sure that you want to dissolve this group?\n\nAll other members will not be able to continue their conversation and might not receive the latest messages.</string>
+    <string name="groups_dissolve_button">Dissolve</string>
+    <string name="groups_dissolved_dialog_title">Group Has Been Dissolved</string>
+    <string name="groups_dissolved_dialog_message">The creator of this group has dissolved it.\n\nYou can no longer write messages to the group and might not receive all posts that have been written.</string>
 
-	<!-- Private Group Invitations -->
-	<string name="groups_invitations_title">Group Invitations</string>
-	<string name="groups_invitations_invitation_sent">You have invited %1$s to join the group \"%2$s\".</string>
-	<string name="groups_invitations_invitation_received">%1$s has invited you to join the group \"%2$s\".</string>
-	<string name="groups_invitations_joined">Joined group</string>
-	<string name="groups_invitations_declined">Group invitation declined</string>
-	<plurals name="groups_invitations_open">
-		<item quantity="one">%d open group invitation</item>
-		<item quantity="other">%d open group invitations</item>
-	</plurals>
-	<string name="groups_invitations_response_accepted_sent">You accepted the group invitation from %s.</string>
-	<string name="groups_invitations_response_declined_sent">You declined the group invitation from %s.</string>
-	<string name="groups_invitations_response_accepted_received">%s accepted the group invitation.</string>
-	<string name="groups_invitations_response_declined_received">%s declined the group invitation.</string>
-	<string name="sharing_status_groups">Only the creator can invite new members to the group. Below are all current members of the group.</string>
+    <!-- Private Group Invitations -->
+    <string name="groups_invitations_title">Group Invitations</string>
+    <string name="groups_invitations_invitation_sent">You have invited %1$s to join the group \"%2$s\".</string>
+    <string name="groups_invitations_invitation_received">%1$s has invited you to join the group \"%2$s\".</string>
+    <string name="groups_invitations_joined">Joined group</string>
+    <string name="groups_invitations_declined">Group invitation declined</string>
+    <plurals name="groups_invitations_open">
+        <item quantity="one">%d open group invitation</item>
+        <item quantity="other">%d open group invitations</item>
+    </plurals>
+    <string name="groups_invitations_response_accepted_sent">You accepted the group invitation from %s.</string>
+    <string name="groups_invitations_response_declined_sent">You declined the group invitation from %s.</string>
+    <string name="groups_invitations_response_accepted_received">%s accepted the group invitation.</string>
+    <string name="groups_invitations_response_declined_received">%s declined the group invitation.</string>
+    <string name="sharing_status_groups">Only the creator can invite new members to the group. Below are all current members of the group.</string>
 
-	<!-- Private Groups Revealing Contacts -->
-	<string name="groups_reveal_contacts">Reveal Contacts</string>
-	<string name="groups_reveal_dialog_message">You can choose whether to reveal contacts to all current and future members of this group.\n\nRevealing contacts makes your connection to the group faster and more reliable, because you can communicate with revealed contacts even when the creator of the group is offline.</string>
-	<string name="groups_reveal_visible">Contact relationship is visible to the group</string>
-	<string name="groups_reveal_visible_revealed_by_us">Contact relationship is visible to the group (revealed by you)</string>
-	<string name="groups_reveal_visible_revealed_by_contact">Contact relationship is visible to the group (revealed by %s)</string>
-	<string name="groups_reveal_invisible">Contact relationship is not visible to the group</string>
+    <!-- Private Groups Revealing Contacts -->
+    <string name="groups_reveal_contacts">Reveal Contacts</string>
+    <string name="groups_reveal_dialog_message">You can choose whether to reveal contacts to all current and future members of this group.\n\nRevealing contacts makes your connection to the group faster and more reliable, because you can communicate with revealed contacts even when the creator of the group is offline.</string>
+    <string name="groups_reveal_visible">Contact relationship is visible to the group</string>
+    <string name="groups_reveal_visible_revealed_by_us">Contact relationship is visible to the group (revealed by you)</string>
+    <string name="groups_reveal_visible_revealed_by_contact">Contact relationship is visible to the group (revealed by %s)</string>
+    <string name="groups_reveal_invisible">Contact relationship is not visible to the group</string>
 
-	<!--Profile-->
-	<string name="profile_alias_hint">Nickname</string>
-	<string name="profile_fullname_hint">Full Name</string>
-	<string name="profile_gender_hint">Gender</string>
-	<string name="profile_not_relevant_hint">Not Relevant</string>
-	<string name="profile_save">Save</string>
+    <!--Profile-->
+    <string name="profile_alias_hint">Nickname</string>
+    <string name="profile_fullname_hint">Full Name</string>
+    <string name="profile_gender_hint">Gender</string>
+    <string name="profile_not_relevant_hint">Not Relevant</string>
+    <string name="profile_save">Save</string>
 
-	<!--Gender-->
-	<string name="gender_not_relevant">Not Relevant</string>
-	<string name="gender_not_binary">Non-Binary</string>
-	<string name="gender_female">Female</string>
-	<string name="gender_male">Male</string>
+    <!--Gender-->
+    <string name="gender_not_relevant">Not Relevant</string>
+    <string name="gender_not_binary">Non-Binary</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_male">Male</string>
 
-	<!--Contexts-->
-	<string name="choose_context_hint">Choose a name for your context</string>
-	<string name="choose_radius_hint">Radius</string>
+    <!--Contexts-->
+    <string name="choose_context_hint">Choose a name for your context</string>
+    <string name="choose_radius_hint">Radius</string>
 
-	<string name="choose_context_location_lat">Latitude</string>
-	<string name="choose_context_location_lng">Longitude</string>
-	<string name="get_current_location_button">Get Current Location</string>
+    <string name="choose_context_location_lat">Latitude</string>
+    <string name="choose_context_location_lng">Longitude</string>
+    <string name="get_current_location_button">Get Current Location</string>
 
-	<string name="location_permission_prompt">Location permission is needed for core functionality</string>
-	<string name="create_context_button">Create Context</string>
-	<string name="create_context_title">Create Context</string>
-	<string name="context_created_toast">Context created</string>
-	<string name="join_context_toast">You joined a new Context</string>
-	<string name="remove_context">Remove Context</string>
-	<string name="add_contacts_to_context">Add Contacts</string>
-	<string name="context_add_contacts_error">There was an error adding contacts to this context.</string>
-	<string name="context_add_members">Add Contacts</string>
-	<string name="dialog_title_leave_context">Confirm Removing Context</string>
-	<string name="dialog_message_leave_context">Are you sure that you want to remove this context?\n\nAny contacts you\'ve added in this context will remain available in #all context.</string>
-	<string name="dialog_button_remove_context">Remove</string>
-	<string name="context_removed_toast">Context Removed</string>
-	<string name="no_contacts_in_context">No contacts to show in current context</string>
-	<string name="no_contacts_action_context">Tap the + icon to add a contact, or select add contacts from option menu</string>
-	<string name="no_context_conversations">No conversations available to show in this contexts</string>
-	<string name="context_contact_already_added">Already added to context</string>
+    <string name="location_permission_prompt">Location permission is needed for core functionality</string>
+    <string name="create_context_button">Create Context</string>
+    <string name="create_context_title">Create Context</string>
+    <string name="context_created_toast">Context created</string>
+    <string name="join_context_toast">You joined a new Context</string>
+    <string name="remove_context">Leave Context</string>
+    <string name="add_contacts_to_context">Invite Contacts</string>
+    <string name="context_add_contacts_error">There was an error adding contacts to this context.</string>
+    <string name="context_add_members">Invite Contacts</string>
+    <string name="dialog_title_leave_context">Confirm Removing Context</string>
+    <string name="dialog_message_leave_context">Are you sure that you want to remove this context?\n\nAny contacts you\'ve added in this context will remain available in #all context.</string>
+    <string name="dialog_button_remove_context">Remove</string>
+    <string name="context_removed_toast">Context Removed</string>
+    <string name="no_contacts_in_context">No contacts to show in current context</string>
+    <string name="no_contacts_action_context">Tap the + icon to add a contact, or select add contacts from option menu</string>
+    <string name="no_context_conversations">No conversations available to show in this contexts</string>
+    <string name="context_contact_already_added">Already invited to context</string>
 
-	<string name="invite_contacts_context">Invite Contacts to Context</string>
-	<string name="join_context">Join</string>
-	<string name="delete_context_invite">Reject</string>
-	<string name="waiting_context_response">Waiting for connection response in context...</string>
-	<string name="context_message">%1$s invited you to join %2$s context %3$s.</string>
-	<string name="dialog_message_remove_pending_context_invite">Are you sure you want to reject context invite?</string>
-	<string name="dialog_title_remove_pending_context_invite">Confirm Removal</string>
+    <string name="invite_contacts_context">Invite Contacts to Context</string>
+    <string name="join_context">Join</string>
+    <string name="delete_context_invite">Reject</string>
+    <string name="waiting_context_response">Waiting for connection response in context...</string>
+    <string name="context_message">%1$s invited you to join %2$s context %3$s.</string>
+    <string name="dialog_message_remove_pending_context_invite">Are you sure you want to reject context invite?</string>
+    <string name="dialog_title_remove_pending_context_invite">Confirm Removal</string>
 
-	<!-- Private Groups -->
-	<string name="dialog_title_remove_pending_group_invite">Confirm Removal</string>
-	<string name="waiting_group_response">Waiting for connection response in private group...</string>
-	<string name="dialog_message_remove_pending_group_invite">Are you sure you want to reject private group invite?</string>
-	<string name="delete_group_invite">Reject</string>
+    <!-- Private Groups -->
+    <string name="dialog_title_remove_pending_group_invite">Confirm Removal</string>
+    <string name="waiting_group_response">Waiting for connection response in private group...</string>
+    <string name="dialog_message_remove_pending_group_invite">Are you sure you want to reject private group invite?</string>
+    <string name="delete_group_invite">Reject</string>
 
-	<string name="no_pending_invitations">No pending Invitations…</string>
+    <string name="no_pending_invitations">No pending Invitations…</string>
 
-	<!-- Communities -->
-	<string name="create_community_title">Create Community</string>
-	<string name="choose_community_hint">Choose a name for your community</string>
+    <!-- Communities -->
+    <string name="create_community_title">Create Community</string>
+    <string name="choose_community_hint">Choose a name for your community</string>
 
-	<string name="create_community_button">Create Community</string>
-	<string name="community_created_toast">Community created</string>
-	<string name="no_community_posts">No posts to show</string>
-	<string name="no_posts">No posts</string>
-	<plurals name="posts">
-		<item quantity="one">%d post</item>
-		<item quantity="other">%d posts</item>
-	</plurals>
-	<string name="community_new_message_hint">New Post</string>
-	<string name="community_message_reply_hint">New Reply</string>
-	<string name="btn_reply">Reply</string>
+    <string name="create_community_button">Create Community</string>
+    <string name="community_created_toast">Community created</string>
+    <string name="no_community_posts">No posts to show</string>
+    <string name="no_posts">No posts</string>
+    <plurals name="posts">
+        <item quantity="one">%d post</item>
+        <item quantity="other">%d posts</item>
+    </plurals>
+    <string name="community_new_message_hint">New Post</string>
+    <string name="community_message_reply_hint">New Reply</string>
+    <string name="btn_reply">Reply</string>
 
-	<string name="dialog_title_leave_community">Confirm Leaving Community</string>
-	<string name="dialog_message_leave_community">Are you sure that you want to leave this community?\n\nAny contacts you\'ve shared this community with might stop receiving updates.</string>
-	<string name="dialog_button_leave">Leave</string>
-	<string name="community_leave">Leave Community</string>
-	<string name="community_left">Left community</string>
+    <string name="dialog_title_leave_community">Confirm Leaving Community</string>
+    <string name="dialog_message_leave_community">Are you sure that you want to leave this community?\n\nAny contacts you\'ve shared this community with might stop receiving updates.</string>
+    <string name="dialog_button_leave">Leave</string>
+    <string name="community_leave">Leave Community</string>
+    <string name="community_left">Left community</string>
 
-	<string name="video_call_button">Start Video Call</string>
-	<string name="video_request_received">%1$s invited you to join a video call.</string>
-	<string name="video_request_sent">You have started a video call with %1$s.</string>
-	<!-- Community Sharing -->
-	<string name="community_share">Share Community</string>
-	<string name="contacts_selected">Contacts selected</string>
-	<string name="activity_share_toolbar_header">Choose Contacts</string>
-	<string name="no_contacts_selector">No contacts to show</string>
-	<string name="no_contacts_selector_action">Please come back here after adding a contact</string>
-	<string name="community_shared_snackbar">Community shared with chosen contacts</string>
-	<string name="community_share_message">Add a message (optional)</string>
-	<string name="community_share_error">There was an error sharing this community.</string>
-	<string name="community_invitation_received">%1$s has shared the community \"%2$s\" with you.</string>
-	<string name="community_invitation_sent">You have shared the community \"%1$s\" with %2$s.</string>
-	<string name="community_invitations_title">Community Invitations</string>
-	<string name="community_invitation_exists">You accepted an invitation to this community already.\n\nAccepting more invitations will make your connection to the community faster and more reliable.</string>
-	<string name="community_joined_toast">Joined community</string>
-	<string name="community_declined_toast">Invitation declined</string>
-	<string name="shared_by_format">Shared by %s</string>
-	<string name="community_invitation_already_sharing">Already sharing</string>
-	<string name="community_invitation_response_accepted_sent">You accepted the community invitation from %s.</string>
-	<string name="community_invitation_response_declined_sent">You declined the community invitation from %s.</string>
-	<string name="community_invitation_response_accepted_received">%s accepted the community invitation.</string>
-	<string name="community_invitation_response_declined_received">%s declined the community invitation.</string>
+    <string name="video_call_button">Start Video Call</string>
+    <string name="video_request_received">%1$s invited you to join a video call.</string>
+    <string name="video_request_sent">You have started a video call with %1$s.</string>
+    <!-- Community Sharing -->
+    <string name="community_share">Share Community</string>
+    <string name="contacts_selected">Contacts selected</string>
+    <string name="activity_share_toolbar_header">Choose Contacts</string>
+    <string name="no_contacts_selector">No contacts to show</string>
+    <string name="no_contacts_selector_action">Please come back here after adding a contact</string>
+    <string name="community_shared_snackbar">Community shared with chosen contacts</string>
+    <string name="community_share_message">Add a message (optional)</string>
+    <string name="community_share_error">There was an error sharing this community.</string>
+    <string name="community_invitation_received">%1$s has shared the community \"%2$s\" with you.</string>
+    <string name="community_invitation_sent">You have shared the community \"%1$s\" with %2$s.</string>
+    <string name="community_invitations_title">Community Invitations</string>
+    <string name="community_invitation_exists">You accepted an invitation to this community already.\n\nAccepting more invitations will make your connection to the community faster and more reliable.</string>
+    <string name="community_joined_toast">Joined community</string>
+    <string name="community_declined_toast">Invitation declined</string>
+    <string name="shared_by_format">Shared by %s</string>
+    <string name="community_invitation_already_sharing">Already sharing</string>
+    <string name="community_invitation_response_accepted_sent">You accepted the community invitation from %s.</string>
+    <string name="community_invitation_response_declined_sent">You declined the community invitation from %s.</string>
+    <string name="community_invitation_response_accepted_received">%s accepted the community invitation.</string>
+    <string name="community_invitation_response_declined_received">%s declined the community invitation.</string>
 
-	<string name="sharing_status">Sharing Status</string>
-	<string name="sharing_status_community">Any member of a community can share it with their contacts. You are sharing this community with the following contacts. There may also be other members who you can\'t see.</string>
-	<string name="shared_with">Shared with %1$d (%2$d online)</string>
-	<plurals name="communities_shared">
-		<item quantity="one">%d community shared by contacts</item>
-		<item quantity="other">%d communities shared by contacts</item>
-	</plurals>
-	<string name="nobody">Nobody</string>
+    <string name="sharing_status">Sharing Status</string>
+    <string name="sharing_status_community">Any member of a community can share it with their contacts. You are sharing this community with the following contacts. There may also be other members who you can\'t see.</string>
+    <string name="shared_with">Shared with %1$d (%2$d online)</string>
+    <plurals name="communities_shared">
+        <item quantity="one">%d community shared by contacts</item>
+        <item quantity="other">%d communities shared by contacts</item>
+    </plurals>
+    <string name="nobody">Nobody</string>
 
-	<!-- Blogs -->
-	<string name="blogs_other_blog_empty_state">No posts to show</string>
-	<string name="read_more">read more</string>
-	<string name="blogs_write_blog_post">Write Blog Post</string>
-	<string name="blogs_write_blog_post_body_hint">Type your blog post</string>
-	<string name="blogs_publish_blog_post">Publish</string>
-	<string name="blogs_blog_post_created">Blog Post Created</string>
-	<string name="blogs_blog_post_received">New Blog Post Received</string>
-	<string name="blogs_blog_post_scroll_to">Scroll To</string>
-	<string name="blogs_feed_empty_state">No posts to show</string>
-	<string name="blogs_feed_empty_state_action">Posts from your contacts and blogs you subscribe to will appear here\n\nTap the pen icon to write a post</string>
-	<string name="blogs_remove_blog">Remove Blog</string>
-	<string name="blogs_remove_blog_dialog_message">Are you sure that you want to remove this blog?\n\nPosts will be removed from your device but not from other people\'s devices.\n\nAny contacts you\'ve shared this blog with might stop receiving updates.</string>
-	<string name="blogs_remove_blog_ok">Remove</string>
-	<string name="blogs_blog_removed">Blog removed</string>
-	<string name="blogs_reblog_comment_hint">Add a comment (optional)</string>
-	<string name="blogs_reblog_button">Reblog</string>
+    <!-- Blogs -->
+    <string name="blogs_other_blog_empty_state">No posts to show</string>
+    <string name="read_more">read more</string>
+    <string name="blogs_write_blog_post">Write Blog Post</string>
+    <string name="blogs_write_blog_post_body_hint">Type your blog post</string>
+    <string name="blogs_publish_blog_post">Publish</string>
+    <string name="blogs_blog_post_created">Blog Post Created</string>
+    <string name="blogs_blog_post_received">New Blog Post Received</string>
+    <string name="blogs_blog_post_scroll_to">Scroll To</string>
+    <string name="blogs_feed_empty_state">No posts to show</string>
+    <string name="blogs_feed_empty_state_action">Posts from your contacts and blogs you subscribe to will appear here\n\nTap the pen icon to write a post</string>
+    <string name="blogs_remove_blog">Remove Blog</string>
+    <string name="blogs_remove_blog_dialog_message">Are you sure that you want to remove this blog?\n\nPosts will be removed from your device but not from other people\'s devices.\n\nAny contacts you\'ve shared this blog with might stop receiving updates.</string>
+    <string name="blogs_remove_blog_ok">Remove</string>
+    <string name="blogs_blog_removed">Blog removed</string>
+    <string name="blogs_reblog_comment_hint">Add a comment (optional)</string>
+    <string name="blogs_reblog_button">Reblog</string>
 
-	<!-- Blog Sharing -->
-	<string name="blogs_sharing_share">Share Blog</string>
-	<string name="blogs_sharing_error">There was an error sharing this blog.</string>
-	<string name="blogs_sharing_button">Share Blog</string>
-	<string name="blogs_sharing_snackbar">Blog shared with chosen contacts</string>
-	<string name="blogs_sharing_response_accepted_sent">You accepted the blog invitation from %s.</string>
-	<string name="blogs_sharing_response_declined_sent">You declined the blog invitation from %s.</string>
-	<string name="blogs_sharing_response_accepted_received">%s accepted the blog invitation.</string>
-	<string name="blogs_sharing_response_declined_received">%s declined the blog invitation.</string>
-	<string name="blogs_sharing_invitation_received">%1$s has shared the blog \"%2$s\" with you.</string>
-	<string name="blogs_sharing_invitation_sent">You have shared the blog \"%1$s\" with %2$s.</string>
-	<string name="blogs_sharing_invitations_title">Blog Invitations</string>
-	<string name="blogs_sharing_joined_toast">Subscribed to blog</string>
-	<string name="blogs_sharing_declined_toast">Invitation declined</string>
-	<string name="sharing_status_blog">Anyone who subscribes to a blog can share it with their contacts. You are sharing this blog with the following contacts. There may also be other subscribers who you can\'t see.</string>
+    <!-- Blog Sharing -->
+    <string name="blogs_sharing_share">Share Blog</string>
+    <string name="blogs_sharing_error">There was an error sharing this blog.</string>
+    <string name="blogs_sharing_button">Share Blog</string>
+    <string name="blogs_sharing_snackbar">Blog shared with chosen contacts</string>
+    <string name="blogs_sharing_response_accepted_sent">You accepted the blog invitation from %s.</string>
+    <string name="blogs_sharing_response_declined_sent">You declined the blog invitation from %s.</string>
+    <string name="blogs_sharing_response_accepted_received">%s accepted the blog invitation.</string>
+    <string name="blogs_sharing_response_declined_received">%s declined the blog invitation.</string>
+    <string name="blogs_sharing_invitation_received">%1$s has shared the blog \"%2$s\" with you.</string>
+    <string name="blogs_sharing_invitation_sent">You have shared the blog \"%1$s\" with %2$s.</string>
+    <string name="blogs_sharing_invitations_title">Blog Invitations</string>
+    <string name="blogs_sharing_joined_toast">Subscribed to blog</string>
+    <string name="blogs_sharing_declined_toast">Invitation declined</string>
+    <string name="sharing_status_blog">Anyone who subscribes to a blog can share it with their contacts. You are sharing this blog with the following contacts. There may also be other subscribers who you can\'t see.</string>
 
-	<!-- RSS Feeds -->
-	<string name="blogs_rss_feeds_import">Import RSS Feed</string>
-	<string name="blogs_rss_feeds_import_button">Import</string>
-	<string name="blogs_rss_feeds_import_hint">Enter the URL of the RSS feed</string>
-	<string name="blogs_rss_feeds_import_error">We are sorry! There was an error importing your feed.</string>
-	<string name="blogs_rss_feeds_manage">Manage RSS Feeds</string>
-	<string name="blogs_rss_feeds_manage_imported">Imported:</string>
-	<string name="blogs_rss_feeds_manage_author">Author:</string>
-	<string name="blogs_rss_feeds_manage_updated">Last Updated:</string>
-	<string name="blogs_rss_remove_feed">Remove Feed</string>
-	<string name="blogs_rss_remove_feed_dialog_message">Are you sure that you want to remove this feed?\n\nPosts will be removed from your device but not from other people\'s devices.\n\nAny contacts you\'ve shared this feed with might stop receiving updates.</string>
-	<string name="blogs_rss_remove_feed_ok">Remove</string>
-	<string name="blogs_rss_feeds_manage_delete_error">The feed could not be deleted!</string>
-	<string name="blogs_rss_feeds_manage_empty_state">No RSS feeds to show\n\nTap the + icon to import a feed</string>
-	<string name="blogs_rss_feeds_manage_error">There was a problem loading your feeds. Please try again later.</string>
+    <!-- RSS Feeds -->
+    <string name="blogs_rss_feeds_import">Import RSS Feed</string>
+    <string name="blogs_rss_feeds_import_button">Import</string>
+    <string name="blogs_rss_feeds_import_hint">Enter the URL of the RSS feed</string>
+    <string name="blogs_rss_feeds_import_error">We are sorry! There was an error importing your feed.</string>
+    <string name="blogs_rss_feeds_manage">Manage RSS Feeds</string>
+    <string name="blogs_rss_feeds_manage_imported">Imported:</string>
+    <string name="blogs_rss_feeds_manage_author">Author:</string>
+    <string name="blogs_rss_feeds_manage_updated">Last Updated:</string>
+    <string name="blogs_rss_remove_feed">Remove Feed</string>
+    <string name="blogs_rss_remove_feed_dialog_message">Are you sure that you want to remove this feed?\n\nPosts will be removed from your device but not from other people\'s devices.\n\nAny contacts you\'ve shared this feed with might stop receiving updates.</string>
+    <string name="blogs_rss_remove_feed_ok">Remove</string>
+    <string name="blogs_rss_feeds_manage_delete_error">The feed could not be deleted!</string>
+    <string name="blogs_rss_feeds_manage_empty_state">No RSS feeds to show\n\nTap the + icon to import a feed</string>
+    <string name="blogs_rss_feeds_manage_error">There was a problem loading your feeds. Please try again later.</string>
 
-	<!-- Settings Display -->
-	<string name="pref_language_title">Language &amp; region</string>
-	<string name="pref_language_changed">This setting will take effect when you restart helios. TALK. Please sign out and restart helios. TALK.</string>
-	<string name="pref_language_default">System default</string>
-	<string name="display_settings_title">Display</string>
-	<string name="pref_theme_title">Theme</string>
-	<string name="pref_theme_light">Light</string>
-	<string name="pref_theme_dark">Dark</string>
-	<string name="pref_theme_cadetblue">Cadet Blue</string>
-	<string name="pref_theme_richblack">Rich Black</string>
-	<string name="pref_theme_auto">Automatic (Daytime)</string>
-	<string name="pref_theme_system">System Default</string>
+    <!-- Settings Display -->
+    <string name="pref_language_title">Language &amp; region</string>
+    <string name="pref_language_changed">This setting will take effect when you restart helios. TALK. Please sign out and restart helios. TALK.</string>
+    <string name="pref_language_default">System default</string>
+    <string name="display_settings_title">Display</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_theme_light">Light</string>
+    <string name="pref_theme_dark">Dark</string>
+    <string name="pref_theme_cadetblue">Cadet Blue</string>
+    <string name="pref_theme_richblack">Rich Black</string>
+    <string name="pref_theme_auto">Automatic (Daytime)</string>
+    <string name="pref_theme_system">System Default</string>
 
-	<!-- Settings Network -->
-	<string name="network_settings_title">Networks</string>
-	<string name="bluetooth_setting">Connect via Bluetooth</string>
-	<string name="bluetooth_setting_enabled">Whenever contacts are nearby</string>
-	<string name="bluetooth_setting_disabled">Only when adding contacts</string>
-	<string name="tor_network_setting">Connect via Internet (Tor)</string>
-	<string name="tor_network_setting_automatic">Automatic based on location</string>
-	<string name="tor_network_setting_without_bridges">Use Tor without bridges</string>
-	<string name="tor_network_setting_with_bridges">Use Tor with bridges</string>
-	<string name="tor_network_setting_never">Don\'t connect</string>
-	<!-- How and when Tor will connect after Automatic: E.g. Don't connect (in China) or Use Tor with bridges (in Belarus) -->
-	<string name="tor_network_setting_summary">Automatic: %1$s (in %2$s)</string>
-	<string name="tor_mobile_data_title">Use mobile data</string>
-	<string name="tor_only_when_charging_title">Connect via Internet (Tor) only when charging</string>
-	<string name="tor_only_when_charging_summary">Disables Internet connection when device is running on battery</string>
+    <!-- Settings Network -->
+    <string name="network_settings_title">Networks</string>
+    <string name="bluetooth_setting">Connect via Bluetooth</string>
+    <string name="bluetooth_setting_enabled">Whenever contacts are nearby</string>
+    <string name="bluetooth_setting_disabled">Only when adding contacts</string>
+    <string name="tor_network_setting">Connect via Internet (Tor)</string>
+    <string name="tor_network_setting_automatic">Automatic based on location</string>
+    <string name="tor_network_setting_without_bridges">Use Tor without bridges</string>
+    <string name="tor_network_setting_with_bridges">Use Tor with bridges</string>
+    <string name="tor_network_setting_never">Don\'t connect</string>
+    <!-- How and when Tor will connect after Automatic: E.g. Don't connect (in China) or Use Tor with bridges (in Belarus) -->
+    <string name="tor_network_setting_summary">Automatic: %1$s (in %2$s)</string>
+    <string name="tor_mobile_data_title">Use mobile data</string>
+    <string name="tor_only_when_charging_title">Connect via Internet (Tor) only when charging</string>
+    <string name="tor_only_when_charging_summary">Disables Internet connection when device is running on battery</string>
 
-	<!-- Settings Security and Panic -->
-	<string name="security_settings_title">Security</string>
-	<string name="pref_lock_title">App lock</string>
-	<string name="pref_lock_summary">Use the device\'s screen lock to protect helios. TALK while signed in</string>
-	<string name="pref_lock_disabled_summary">To use this feature, set up a screen lock for your device</string>
-	<string name="pref_lock_timeout_title">App lock inactivity timeout</string>
-	<!-- The %s placeholder is replaced with the following time spans, e.g. 5 Minutes, 1 Hour -->
-	<string name="pref_lock_timeout_summary">When not using helios. TALK, automatically lock it after %s</string>
-	<!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
-	<string name="pref_lock_timeout_1">1 minute</string>
-	<!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
-	<string name="pref_lock_timeout_5">5 minutes</string>
-	<!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
-	<string name="pref_lock_timeout_15">15 minutes</string>
-	<!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
-	<string name="pref_lock_timeout_30">30 minutes</string>
-	<!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
-	<string name="pref_lock_timeout_60">1 hour</string>
-	<string name="pref_lock_timeout_never">Never</string>
-	<string name="pref_lock_timeout_never_summary">Never lock helios. TALK automatically</string>
+    <!-- Settings Security and Panic -->
+    <string name="security_settings_title">Security</string>
+    <string name="pref_lock_title">App lock</string>
+    <string name="pref_lock_summary">Use the device\'s screen lock to protect helios. TALK while signed in</string>
+    <string name="pref_lock_disabled_summary">To use this feature, set up a screen lock for your device</string>
+    <string name="pref_lock_timeout_title">App lock inactivity timeout</string>
+    <!-- The %s placeholder is replaced with the following time spans, e.g. 5 Minutes, 1 Hour -->
+    <string name="pref_lock_timeout_summary">When not using helios. TALK, automatically lock it after %s</string>
+    <!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
+    <string name="pref_lock_timeout_1">1 minute</string>
+    <!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
+    <string name="pref_lock_timeout_5">5 minutes</string>
+    <!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
+    <string name="pref_lock_timeout_15">15 minutes</string>
+    <!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
+    <string name="pref_lock_timeout_30">30 minutes</string>
+    <!-- Will be shown in a list of lock times. Should fit into the %s of "automatically lock it after %s" -->
+    <string name="pref_lock_timeout_60">1 hour</string>
+    <string name="pref_lock_timeout_never">Never</string>
+    <string name="pref_lock_timeout_never_summary">Never lock helios. TALK automatically</string>
 
-	<string name="video_call_title">Video Call</string>
+    <string name="video_call_title">Video Call</string>
 
-	<string name="change_password">Change password</string>
-	<string name="current_password">Current password</string>
-	<string name="choose_new_password">New password</string>
-	<string name="confirm_new_password">Confirm new password</string>
-	<string name="password_changed">Password has been changed.</string>
-	<string name="panic_setting">Panic button setup</string>
-	<string name="panic_setting_title">Panic button</string>
-	<string name="panic_setting_hint">Configure how helios. TALK will react when you use a panic button app</string>
-	<string name="panic_app_setting_title">Panic Button App</string>
-	<string name="unknown_app">an unknown app</string>
-	<string name="panic_app_setting_summary">No app has been set</string>
-	<string name="panic_app_setting_none">None</string>
-	<string name="dialog_title_connect_panic_app">Confirm Panic App</string>
-	<string name="dialog_message_connect_panic_app">Are you sure that you want to allow %1$s to trigger destructive panic button actions?</string>
-	<string name="panic_setting_destructive_action">Destructive Actions</string>
-	<string name="panic_setting_signout_title">Sign Out</string>
-	<string name="panic_setting_signout_summary">Sign out of helios. TALK if a panic button is pressed</string>
-	<string name="purge_setting_title">Delete Account</string>
-	<string name="purge_setting_summary">Delete your helios. TALK account if a panic button is pressed. Caution: This will permanently delete your identities, contacts and messages</string>
-	<string name="uninstall_setting_title">Uninstall helios. TALK</string>
-	<string name="uninstall_setting_summary">This requires manual confirmation in a panic event</string>
+    <string name="change_password">Change password</string>
+    <string name="current_password">Current password</string>
+    <string name="choose_new_password">New password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="password_changed">Password has been changed.</string>
+    <string name="panic_setting">Panic button setup</string>
+    <string name="panic_setting_title">Panic button</string>
+    <string name="panic_setting_hint">Configure how helios. TALK will react when you use a panic button app</string>
+    <string name="panic_app_setting_title">Panic Button App</string>
+    <string name="unknown_app">an unknown app</string>
+    <string name="panic_app_setting_summary">No app has been set</string>
+    <string name="panic_app_setting_none">None</string>
+    <string name="dialog_title_connect_panic_app">Confirm Panic App</string>
+    <string name="dialog_message_connect_panic_app">Are you sure that you want to allow %1$s to trigger destructive panic button actions?</string>
+    <string name="panic_setting_destructive_action">Destructive Actions</string>
+    <string name="panic_setting_signout_title">Sign Out</string>
+    <string name="panic_setting_signout_summary">Sign out of helios. TALK if a panic button is pressed</string>
+    <string name="purge_setting_title">Delete Account</string>
+    <string name="purge_setting_summary">Delete your helios. TALK account if a panic button is pressed. Caution: This will permanently delete your identities, contacts and messages</string>
+    <string name="uninstall_setting_title">Uninstall helios. TALK</string>
+    <string name="uninstall_setting_summary">This requires manual confirmation in a panic event</string>
 
-	<!-- Settings Profiling -->
-	<string name="profiling_setting_title">Profiling</string>
-	<string name="profiling_setting">Content-Aware Profiling</string>
-	<string name="profiling_settings_disabled">Disabled</string>
-	<string name="profiling_settings_fine">Fine Interest Profiling (recommended)</string>
-	<string name="profiling_settings_coarse">Coarse Interest Profiling</string>
+    <!-- Settings Profiling -->
+    <string name="profiling_setting_title">Profiling</string>
+    <string name="profiling_setting">Content-Aware Profiling</string>
+    <string name="profiling_settings_disabled">Disabled</string>
+    <string name="profiling_settings_fine">Fine Interest Profiling (recommended)</string>
+    <string name="profiling_settings_coarse">Coarse Interest Profiling</string>
 
-	<!-- Settings Notifications -->
-	<string name="notification_settings_title">Notifications</string>
-	<string name="notify_sign_in_title">Remind me to sign in</string>
-	<string name="notify_sign_in_summary">Show a reminder when the phone starts or the app has been updated</string>
-	<string name="notify_private_messages_setting_title">Private messages</string>
-	<string name="notify_private_messages_setting_summary">Show alerts for private messages</string>
-	<string name="notify_private_messages_setting_summary_26">Configure alerts for private messages</string>
-	<string name="notify_group_messages_setting_title">Group messages</string>
-	<string name="notify_group_messages_setting_summary">Show alerts for group messages</string>
-	<string name="notify_group_messages_setting_summary_26">Configure alerts for group messages</string>
-	<string name="notify_community_posts_setting_title">Community posts</string>
-	<string name="notify_community_posts_setting_summary">Show alerts for community posts</string>
-	<string name="notify_community_posts_setting_summary_26">Configure alerts for community posts</string>
-	<string name="notify_blog_posts_setting_title">Blog posts</string>
-	<string name="notify_blog_posts_setting_summary">Show alerts for blog posts</string>
-	<string name="notify_blog_posts_setting_summary_26">Configure alerts for blog posts</string>
-	<string name="notify_vibration_setting">Vibrate</string>
-	<string name="notify_sound_setting">Sound</string>
-	<string name="notify_sound_setting_default">Default ringtone</string>
-	<string name="notify_sound_setting_disabled">None</string>
-	<string name="choose_ringtone_title">Choose ringtone</string>
-	<string name="cannot_load_ringtone">Cannot load ringtone</string>
+    <!-- Settings Notifications -->
+    <string name="notification_settings_title">Notifications</string>
+    <string name="notify_sign_in_title">Remind me to sign in</string>
+    <string name="notify_sign_in_summary">Show a reminder when the phone starts or the app has been updated</string>
+    <string name="notify_private_messages_setting_title">Private messages</string>
+    <string name="notify_private_messages_setting_summary">Show alerts for private messages</string>
+    <string name="notify_private_messages_setting_summary_26">Configure alerts for private messages</string>
+    <string name="notify_group_messages_setting_title">Group messages</string>
+    <string name="notify_group_messages_setting_summary">Show alerts for group messages</string>
+    <string name="notify_group_messages_setting_summary_26">Configure alerts for group messages</string>
+    <string name="notify_community_posts_setting_title">Community posts</string>
+    <string name="notify_community_posts_setting_summary">Show alerts for community posts</string>
+    <string name="notify_community_posts_setting_summary_26">Configure alerts for community posts</string>
+    <string name="notify_blog_posts_setting_title">Blog posts</string>
+    <string name="notify_blog_posts_setting_summary">Show alerts for blog posts</string>
+    <string name="notify_blog_posts_setting_summary_26">Configure alerts for blog posts</string>
+    <string name="notify_vibration_setting">Vibrate</string>
+    <string name="notify_sound_setting">Sound</string>
+    <string name="notify_sound_setting_default">Default ringtone</string>
+    <string name="notify_sound_setting_disabled">None</string>
+    <string name="choose_ringtone_title">Choose ringtone</string>
+    <string name="cannot_load_ringtone">Cannot load ringtone</string>
 
-	<!-- Settings Feedback -->
-	<string name="feedback_settings_title">Feedback</string>
-	<string name="send_feedback">Send feedback</string>
+    <!-- Settings Feedback -->
+    <string name="feedback_settings_title">Feedback</string>
+    <string name="send_feedback">Send feedback</string>
 
-	<!-- Link Warning -->
-	<string name="link_warning_title">Link Warning</string>
-	<string name="link_warning_intro">You are about to open the following link with an external app.</string>
-	<string name="link_warning_text">This can be used to identify you. Think about whether you trust the person that sent you this link and consider opening it with Tor Browser.</string>
-	<string name="link_warning_open_link">Open Link</string>
+    <!-- Link Warning -->
+    <string name="link_warning_title">Link Warning</string>
+    <string name="link_warning_intro">You are about to open the following link with an external app.</string>
+    <string name="link_warning_text">This can be used to identify you. Think about whether you trust the person that sent you this link and consider opening it with Tor Browser.</string>
+    <string name="link_warning_open_link">Open Link</string>
 
-	<!-- Crash Reporter -->
-	<string name="crash_dialog_comment_prompt">Please add additional comments to send along with the report</string>
-	<string name="crash_dialog_text">helios. TALK has been crashed!</string>
+    <!-- Crash Reporter -->
+    <string name="crash_dialog_comment_prompt">Please add additional comments to send along with the report</string>
+    <string name="crash_dialog_text">helios. TALK has been crashed!</string>
 
-	<string name="crash_report_title">helios. TALK Crash Report</string>
-	<string name="helios_crashed">Sorry, helios. TALK has crashed.</string>
-	<string name="not_your_fault">This is not your fault.</string>
-	<string name="please_send_report">Please help us build a better helios. TALK by sending us a crash report.</string>
-	<string name="report_is_encrypted">We promise that the report is encrypted and sent securely.</string>
-	<string name="feedback_title">Feedback</string>
-	<string name="describe_crash">Describe what happened (optional)</string>
-	<string name="enter_feedback">Enter your feedback</string>
-	<string name="optional_contact_email">Your email address (optional)</string>
-	<string name="include_debug_report_crash">Include anonymous data about the crash</string>
-	<string name="include_debug_report_feedback">Include anonymous data about this device</string>
-	<string name="could_not_load_report_data">Could not load report data.</string>
-	<string name="send_report">Send report</string>
-	<string name="close">Close</string>
-	<string name="dev_report_saved">Report saved. It will be sent the next time you log into helios. TALK.</string>
+    <string name="crash_report_title">helios. TALK Crash Report</string>
+    <string name="helios_crashed">Sorry, helios. TALK has crashed.</string>
+    <string name="not_your_fault">This is not your fault.</string>
+    <string name="please_send_report">Please help us build a better helios. TALK by sending us a crash report.</string>
+    <string name="report_is_encrypted">We promise that the report is encrypted and sent securely.</string>
+    <string name="feedback_title">Feedback</string>
+    <string name="describe_crash">Describe what happened (optional)</string>
+    <string name="enter_feedback">Enter your feedback</string>
+    <string name="optional_contact_email">Your email address (optional)</string>
+    <string name="include_debug_report_crash">Include anonymous data about the crash</string>
+    <string name="include_debug_report_feedback">Include anonymous data about this device</string>
+    <string name="could_not_load_report_data">Could not load report data.</string>
+    <string name="send_report">Send report</string>
+    <string name="close">Close</string>
+    <string name="dev_report_saved">Report saved. It will be sent the next time you log into helios. TALK.</string>
 
-	<!-- Sign Out -->
-	<string name="progress_title_logout">Signing out of helios. TALK…</string>
+    <!-- Sign Out -->
+    <string name="progress_title_logout">Signing out of helios. TALK…</string>
 
-	<!-- Screen Filters & Tapjacking -->
-	<string name="screen_filter_title">Screen overlay detected</string>
-	<string name="screen_filter_body">Another app is drawing on top of helios. TALK. To protect your security, helios. TALK will not respond to touches when another app is drawing on top.\n\nThe following apps might be drawing on top:\n\n%1$s</string>
-	<string name="screen_filter_allow">Allow these apps to draw on top</string>
+    <!-- Screen Filters & Tapjacking -->
+    <string name="screen_filter_title">Screen overlay detected</string>
+    <string name="screen_filter_body">Another app is drawing on top of helios. TALK. To protect your security, helios. TALK will not respond to touches when another app is drawing on top.\n\nThe following apps might be drawing on top:\n\n%1$s</string>
+    <string name="screen_filter_allow">Allow these apps to draw on top</string>
 
-	<!-- Permission Requests -->
-	<string name="permission_camera_title">Camera permission</string>
-	<string name="permission_camera_request_body">To scan the QR code, helios. TALK needs access to the camera.</string>
-	<string name="permission_location_title">Location permission</string>
-	<string name="permission_location_request_body">To discover Bluetooth devices, helios. TALK needs permission to access your location.\n\helios. TALK does not store your location or share it with anyone.</string>
-	<string name="permission_camera_location_title">Camera and location</string>
-	<string name="permission_camera_location_request_body">To scan the QR code, helios. TALK needs access to the camera.\n\nTo discover Bluetooth devices, helios. TALK needs permission to access your location.\n\helios. TALK does not store your location or share it with anyone.</string>
-	<string name="permission_camera_denied_body">You have denied access to the camera, but adding contacts requires using the camera.\n\nPlease consider granting access.</string>
-	<string name="qr_code">QR code</string>
-	<string name="show_qr_code_fullscreen">Show QR code fullscreen</string>
+    <!-- Permission Requests -->
+    <string name="permission_camera_title">Camera permission</string>
+    <string name="permission_camera_request_body">To scan the QR code, helios. TALK needs access to the camera.</string>
+    <string name="permission_location_title">Location permission</string>
+    <string name="permission_location_request_body">To discover Bluetooth devices, helios. TALK needs permission to access your location.\n\helios. TALK does not store your location or share it with anyone.</string>
+    <string name="permission_camera_location_title">Camera and location</string>
+    <string name="permission_camera_location_request_body">To scan the QR code, helios. TALK needs access to the camera.\n\nTo discover Bluetooth devices, helios. TALK needs permission to access your location.\n\helios. TALK does not store your location or share it with anyone.</string>
+    <string name="permission_camera_denied_body">You have denied access to the camera, but adding contacts requires using the camera.\n\nPlease consider granting access.</string>
+    <string name="qr_code">QR code</string>
+    <string name="show_qr_code_fullscreen">Show QR code fullscreen</string>
 
-	<!-- App Locking -->
-	<string name="lock_unlock">Unlock helios. TALK</string>
-	<string name="lock_unlock_verbose">Enter your device PIN, pattern or password to unlock helios. TALK</string>
-	<string name="lock_unlock_fingerprint_description">Touch your fingerprint sensor with the registered finger to continue</string>
-	<string name="lock_unlock_password">Use Password</string>
-	<string name="lock_is_locked">helios. TALK is locked</string>
-	<string name="lock_tap_to_unlock">Tap to unlock</string>
+    <!-- App Locking -->
+    <string name="lock_unlock">Unlock helios. TALK</string>
+    <string name="lock_unlock_verbose">Enter your device PIN, pattern or password to unlock helios. TALK</string>
+    <string name="lock_unlock_fingerprint_description">Touch your fingerprint sensor with the registered finger to continue</string>
+    <string name="lock_unlock_password">Use Password</string>
+    <string name="lock_is_locked">helios. TALK is locked</string>
+    <string name="lock_tap_to_unlock">Tap to unlock</string>
 
-	<!-- Screenshots -->
+    <!-- Screenshots -->
 
-	<string name="invitations">Context/Group Invitations</string>
+    <string name="invitations">Context/Group Invitations</string>
 
-	<!-- This is a name to be used in screenshots. Feel free to change it to a local name. -->
-	<string name="screenshot_alice">Alice</string>
-	<!-- This is a name to be used in screenshots. Feel free to change it to a local name. -->
-	<string name="screenshot_bob">Bob</string>
-	<!-- This is a name to be used in screenshots. Feel free to change it to a local name. -->
-	<string name="screenshot_carol">Carol</string>
-	<!-- This is a message to be used in screenshots. Please use the same translation for Bob! -->
-	<string name="screenshot_message_1">Hi Bob!</string>
-	<!-- This is a message to be used in screenshots. Please use the same translation for Alice! -->
-	<string name="screenshot_message_2">Hi Alice! Thanks for telling me about helios. TALK!</string>
-	<!-- This is a message to be used in screenshots. -->
-	<string name="screenshot_message_3">No problem, hope you like it 😀</string>
+    <!-- This is a name to be used in screenshots. Feel free to change it to a local name. -->
+    <string name="screenshot_alice">Alice</string>
+    <!-- This is a name to be used in screenshots. Feel free to change it to a local name. -->
+    <string name="screenshot_bob">Bob</string>
+    <!-- This is a name to be used in screenshots. Feel free to change it to a local name. -->
+    <string name="screenshot_carol">Carol</string>
+    <!-- This is a message to be used in screenshots. Please use the same translation for Bob! -->
+    <string name="screenshot_message_1">Hi Bob!</string>
+    <!-- This is a message to be used in screenshots. Please use the same translation for Alice! -->
+    <string name="screenshot_message_2">Hi Alice! Thanks for telling me about helios. TALK!</string>
+    <!-- This is a message to be used in screenshots. -->
+    <string name="screenshot_message_3">No problem, hope you like it 😀</string>
 
 </resources>

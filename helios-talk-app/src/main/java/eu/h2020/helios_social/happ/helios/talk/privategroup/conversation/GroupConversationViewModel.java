@@ -148,7 +148,7 @@ public class GroupConversationViewModel extends AndroidViewModel {
 					groupId, requireNonNull(text), timestamp,
 					fakeIdentity.getFirst(), fakeIdentity.getSecond());
 			GroupMessageHeader h = (GroupMessageHeader) messagingManager
-					.sendPrivateGroupMessage(
+					.sendGroupMessage(
 							privateGroup.getValue(),
 							pgm
 					);
