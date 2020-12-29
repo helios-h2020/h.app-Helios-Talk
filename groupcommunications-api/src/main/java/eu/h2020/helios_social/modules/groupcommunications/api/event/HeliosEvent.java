@@ -2,35 +2,50 @@ package eu.h2020.helios_social.modules.groupcommunications.api.event;
 
 import org.jetbrains.annotations.NotNull;
 
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.ForumType;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.AbstractMessage;
 
 public class HeliosEvent implements AbstractMessage {
 
     public enum Type {
-        PRIVATE, PUBLIC, SHARABLE
-    }
+        PRIVATE(0), PUBLIC(1), SHARABLE(2);
+
+        private final int value;
+
+        Type(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static Type fromValue(int value) {
+            for (Type s : values()) if (s.value == value) return s;
+            throw new IllegalArgumentException();
+        }
+        }
 
     private String eventId;
+    private String contextId;
+    private long timestamp;
     private String title;
     private String description;
-    private String contextId;
     private double lat, lng;
     private String url;
     private Type eventType;
 
-    public HeliosEvent(@NotNull String eventId, @NotNull String title) {
+    public HeliosEvent(@NotNull String eventId, @NotNull String contextId, @NotNull String title,
+                       long timestamp) {
         this.eventId = eventId;
         this.title = title;
+        this.timestamp = timestamp;
+        this.contextId = contextId;
         this.eventType = Type.PUBLIC;
     }
 
     public HeliosEvent setDescription(String description) {
         this.description = description;
-        return this;
-    }
-
-    public HeliosEvent setContextId(String contextId) {
-        this.contextId = contextId;
         return this;
     }
 
@@ -58,7 +73,7 @@ public class HeliosEvent implements AbstractMessage {
         return title;
     }
 
-    public String ContextId() {
+    public String getContextId() {
         return contextId;
     }
 
@@ -80,5 +95,9 @@ public class HeliosEvent implements AbstractMessage {
 
     public String getUrl() {
         return url;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 }
