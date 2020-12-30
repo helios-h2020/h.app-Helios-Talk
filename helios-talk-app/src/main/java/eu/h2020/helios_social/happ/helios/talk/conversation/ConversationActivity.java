@@ -434,8 +434,6 @@ public class ConversationActivity extends HeliosTalkActivity
     private void eagerlyLoadMessageSize(MessageHeader h) {
         try {
             String id = h.getMessageId();
-            // If the message has text, load it
-            //if (h.hasText()) {
             String text = textCache.get(id);
             if (text == null) {
                 LOG.info("Eagerly loading text for latest message");
@@ -532,14 +530,6 @@ public class ConversationActivity extends HeliosTalkActivity
 
     @Override
     public void eventOccurred(Event e) {
-		/*if (e instanceof AttachmentReceivedEvent) {
-			AttachmentReceivedEvent a = (AttachmentReceivedEvent) e;
-			if (a.getContactId().equals(contactId)) {
-				LOG.info("Attachment received");
-				onAttachmentReceived(a.getMessageId());
-				//addInteraction(InteractionType.RECEIVED);
-			}
-		}*/
         if (e instanceof ContactRemovedEvent) {
             ContactRemovedEvent c = (ContactRemovedEvent) e;
             if (c.getContactId().equals(contactId)) {
@@ -553,40 +543,7 @@ public class ConversationActivity extends HeliosTalkActivity
                 LOG.info("Message received, adding");
                 onNewConversationMessage(p.getMessageHeader());
             }
-        }/* else if (e instanceof MessagesSentEvent) {
-			MessagesSentEvent m = (MessagesSentEvent) e;
-			if (m.getContactId().equals(contactId)) {
-				LOG.info("Messages sent");
-				markMessages(m.getMessageIds(), true, false);
-			}
-		} else if (e instanceof MessagesAckedEvent) {
-			MessagesAckedEvent m = (MessagesAckedEvent) e;
-			if (m.getContactId().equals(contactId)) {
-				LOG.info("Messages acked");
-				markMessages(m.getMessageIds(), true, true);
-			}
-		} else if (e instanceof ContactConnectedEvent) {
-			ContactConnectedEvent c = (ContactConnectedEvent) e;
-			if (c.getContactId().equals(contactId)) {
-				LOG.info("Contact connected");
-				displayContactOnlineStatus();
-			}
-		} else if (e instanceof ContactDisconnectedEvent) {
-			ContactDisconnectedEvent c = (ContactDisconnectedEvent) e;
-			if (c.getContactId().equals(contactId)) {
-				LOG.info("Contact disconnected");
-				displayContactOnlineStatus();
-			}
-		} else if (e instanceof ClientVersionUpdatedEvent) {
-			ClientVersionUpdatedEvent c = (ClientVersionUpdatedEvent) e;
-			if (c.getContactId().equals(contactId)) {
-				ClientId clientId = c.getClientVersion().getClientId();
-				if (clientId.equals(MessagingManager.CLIENT_ID)) {
-					LOG.info("Contact's messaging client was updated");
-					viewModel.recheckFeaturesAndOnboarding(contactId);
-				}
-			}
-		}*/
+        }
     }
 
     @UiThread

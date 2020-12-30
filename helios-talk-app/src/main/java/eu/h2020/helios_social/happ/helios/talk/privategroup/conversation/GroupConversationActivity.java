@@ -212,9 +212,9 @@ public class GroupConversationActivity extends HeliosTalkActivity
     @Override
     public void onStart() {
         super.onStart();
+        eventBus.addListener(this);
         notificationManager.blockNotification(groupId);
         notificationManager.clearGroupMessageNotification(groupId);
-        eventBus.addListener(this);
         viewModel.getPrivateGroup().observe(this, privateGroupObserver);
         list.startPeriodicUpdate();
     }
@@ -343,8 +343,6 @@ public class GroupConversationActivity extends HeliosTalkActivity
     private void eagerlyLoadMessageSize(GroupMessageHeader h) {
         try {
             String id = h.getMessageId();
-            // If the message has text, load it
-            //if (h.hasText()) {
             String text = textCache.get(id);
             if (text == null) {
                 LOG.info("Eagerly loading text for latest message");
@@ -509,21 +507,6 @@ public class GroupConversationActivity extends HeliosTalkActivity
 
     @Override
     public void eventOccurred(Event e) {
-		/*if (e instanceof AttachmentReceivedEvent) {
-			AttachmentReceivedEvent a = (AttachmentReceivedEvent) e;
-			if (a.getContactId().equals(contactId)) {
-				LOG.info("Attachment received");
-				onAttachmentReceived(a.getMessageId());
-				//addInteraction(InteractionType.RECEIVED);
-			}
-		}
-		if (e instanceof GroupRemovedEvent) {
-			GroupRemovedEvent g = (GroupRemovedEvent) e;
-			if (g.getGroup().getId().equals(groupId)) {
-				LOG.info("Group has been removed");
-				supportFinishAfterTransition();
-			}
-		} else */
         if (e instanceof GroupMessageReceivedEvent) {
             GroupMessageReceivedEvent p =
                     (GroupMessageReceivedEvent) e;

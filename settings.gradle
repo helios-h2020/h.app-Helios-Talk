@@ -1,6 +1,3 @@
 include ':groupcommunications-utils'
-include ':groupcommunications-db'
 include ':helios-talk-android'
-include ':groupcommunications'
-include ':groupcommunications-api'
 include ':helios-talk-app'

@@ -35,12 +35,7 @@ class ConversationVisitor implements
 	@Override
 	public ConversationItem visitMessageHeader(MessageHeader h) {
 		ConversationItem item;
-		/*List<AttachmentItem> attachments;
-		if (h.getAttachmentHeaders().isEmpty()) {
-			attachments = emptyList();
-		} else {
-			attachments = attachmentCache.getAttachmentItems(h);
-		}*/
+
 		if (!h.isIncoming()) {
 			if (h.getMessageType() == VIDEOCALL) {
 				String text = ctx.getString(R.string.video_request_sent,
@@ -51,8 +46,7 @@ class ConversationVisitor implements
 						h);
 			} else {
 				item = new ConversationMessageItem(
-						R.layout.list_item_conversation_msg_out, h/*,
-						attachments*/);
+						R.layout.list_item_conversation_msg_out, h);
 			}
 		} else {
 			if (h.getMessageType() == VIDEOCALL) {
@@ -65,17 +59,16 @@ class ConversationVisitor implements
 			} else {
 				item = new ConversationMessageItem(
 						R.layout.list_item_conversation_msg_in,
-						h/*, attachments*/);
+						h);
 			}
 		}
 
-		//if (h.hasText()) {
 		String text = textCache.getText(h.getMessageId());
 		if (text != null && h.getMessageType() != VIDEOCALL) item.setText(text);
 		if (text != null && h.getMessageType() == VIDEOCALL) {
 			((VideoCallConversationItem) item).setRoomId(text);
 		}
-		//}
+
 		return item;
 	}
 

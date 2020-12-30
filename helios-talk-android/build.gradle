@@ -30,7 +30,9 @@ android {
 }
 
 dependencies {
-	implementation project(path: ':groupcommunications-db', configuration: 'default')
+	implementation 'eu.h2020.helios_social.modules.groupcommunications-api:groupcommunications-api:1.0.3'
+	implementation project(path: ':groupcommunications-utils', configuration: 'default')
+	implementation 'eu.h2020.helios_social.modules.groupcommunications-db:groupcommunications-db:1.0.1'
 
 	annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
 

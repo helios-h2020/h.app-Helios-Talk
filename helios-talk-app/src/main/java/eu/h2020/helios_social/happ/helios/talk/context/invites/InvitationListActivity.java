@@ -169,6 +169,10 @@ public class InvitationListActivity extends HeliosTalkActivity
                 R.string.join_context_toast,
                 LENGTH_LONG)
                 .show();
+        egoNetwork.setCurrent(
+                egoNetwork.getOrCreateContext(item.getContextName() + "%" +
+                        item.getInvitation().getContextId()));
+
         Intent intent = new Intent(this, NavDrawerActivity.class);
         intent.setFlags(
                 FLAG_ACTIVITY_CLEAR_TASK);
