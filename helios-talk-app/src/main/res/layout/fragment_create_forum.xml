@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_large">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameLayout"
+                android:layout_width="250dp"
+                android:layout_height="70dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/createForumNameEntry"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="12dp"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:hint="@string/choose_forum_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="text|textCapSentences"
+                    android:maxLength="150"
+                    android:maxLines="1"
+                    android:textSize="@dimen/text_size_medium" />
+
+                <requestFocus />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Spinner
+                android:id="@+id/groupType"
+                android:layout_width="130dp"
+                android:layout_height="40dp"
+                android:entries="@array/forum_options"
+                android:textSize="@dimen/text_size_small" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_size_medium"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:text="@string/forum_tags"
+                android:textSize="@dimen/text_size_medium" />
+
+            <eu.h2020.helios_social.happ.helios.talk.profile.TagEditText
+                android:id="@+id/tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:enabled="true"
+                android:gravity="top|left"
+                android:hint="@string/forum_tags_hint"
+                android:importantForAutofill="no"
+                android:inputType="text|textMultiLine"
+                android:maxLength="150"
+                android:maxLines="3"
+                android:minLines="3"
+                android:textSize="@dimen/text_size_medium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_size_small"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="@string/forum_new_member"
+                android:textSize="@dimen/text_size_medium" />
+
+            <Spinner
+                android:id="@+id/default_member_role"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:entries="@array/forum_member_options"
+                android:gravity="right" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="@string/forum_type"
+                android:textSize="@dimen/text_size_medium" />
+
+            <Spinner
+                android:id="@+id/forum_type"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:entries="@array/forum_types"
+                android:gravity="right" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/forum_location_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="@string/forum_location"
+                android:textSize="@dimen/text_size_medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_size_small"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/lat"
+                    android:layout_width="175dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:hint="@string/choose_context_location_lat"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+
+                <EditText
+                    android:id="@+id/lng"
+                    android:layout_width="175dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="@dimen/margin_large"
+                    android:hint="@string/choose_context_location_lng"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:gravity="right">
+
+                <Button
+                    android:id="@+id/getCurrentLocation"
+                    style="@style/HeliosButtonSmall"
+                    android:layout_width="200dp"
+                    android:layout_height="@dimen/button_size_small"
+                    android:background="@drawable/helios_button_white"
+                    android:enabled="true"
+                    android:text="@string/get_current_location_button" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_size_small"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/radius"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:hint="@string/choose_radius_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:text="10000" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/createForumButton"
+                style="@style/BasicButton"
+                android:layout_width="250dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@drawable/helios_button"
+                android:enabled="false"
+                android:text="@string/create_forum_button"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/createForumNameLayout"
+                tools:enabled="true" />
+
+            <ProgressBar
+                android:id="@+id/createForumProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/createForumButton"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
