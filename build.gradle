@@ -10,12 +10,18 @@ allprojects {
 				password = "h3l10sN3xu\$"
 			}
 		}
-		maven { url "https://jitpack.io" }
+		maven { url "https://jitpack.io"
+		}
+        maven {
+            url "https://dl.bintray.com/stojan/android"
+        }
 	}
 }
 
 buildscript {
 	ext.kotlin_version = '1.4.10'
+	ext.work_version = '2.4.0'
+	ext.room_version = '2.2.6'
 	repositories {
 		google()
 		jcenter()
