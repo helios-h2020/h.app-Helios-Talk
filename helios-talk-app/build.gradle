@@ -16,14 +16,14 @@ def getStdout = { command, defaultValue ->
 def acraVersion = '5.7.0'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 10207
-        versionName "0.4.5"
+        versionCode 10501
+        versionName "0.5.3"
         applicationId "eu.h2020.helios_social.helios.talk"
     }
 
@@ -52,7 +52,7 @@ android {
     productFlavors {
         screenshot {
             dimension "version"
-            minSdkVersion 26
+            minSdkVersion 28
             applicationIdSuffix ".screenshot"
         }
         official {
