@@ -22,8 +22,8 @@ import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
 import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
 import eu.h2020.helios_social.modules.groupcommunications.api.context.sharing.ContextInvitation;
@@ -124,10 +124,18 @@ public class InvitationListActivity extends HeliosTalkActivity
     @Override
     public void onJoinGroup(InvitationItem item) {
         viewModel.joinPendingGroup((GroupInvitation) item.getInvitation());
-        Toast.makeText(InvitationListActivity.this,
-                R.string.join_context_toast,
-                LENGTH_LONG)
-                .show();
+
+        if (item.getInvitationType() == InvitationItem.InvitationType.FORUM) {
+            Toast.makeText(InvitationListActivity.this,
+                    R.string.join_forum_toast,
+                    LENGTH_LONG)
+                    .show();
+        } else {
+            Toast.makeText(InvitationListActivity.this,
+                    R.string.join_group_toast,
+                    LENGTH_LONG)
+                    .show();
+        }
         egoNetwork.setCurrent(
                 egoNetwork.getOrCreateContext(item.getContextName() + "%" +
                         item.getInvitation().getContextId()));

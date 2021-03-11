@@ -10,30 +10,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import eu.h2020.helios_social.happ.helios.talk.api.Multiset;
-import eu.h2020.helios_social.happ.helios.talk.api.contact.event.ContactAddedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.contact.event.PendingContactAddedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.context.ContextInvitationAddedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.sync.event.GroupInvitationAddedEvent;
+import eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity;
+import eu.h2020.helios_social.modules.groupcommunications_utils.Multiset;
+import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.ContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.PendingContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAddedEvent;
 import eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListActivity;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
-import eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.GroupConversationActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.PendingContactType;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.happ.helios.talk.api.event.Event;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.Service;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.ServiceException;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.Settings;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.SettingsManager;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.event.SettingsUpdatedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.system.Clock;
-import eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.Service;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.ServiceException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.event.SettingsUpdatedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.system.Clock;
+import eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils;
 
 import eu.h2020.helios_social.happ.helios.talk.android.system.AndroidExecutor;
 import eu.h2020.helios_social.happ.helios.talk.login.SignInReminderReceiver;
@@ -76,9 +76,9 @@ import static androidx.core.app.NotificationCompat.PRIORITY_LOW;
 import static androidx.core.app.NotificationCompat.PRIORITY_MIN;
 import static androidx.core.app.NotificationCompat.VISIBILITY_SECRET;
 import static androidx.core.content.ContextCompat.getColor;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.CONTACT_ID;
 import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.GROUP_ID;
-import static eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment.SETTINGS_NAMESPACE;
 
 @ThreadSafe
 @MethodsNotNullByDefault
@@ -482,7 +482,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             Intent i = new Intent(appContext, PendingContactListActivity.class);
             i.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
             TaskStackBuilder t = TaskStackBuilder.create(appContext);
-            t.addParentStack(GroupConversationActivity.class);
+            t.addParentStack(PrivateGroupConversationActivity.class);
             t.addNextIntent(i);
             b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
             notificationManager.notify(CONNECTION_REQUESTS_NOTIFICATION_ID,
@@ -530,12 +530,12 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             Set<String> groups = groupCounts.keySet();
             if (groups.size() == 1) {
                 // Touching the notification shows the relevant group
-                Intent i = new Intent(appContext, GroupConversationActivity.class);
+                Intent i = new Intent(appContext, PrivateGroupConversationActivity.class);
                 String g = groups.iterator().next();
                 i.putExtra(GROUP_ID, g);
                 i.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 TaskStackBuilder t = TaskStackBuilder.create(appContext);
-                t.addParentStack(GroupConversationActivity.class);
+                t.addParentStack(PrivateGroupConversationActivity.class);
                 t.addNextIntent(i);
                 b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
             } else {

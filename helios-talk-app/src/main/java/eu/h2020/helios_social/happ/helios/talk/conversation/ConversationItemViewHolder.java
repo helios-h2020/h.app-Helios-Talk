@@ -11,15 +11,15 @@ import androidx.annotation.UiThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import eu.h2020.helios_social.happ.helios.talk.R;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 
-import static eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils.trim;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils.trim;
 
 
 @UiThread
 @NotNullByDefault
-abstract class ConversationItemViewHolder extends ViewHolder {
+public abstract class ConversationItemViewHolder extends ViewHolder {
 
 	protected final ConversationListener listener;
 	private final View root;

@@ -3,9 +3,9 @@ package eu.h2020.helios_social.happ.account;
 import android.app.Application;
 import android.content.SharedPreferences;
 
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.CryptoComponent;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseConfig;
-import eu.h2020.helios_social.happ.helios.talk.api.identity.IdentityManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.CryptoComponent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseConfig;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
 
 import eu.h2020.helios_social.happ.helios.talk.Localizer;
 import eu.h2020.helios_social.happ.helios.talk.R;

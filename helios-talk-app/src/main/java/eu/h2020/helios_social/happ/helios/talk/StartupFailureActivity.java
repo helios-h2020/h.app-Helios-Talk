@@ -4,8 +4,8 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.BaseActivity;
@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
-import static eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager.StartResult;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.StartResult;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault

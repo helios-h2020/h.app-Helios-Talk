@@ -3,12 +3,12 @@ package eu.h2020.helios_social.happ.helios.talk;
 import android.net.TrafficStats;
 import android.os.Process;
 
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.Service;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.Service;
 
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.INFO;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.now;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.now;
 
 class NetworkUsageLogger implements Service {
 

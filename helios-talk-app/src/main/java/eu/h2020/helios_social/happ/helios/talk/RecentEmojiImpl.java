@@ -5,15 +5,15 @@ import com.vanniktech.emoji.EmojiUtils;
 import com.vanniktech.emoji.RecentEmoji;
 import com.vanniktech.emoji.emoji.Emoji;
 
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.happ.helios.talk.api.db.Transaction;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager.OpenDatabaseHook;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.Settings;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.SettingsManager;
-import eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.Transaction;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.OpenDatabaseHook;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,9 +25,9 @@ import javax.inject.Inject;
 
 import eu.h2020.helios_social.happ.helios.talk.android.system.AndroidExecutor;
 
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static java.util.logging.Level.WARNING;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
-import static eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment.SETTINGS_NAMESPACE;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault

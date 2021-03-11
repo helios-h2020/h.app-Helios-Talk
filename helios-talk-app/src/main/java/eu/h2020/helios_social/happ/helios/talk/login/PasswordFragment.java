@@ -12,9 +12,9 @@ import android.widget.ProgressBar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.DecryptionResult;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.DecryptionResult;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.fragment.BaseFragment;
@@ -30,8 +30,8 @@ import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.DecryptionResult.KEY_STRENGTHENER_ERROR;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.DecryptionResult.SUCCESS;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.DecryptionResult.KEY_STRENGTHENER_ERROR;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.DecryptionResult.SUCCESS;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault

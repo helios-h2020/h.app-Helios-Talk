@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import eu.h2020.helios_social.happ.helios.talk.api.account.AccountManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
 import eu.h2020.helios_social.happ.helios.talk.AndroidComponent;
 import eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplication;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;

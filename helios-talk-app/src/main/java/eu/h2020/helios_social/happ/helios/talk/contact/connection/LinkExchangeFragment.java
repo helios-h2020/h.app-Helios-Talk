@@ -26,14 +26,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.fragment.BaseFragment;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 import static android.widget.Toast.LENGTH_SHORT;
-import static eu.h2020.helios_social.happ.helios.talk.api.contact.HeliosLinkConstants.LINK_REGEX;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.contact.HeliosLinkConstants.LINK_REGEX;
 import static java.util.Objects.requireNonNull;
 
 @MethodsNotNullByDefault

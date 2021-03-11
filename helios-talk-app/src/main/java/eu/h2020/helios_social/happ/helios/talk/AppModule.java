@@ -9,15 +9,15 @@ import com.vanniktech.emoji.RecentEmoji;
 
 import org.jetbrains.annotations.NotNull;
 
-import eu.h2020.helios_social.happ.helios.talk.api.FeatureFlags;
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.KeyStrengthener;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseConfig;
+import eu.h2020.helios_social.modules.groupcommunications_utils.FeatureFlags;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.KeyStrengthener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseConfig;
 
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.android.DozeWatchdog;
 import eu.h2020.helios_social.happ.android.LockManager;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
 import eu.h2020.helios_social.happ.helios.talk.account.LockManagerImpl;
 import eu.h2020.helios_social.happ.helios.talk.login.LoginModule;
 import eu.h2020.helios_social.happ.helios.talk.viewmodel.ViewModelModule;

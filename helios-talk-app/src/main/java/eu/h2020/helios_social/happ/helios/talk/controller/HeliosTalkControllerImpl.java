@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.IBinder;
 
-import eu.h2020.helios_social.happ.helios.talk.api.account.AccountManager;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.Settings;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.SettingsManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
 import eu.h2020.helios_social.happ.helios.talk.HeliosTalkService;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultHandler;
 import eu.h2020.helios_social.happ.android.DozeWatchdog;
@@ -20,12 +20,13 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import androidx.annotation.CallSuper;
-import eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment;
+
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static java.util.logging.Level.WARNING;
-import static eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager.LifecycleState.STARTING_SERVICES;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.STARTING_SERVICES;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 
 public class HeliosTalkControllerImpl implements HeliosTalkController {
 
@@ -104,7 +105,7 @@ public class HeliosTalkControllerImpl implements HeliosTalkController {
 			try {
 				Settings settings =
 						settingsManager.getSettings(
-								SettingsFragment.SETTINGS_NAMESPACE);
+								SETTINGS_NAMESPACE);
 				boolean ask = settings.getBoolean(DOZE_ASK_AGAIN, true);
 				handler.onResult(ask);
 			} catch (DbException e) {
@@ -119,7 +120,7 @@ public class HeliosTalkControllerImpl implements HeliosTalkController {
 			try {
 				Settings settings = new Settings();
 				settings.putBoolean(DOZE_ASK_AGAIN, false);
-				settingsManager.mergeSettings(settings, SettingsFragment.SETTINGS_NAMESPACE);
+				settingsManager.mergeSettings(settings, SETTINGS_NAMESPACE);
 			} catch (DbException e) {
 				logException(LOG, WARNING, e);
 			}

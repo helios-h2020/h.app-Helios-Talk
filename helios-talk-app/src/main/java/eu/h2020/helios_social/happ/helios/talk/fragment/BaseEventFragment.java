@@ -2,8 +2,8 @@ package eu.h2020.helios_social.happ.helios.talk.fragment;
 
 import javax.inject.Inject;
 
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
 
 public abstract class BaseEventFragment extends BaseFragment implements
 		EventListener {

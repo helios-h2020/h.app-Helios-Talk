@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiExceptionHandler;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;

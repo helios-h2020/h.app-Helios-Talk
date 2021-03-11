@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.PowerManager;
 
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.Service;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.ServiceException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.Service;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.ServiceException;
 import eu.h2020.helios_social.happ.android.DozeWatchdog;
 
 import java.util.concurrent.atomic.AtomicBoolean;

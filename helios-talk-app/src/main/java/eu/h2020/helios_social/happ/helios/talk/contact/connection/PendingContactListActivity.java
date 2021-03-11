@@ -4,9 +4,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -22,11 +19,9 @@ import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.util.HeliosTalkSnackbarBuilder;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
-import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.PendingContact;
 
 

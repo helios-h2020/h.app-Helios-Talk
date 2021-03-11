@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.util.HeliosTalkAdapter;
 import eu.h2020.helios_social.modules.groupcommunications.api.sharing.Invitation;
 

@@ -3,19 +3,17 @@ package eu.h2020.helios_social.happ.helios.talk.conversation;
 import android.view.View;
 
 import androidx.annotation.UiThread;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+
+import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 
 @UiThread
 @NotNullByDefault
-interface ConversationListener {
+public interface ConversationListener {
 
-	//void respondToRequest(ConversationRequestItem item, boolean accept);
+	void onAttachmentClicked(View view, ConversationItem messageItem,
+			AttachmentItem attachmentItem);
 
-	//void openRequestedShareable(ConversationRequestItem item);
-
-	/*void onAttachmentClicked(View view, ConversationMessageItem messageItem,
-			AttachmentItem attachmentItem);*/
-
-	void onFavouriteClicked(View view, ConversationMessageItem messageItem);
+	void onFavouriteClicked(View view, ConversationItem messageItem);
 
 }

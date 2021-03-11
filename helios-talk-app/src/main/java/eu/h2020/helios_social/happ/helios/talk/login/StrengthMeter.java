@@ -19,10 +19,10 @@ import static android.graphics.Paint.Style.STROKE;
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 import static android.view.Gravity.LEFT;
 import static android.view.Gravity.START;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.PasswordStrengthEstimator.QUITE_STRONG;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.PasswordStrengthEstimator.QUITE_WEAK;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.PasswordStrengthEstimator.STRONG;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.PasswordStrengthEstimator.WEAK;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator.QUITE_STRONG;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator.QUITE_WEAK;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator.STRONG;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator.WEAK;
 
 public class StrengthMeter extends ProgressBar {
 

@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 import eu.h2020.helios_social.happ.helios.talk.R;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.contact.ContactListItem;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.GroupItem;
 import eu.h2020.helios_social.happ.helios.talk.util.HeliosTalkAdapter;

@@ -31,7 +31,7 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_SEND;
 import static android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils.utf8IsTooLong;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils.utf8IsTooLong;
 
 public class EmojiTextInputView extends LinearLayout implements
 		TextWatcher {

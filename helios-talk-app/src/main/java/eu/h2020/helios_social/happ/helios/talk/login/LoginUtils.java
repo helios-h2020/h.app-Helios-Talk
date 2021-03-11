@@ -3,7 +3,7 @@ package eu.h2020.helios_social.happ.helios.talk.login;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.R;
 
 import androidx.appcompat.app.AlertDialog;

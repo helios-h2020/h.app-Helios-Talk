@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import eu.h2020.helios_social.happ.helios.talk.R;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 
 
 @MethodsNotNullByDefault

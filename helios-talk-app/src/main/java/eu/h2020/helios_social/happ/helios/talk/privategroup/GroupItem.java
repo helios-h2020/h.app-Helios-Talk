@@ -1,6 +1,6 @@
 package eu.h2020.helios_social.happ.helios.talk.privategroup;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.chat.ChatItem;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.GroupCount;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
@@ -27,7 +27,8 @@ public class GroupItem implements ChatItem {
 		this.favourite = false;
 	}
 
-	public void addMessageHeader(MessageHeader header) {
+	@Override
+	public void addMessage(MessageHeader header) {
 		messageCount++;
 		if (header.getTimestamp() > timestamp) {
 			timestamp = header.getTimestamp();

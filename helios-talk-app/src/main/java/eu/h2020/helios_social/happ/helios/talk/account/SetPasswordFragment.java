@@ -12,8 +12,8 @@ import android.widget.ProgressBar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.login.StrengthMeter;
@@ -27,7 +27,7 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static java.util.Objects.requireNonNull;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.PasswordStrengthEstimator.QUITE_WEAK;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator.QUITE_WEAK;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault

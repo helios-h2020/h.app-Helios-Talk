@@ -3,8 +3,8 @@ package eu.h2020.helios_social.happ.helios.talk.login;
 import android.content.Intent;
 import android.os.Bundle;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 
 import eu.h2020.helios_social.happ.helios.talk.HeliosTalkService;
 import eu.h2020.helios_social.happ.helios.talk.R;

@@ -1,24 +1,28 @@
 package eu.h2020.helios_social.happ.helios.talk.chat;
 
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
+
 public interface ChatItem {
 
-	String getGroupId();
+    void addMessage(MessageHeader messageHeader);
 
-	boolean isEmpty();
+    String getGroupId();
 
-	int getMessageCount();
+    boolean isEmpty();
 
-	long getTimestamp();
+    int getMessageCount();
 
-	int getUnreadCount();
+    long getTimestamp();
 
-	String getName();
+    int getUnreadCount();
 
-	String getLastMessageText();
+    String getName();
 
-	void setLastMessageText(String lastMessage);
+    String getLastMessageText();
 
-	boolean isFavourite();
+    void setLastMessageText(String lastMessage);
 
-	void setFavourite(boolean isFavourite);
+    boolean isFavourite();
+
+    void setFavourite(boolean isFavourite);
 }

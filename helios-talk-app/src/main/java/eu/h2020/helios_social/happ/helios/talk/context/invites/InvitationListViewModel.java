@@ -14,15 +14,15 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import eu.h2020.helios_social.happ.helios.talk.api.context.ContextInvitationAddedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.context.ContextInvitationRemovedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.context.RemovePendingContextEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
-import eu.h2020.helios_social.happ.helios.talk.api.event.Event;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.sync.event.GroupInvitationAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.context.RemovePendingContextEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.context.sharing.ContextInvitation;
@@ -30,11 +30,12 @@ import eu.h2020.helios_social.modules.groupcommunications.api.context.sharing.Sh
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.sharing.GroupInvitationType;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.sharing.GroupInvitation;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.sharing.SharingGroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
 
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static java.util.logging.Level.WARNING;
 import static java.util.logging.Logger.getLogger;
 
@@ -119,8 +120,13 @@ public class InvitationListViewModel extends AndroidViewModel
                     String contextName =
                             contextManager.getContext(p.getContextId())
                                     .getName();
+
+                    InvitationItem.InvitationType itemInvType = InvitationItem.InvitationType.FORUM;
+                    if (p.getGroupInvitationType() == GroupInvitationType.PrivateGroup) {
+                        itemInvType = InvitationItem.InvitationType.GROUP;
+                    }
                     items.add(new InvitationItem(p, c.getAlias(), contextName,
-                            InvitationItem.InvitationType.GROUP));
+                            itemInvType));
                 }
                 LOG.info("Total Invitations: " + items.size());
                 pendingInvitations.postValue(items);

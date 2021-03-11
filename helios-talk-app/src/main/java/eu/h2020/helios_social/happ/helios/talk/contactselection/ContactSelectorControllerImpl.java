@@ -8,10 +8,9 @@ import java.util.logging.Logger;
 import javax.annotation.concurrent.Immutable;
 
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
-import eu.h2020.helios_social.core.contextualegonetwork.Node;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.controller.DbControllerImpl;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
@@ -20,7 +19,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactMan
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
 
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static java.util.logging.Level.WARNING;
 
 @Immutable

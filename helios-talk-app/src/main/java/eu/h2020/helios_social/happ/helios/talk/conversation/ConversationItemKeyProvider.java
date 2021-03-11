@@ -2,7 +2,7 @@ package eu.h2020.helios_social.happ.helios.talk.conversation;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemKeyProvider;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 
 @NotNullByDefault
 class ConversationItemKeyProvider extends ItemKeyProvider<String> {

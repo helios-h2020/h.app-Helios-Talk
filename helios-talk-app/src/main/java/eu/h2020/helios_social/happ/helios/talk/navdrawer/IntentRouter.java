@@ -9,7 +9,7 @@ import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.EXTRA_TEXT;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
-import static eu.h2020.helios_social.happ.helios.talk.api.contact.HeliosLinkConstants.LINK_REGEX;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.contact.HeliosLinkConstants.LINK_REGEX;
 
 class IntentRouter {
 

@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import androidx.annotation.UiThread;
 import eu.h2020.helios_social.happ.helios.talk.R;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.contact.BaseContactListAdapter;
 import eu.h2020.helios_social.happ.helios.talk.contact.ContactItemViewHolder;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;

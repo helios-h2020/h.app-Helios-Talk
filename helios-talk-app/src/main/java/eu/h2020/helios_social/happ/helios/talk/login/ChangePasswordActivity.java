@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.DecryptionResult;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.DecryptionResult;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
@@ -30,9 +30,9 @@ import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static android.widget.Toast.LENGTH_LONG;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.DecryptionResult.KEY_STRENGTHENER_ERROR;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.DecryptionResult.SUCCESS;
-import static eu.h2020.helios_social.happ.helios.talk.api.crypto.PasswordStrengthEstimator.QUITE_WEAK;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.DecryptionResult.KEY_STRENGTHENER_ERROR;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.DecryptionResult.SUCCESS;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator.QUITE_WEAK;
 
 public class ChangePasswordActivity extends HeliosTalkActivity
 		implements OnClickListener, OnEditorActionListener {

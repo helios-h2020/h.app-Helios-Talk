@@ -6,16 +6,16 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.happ.helios.talk.api.event.Event;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.Service;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.Settings;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.SettingsManager;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.event.SettingsUpdatedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.Service;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.event.SettingsUpdatedEvent;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.HeliosTalkService;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
@@ -36,12 +36,12 @@ import static android.app.AlarmManager.ELAPSED_REALTIME;
 import static android.app.PendingIntent.getService;
 import static android.content.Context.ALARM_SERVICE;
 import static android.os.SystemClock.elapsedRealtime;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.logging.Level.WARNING;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment.PREF_SCREEN_LOCK;
 import static eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment.PREF_SCREEN_LOCK_TIMEOUT;
-import static eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment.SETTINGS_NAMESPACE;
 
 @ThreadSafe
 @MethodsNotNullByDefault

@@ -1,65 +1,71 @@
 package eu.h2020.helios_social.happ.helios.talk.chat;
 
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
+
 public class HeaderItem implements ChatItem {
 
-	private String name;
-	private int weight;
+    private String name;
+    private int weight;
 
-	public HeaderItem(String name) {
-		this.name = name;
-		this.weight = 0;
-	}
+    public HeaderItem(String name) {
+        this.name = name;
+        this.weight = 0;
+    }
 
-	@Override
-	public String getGroupId() {
-		return null;
-	}
+    @Override
+    public void addMessage(MessageHeader messageHeader) {
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public String getGroupId() {
+        return null;
+    }
 
-	@Override
-	public int getMessageCount() {
-		return 0;
-	}
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
-	@Override
-	public long getTimestamp() {
-		return 4117849822000l + weight;
-	}
+    @Override
+    public int getMessageCount() {
+        return 0;
+    }
 
-	public void setWeight(int weight) {
-		this.weight = weight;
-	}
+    @Override
+    public long getTimestamp() {
+        return 4117849822000l + weight;
+    }
 
-
-	@Override
-	public int getUnreadCount() {
-		return 0;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public String getLastMessageText() {
-		return null;
-	}
-
-	@Override
-	public void setLastMessageText(String lastMessage) {
-	}
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
 
 
-	@Override
-	public boolean isFavourite() {
-		return false;
-	}
+    @Override
+    public int getUnreadCount() {
+        return 0;
+    }
 
-	@Override
-	public void setFavourite(boolean isFavourite) {
-	}
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getLastMessageText() {
+        return null;
+    }
+
+    @Override
+    public void setLastMessageText(String lastMessage) {
+    }
+
+
+    @Override
+    public boolean isFavourite() {
+        return false;
+    }
+
+    @Override
+    public void setFavourite(boolean isFavourite) {
+    }
 }

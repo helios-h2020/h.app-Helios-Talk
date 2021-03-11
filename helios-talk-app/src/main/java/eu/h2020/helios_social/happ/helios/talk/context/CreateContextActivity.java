@@ -38,10 +38,10 @@ import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
 import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
@@ -88,7 +88,7 @@ public class CreateContextActivity extends HeliosTalkActivity
 	private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
 	// Constant used in the location settings dialog
-	private static final int REQUEST_CHECK_SETTINGS = 0x1;
+	public static final int REQUEST_CHECK_SETTINGS = 0x1;
 
 	// Represents a geographical location
 	private Location mCurrentLocation;

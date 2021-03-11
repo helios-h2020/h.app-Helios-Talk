@@ -3,16 +3,16 @@ package eu.h2020.helios_social.happ.helios.talk.navdrawer;
 import android.app.Activity;
 import android.content.Context;
 
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.happ.helios.talk.api.event.Event;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.Settings;
-import eu.h2020.helios_social.happ.helios.talk.api.settings.SettingsManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
 import eu.h2020.helios_social.happ.helios.talk.controller.DbControllerImpl;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultHandler;
 
@@ -21,11 +21,12 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
+
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static java.util.logging.Level.WARNING;
 import static java.util.logging.Logger.getLogger;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static eu.h2020.helios_social.happ.helios.talk.controller.HeliosTalkControllerImpl.DOZE_ASK_AGAIN;
 
 @MethodsNotNullByDefault
@@ -99,7 +100,7 @@ public class NavDrawerControllerImpl extends DbControllerImpl
 			try {
 				Settings settings =
 						settingsManager.getSettings(
-								SettingsFragment.SETTINGS_NAMESPACE);
+								SETTINGS_NAMESPACE);
 				boolean ask = settings.getBoolean(DOZE_ASK_AGAIN, true);
 				handler.onResult(ask);
 			} catch (DbException e) {

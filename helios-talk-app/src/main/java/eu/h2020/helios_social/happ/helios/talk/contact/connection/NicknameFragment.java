@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -25,8 +24,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.fragment.BaseFragment;
 
 import static android.view.View.INVISIBLE;
@@ -34,8 +33,8 @@ import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.getColor;
 import static androidx.core.content.ContextCompat.getDrawable;
 import static androidx.core.graphics.drawable.DrawableCompat.setTint;
-import static eu.h2020.helios_social.happ.helios.talk.api.identity.IdentityConstants.MAX_IDENTITY_NAME_LENGTH;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils.utf8IsTooLong;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityConstants.MAX_IDENTITY_NAME_LENGTH;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils.utf8IsTooLong;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageConstants.MAX_SHORT_MESSAGE_LENGTH;
 import static java.util.Objects.requireNonNull;
 

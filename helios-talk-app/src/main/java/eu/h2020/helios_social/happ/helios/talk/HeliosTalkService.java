@@ -14,10 +14,10 @@ import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 
-import eu.h2020.helios_social.happ.helios.talk.api.account.AccountManager;
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.SecretKey;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager.StartResult;
+import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.SecretKey;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.StartResult;
 
 import eu.h2020.helios_social.happ.helios.talk.android.system.AndroidExecutor;
 import eu.h2020.helios_social.happ.helios.talk.logout.HideUiActivity;
@@ -47,8 +47,8 @@ import static android.os.Build.VERSION.SDK_INT;
 import static androidx.core.app.NotificationCompat.VISIBILITY_SECRET;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
-import static eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager.StartResult.ALREADY_RUNNING;
-import static eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager.StartResult.SUCCESS;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.StartResult.ALREADY_RUNNING;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.StartResult.SUCCESS;
 import static eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplication.ENTRY_ACTIVITY;
 
 public class HeliosTalkService extends Service {

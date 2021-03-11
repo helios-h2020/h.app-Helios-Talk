@@ -6,8 +6,8 @@ import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
 import eu.h2020.helios_social.happ.helios.talk.controller.DbControllerImpl;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
@@ -17,7 +17,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.context.sharing.Co
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
 
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static java.util.logging.Level.WARNING;
 
 public abstract class ContextContactSelectorControllerImpl

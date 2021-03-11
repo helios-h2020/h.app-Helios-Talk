@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 
 import eu.h2020.helios_social.happ.helios.talk.AndroidComponent;
 import eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplication;

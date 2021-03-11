@@ -2,9 +2,9 @@ package eu.h2020.helios_social.happ.helios.talk;
 
 import android.security.keystore.KeyGenParameterSpec;
 
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.KeyStrengthener;
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.SecretKey;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.KeyStrengthener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.SecretKey;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -30,7 +30,7 @@ import static java.util.Collections.singletonList;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
 import static java.util.logging.Logger.getLogger;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 
 @RequiresApi(23)
 @NotNullByDefault

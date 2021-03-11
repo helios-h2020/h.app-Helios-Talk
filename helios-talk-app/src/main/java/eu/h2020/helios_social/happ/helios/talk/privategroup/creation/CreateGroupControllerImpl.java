@@ -8,11 +8,11 @@ import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.LifecycleManager;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.sync.event.JoinGroupEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.JoinGroupEvent;
 import eu.h2020.helios_social.happ.helios.talk.contactselection.ContactSelectorControllerImpl;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
@@ -28,7 +28,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.shari
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.sharing.GroupInvitationFactory;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.sharing.SharingGroupManager;
 
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static java.util.logging.Level.WARNING;
 
 @Immutable

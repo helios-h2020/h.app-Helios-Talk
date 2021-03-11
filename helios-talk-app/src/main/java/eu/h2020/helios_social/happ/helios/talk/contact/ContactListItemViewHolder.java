@@ -5,9 +5,8 @@ import android.view.View;
 import javax.annotation.Nullable;
 
 import androidx.annotation.UiThread;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.contact.BaseContactListAdapter.OnContactClickListener;
-import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 
 import static androidx.core.view.ViewCompat.setTransitionName;

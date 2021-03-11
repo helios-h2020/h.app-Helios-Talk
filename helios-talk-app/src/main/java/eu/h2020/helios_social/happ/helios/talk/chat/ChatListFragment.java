@@ -1,5 +1,6 @@
 package eu.h2020.helios_social.happ.helios.talk.chat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,37 +29,43 @@ import eu.h2020.helios_social.core.contextualegonetwork.Node;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
-import eu.h2020.helios_social.happ.helios.talk.api.contact.event.ContactAddedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.event.Event;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.PendingContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAddedEvent;
 import eu.h2020.helios_social.happ.helios.talk.contact.ContactListFragment;
 import eu.h2020.helios_social.happ.helios.talk.contact.ContactListItem;
+import eu.h2020.helios_social.happ.helios.talk.forum.creation.CreateForumActivity;
 import eu.h2020.helios_social.happ.helios.talk.fragment.HeliosContextFragment;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.GroupItem;
+import eu.h2020.helios_social.happ.helios.talk.forum.ForumItem;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroupActivity;
 import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.PendingContactType;
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.Forum;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.Group;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
-import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
-import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupMessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.GroupCount;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.mining.MiningManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.peer.PeerInfo;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroup;
+import eu.h2020.helios_social.modules.groupcommunications.messaging.event.GroupMessageReceivedEvent;
 import eu.h2020.helios_social.modules.groupcommunications.messaging.event.PrivateMessageReceivedEvent;
 import io.github.kobakei.materialfabspeeddial.FabSpeedDial;
 
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logDuration;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.now;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.now;
 import static java.util.Collections.sort;
 import static java.util.logging.Level.WARNING;
 
@@ -70,11 +77,7 @@ public class ChatListFragment extends HeliosContextFragment
     @Inject
     AndroidNotificationManager notificationManager;
     @Inject
-    ContactManager contactManager;
-    @Inject
     ConversationManager conversationManager;
-    @Inject
-    GroupManager groupManager;
     @Inject
     MiningManager miningManager;
     @Inject
@@ -135,6 +138,12 @@ public class ChatListFragment extends HeliosContextFragment
         eventBus.addListener(this);
         loadChats();
         list.startPeriodicUpdate();
+    }
+
+    @SuppressLint("RestrictedApi")
+    public void onResume() {
+        super.onResume();
+        actionBar.invalidateOptionsMenu();
     }
 
     @Override
@@ -214,12 +223,22 @@ public class ChatListFragment extends HeliosContextFragment
                     GroupCount count =
                             conversationManager
                                     .getGroupCount(group.getId());
-                    GroupItem item =
-                            new GroupItem((PrivateGroup) group, count, false);
+                    if (group.getGroupType().equals(GroupType.PrivateGroup)) {
+                        GroupItem item =
+                                new GroupItem((PrivateGroup) group, count, false);
 
-                    item.setLastMessageText(getLastMessage(group.getId(),
-                            GroupType.PrivateGroup));
-                    chats.add(item);
+                        item.setLastMessageText(getLastMessage(group.getId(),
+                                GroupType.PrivateGroup));
+                        chats.add(item);
+                    } else {
+                        ForumItem item =
+                                new ForumItem((Forum) group, count);
+                        System.out.println();
+
+                        item.setLastMessageText(getLastMessage(group.getId(),
+                                group.getGroupType()));
+                        chats.add(item);
+                    }
                 }
                 if (chats.size() > 0) {
                     HeaderItem headerItem = new HeaderItem("chats");
@@ -271,9 +290,11 @@ public class ChatListFragment extends HeliosContextFragment
                 username = "";
             }
             if (latest instanceof GroupMessageHeader) {
+                PeerInfo peerInfo = ((GroupMessageHeader) latest).getPeerInfo();
+                String visibleAlias = peerInfo.getAlias();
+                if (visibleAlias == null) visibleAlias = peerInfo.getFunnyName();
                 lastMessage =
-                        ((GroupMessageHeader) latest).getPeerInfo().getAlias() +
-                                ": " + conversationManager
+                        visibleAlias + ": " + conversationManager
                                 .getMessageText(latest.getMessageId());
             } else {
                 if (((MessageHeader) latest).getMessageType().equals(
@@ -306,22 +327,38 @@ public class ChatListFragment extends HeliosContextFragment
                         CreateGroupActivity.class);
                 startActivity(intent);
                 return;
-            case R.id.action_new_community:
-
+            case R.id.action_new_forum:
+                Intent createForumIntent = new Intent(getActivity(),
+                        CreateForumActivity.class);
+                startActivity(createForumIntent);
+                return;
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void eventOccurred(Event e) {
-        if (e instanceof ContactAddedEvent) {
-            LOG.info("Contact added, reloading");
-            loadChats();
+        if (e instanceof GroupMessageReceivedEvent) {
+            LOG.info("Group message received, updating item");
+            GroupMessageReceivedEvent p =
+                    (GroupMessageReceivedEvent) e;
+            GroupMessageHeader h = p.getMessageHeader();
+            updateItem(h.getGroupId(), h);
         } else if (e instanceof PrivateMessageReceivedEvent) {
             LOG.info("Conversation message received, updating item");
             PrivateMessageReceivedEvent p =
                     (PrivateMessageReceivedEvent) e;
             MessageHeader h = p.getMessageHeader();
             updateItem(p.getContactId(), h);
+        } else if (e instanceof ContextInvitationAddedEvent) {
+            if (((ContextInvitationAddedEvent) e).getInvite().isIncoming())
+                actionBar.invalidateOptionsMenu();
+        } else if (e instanceof GroupInvitationAddedEvent) {
+            if (((GroupInvitationAddedEvent) e).getInvite().isIncoming())
+                actionBar.invalidateOptionsMenu();
+        } else if (e instanceof PendingContactAddedEvent) {
+            if (((PendingContactAddedEvent) e).getPendingContact().getPendingContactType().equals(PendingContactType.INCOMING))
+                actionBar.invalidateOptionsMenu();
         }
     }
 
@@ -345,7 +382,32 @@ public class ChatListFragment extends HeliosContextFragment
             e.printStackTrace();
         }
         if (item != null) {
-            ((ContactListItem) item).addMessage(h);
+            item.addMessage(h);
+            adapter.updateItemAt(position, item);
+        }
+    }
+
+    @UiThread
+    private void updateItem(String groupId, GroupMessageHeader h) {
+        adapter.incrementRevision();
+        int position = adapter.findItemPosition(h.getGroupId());
+        if (position < 0) {
+            loadChats();
+            return;
+        }
+        ChatItem item = adapter.getItemAt(position);
+        try {
+            String username = h.getPeerInfo().getFunnyName();
+            if (h.getPeerInfo().getAlias() != null) {
+                username = h.getPeerInfo().getAlias();
+            }
+            item.setLastMessageText(username + ": " + conversationManager
+                    .getMessageText(h.getMessageId()));
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        if (item != null) {
+            item.addMessage(h);
             adapter.updateItemAt(position, item);
         }
     }

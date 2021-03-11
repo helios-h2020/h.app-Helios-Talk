@@ -11,16 +11,16 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseExecutor;
-import eu.h2020.helios_social.happ.helios.talk.api.identity.IdentityManager;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.viewmodel.LiveEvent;
 import eu.h2020.helios_social.happ.helios.talk.viewmodel.LiveResult;
 import eu.h2020.helios_social.happ.helios.talk.viewmodel.MutableLiveEvent;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.PendingContactFactory;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionManager;
 
-import static eu.h2020.helios_social.happ.helios.talk.api.contact.HeliosLinkConstants.LINK_REGEX;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.contact.HeliosLinkConstants.LINK_REGEX;
 import static java.util.logging.Logger.getLogger;
 
 @NotNullByDefault

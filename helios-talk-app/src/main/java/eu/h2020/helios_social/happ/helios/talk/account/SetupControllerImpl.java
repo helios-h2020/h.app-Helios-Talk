@@ -1,9 +1,9 @@
 package eu.h2020.helios_social.happ.helios.talk.account;
 
-import eu.h2020.helios_social.happ.helios.talk.api.account.AccountManager;
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.PasswordStrengthEstimator;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.IoExecutor;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.IoExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultHandler;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultHandler;
 
@@ -13,9 +13,8 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import androidx.annotation.Nullable;
-import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
+
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
-import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
 
 @NotNullByDefault
 public class SetupControllerImpl implements SetupController {

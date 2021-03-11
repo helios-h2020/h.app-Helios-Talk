@@ -24,8 +24,8 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.acra.ACRA;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.android.system.AndroidExecutor;
@@ -76,7 +76,6 @@ import static androidx.core.content.ContextCompat.getSystemService;
 import static androidx.core.view.ViewCompat.LAYOUT_DIRECTION_RTL;
 import static eu.h2020.helios_social.happ.helios.talk.BuildConfig.APPLICATION_ID;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.DAYS;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault

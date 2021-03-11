@@ -4,7 +4,7 @@ package eu.h2020.helios_social.happ.helios.talk.account;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.R;
 
 import androidx.annotation.Nullable;

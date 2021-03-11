@@ -1,8 +1,12 @@
 package eu.h2020.helios_social.happ.helios.talk.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import javax.annotation.Nullable;
@@ -23,23 +28,23 @@ import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactsToContextActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.ContextController;
 import eu.h2020.helios_social.happ.helios.talk.context.CreateContextActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.Themes;
-import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
-import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
-
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static android.widget.Toast.LENGTH_LONG;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
 
 public abstract class HeliosContextFragment extends BaseFragment {
 
     @Inject
     protected ContextualEgoNetwork egoNetwork;
+    @Inject
+    protected ContactManager contactManager;
+    @Inject
+    protected GroupManager groupManager;
     @Inject
     protected ContextController contextController;
 
@@ -95,6 +100,28 @@ public abstract class HeliosContextFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.context_actions, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        MenuItem friendRequests = menu.findItem(R.id.pending_contacts);
+        int incomingConnectionRequests = 0;
+        try {
+            incomingConnectionRequests = contactManager.pendingIncomingConnectionRequests();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        int inviteCounter = 0;
+        try {
+            inviteCounter += contextController.getPendingIncomingContextInvitations();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        try {
+            inviteCounter += groupManager.pendingIncomingGroupInvitations();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        friendRequests.setIcon(buildCounterDrawable(incomingConnectionRequests,
+                R.drawable.ic_person_white));
+        MenuItem invites = menu.findItem(R.id.pending_contexts);
+        invites.setIcon(buildCounterDrawable(inviteCounter, R.drawable.ic_notifications));
     }
 
     @Override
@@ -191,6 +218,35 @@ public abstract class HeliosContextFragment extends BaseFragment {
 		intent.setFlags(
 				FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);*/
+
+    }
+
+    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+        LayoutInflater inflater = LayoutInflater.from(this.getActivity());
+        View view = inflater.inflate(R.layout.counter_menu_item_layout, null);
+        view.setBackgroundResource(backgroundImageId);
+
+        if (count == 0) {
+            View counterTextPanel = view.findViewById(R.id.counterValuePanel);
+            counterTextPanel.setVisibility(View.GONE);
+        } else {
+            TextView textView = (TextView) view.findViewById(R.id.count);
+
+            if (count > 9) textView.setText("9+");
+            else textView.setText("" + count);
+        }
+
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        return new BitmapDrawable(getResources(), bitmap);
 
     }
 }
