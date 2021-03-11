@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         minSdkVersion 28
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 10207
         versionName "0.4.5"
         applicationId "eu.h2020.helios_social.helios.talk"
