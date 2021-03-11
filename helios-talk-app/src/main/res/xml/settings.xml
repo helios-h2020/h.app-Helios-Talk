@@ -107,10 +107,10 @@
 
 		<SwitchPreference
 			android:defaultValue="true"
-			android:key="pref_key_notify_community_posts"
+			android:key="pref_key_notify_forum_posts"
 			android:persistent="false"
-			android:summary="@string/notify_community_posts_setting_summary"
-			android:title="@string/notify_community_posts_setting_title"
+			android:summary="@string/notify_forum_posts_setting_summary"
+			android:title="@string/notify_forum_posts_setting_title"
 			android:widgetLayout="@layout/preference_switch_compat"
 			app:iconSpaceReserved="false" />
 
