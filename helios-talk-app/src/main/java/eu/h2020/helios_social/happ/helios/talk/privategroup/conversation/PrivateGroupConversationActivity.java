@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -30,9 +30,7 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,13 +41,22 @@ import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
 import eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes;
-import eu.h2020.helios_social.happ.helios.talk.api.Pair;
-import eu.h2020.helios_social.happ.helios.talk.api.db.NoSuchGroupException;
-import eu.h2020.helios_social.happ.helios.talk.api.event.Event;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
+import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
+import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationListener;
+import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
+import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
+import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
+import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
+import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
+import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
+import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationItem;
 import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteActivity;
@@ -66,24 +73,32 @@ import eu.h2020.helios_social.modules.groupcommunications.messaging.event.GroupM
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.lifecycle.Lifecycle.State.STARTED;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logDuration;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.now;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils.isNullOrEmpty;
+import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.ATTACHMENT_URI;
+import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.CONTACT_NAME;
+import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.TEXT_MESSAGE;
+import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.TIMESTAMP;
+import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessagingConstants.MAX_IMAGE_ATTACHMENTS_PER_MESSAGE;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.now;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils.isNullOrEmpty;
 import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.GROUP_ID;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessagingConstants.MAX_MESSAGE_TEXT_LENGTH;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
 import static java.util.Objects.requireNonNull;
 import static java.util.logging.Level.WARNING;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
-public class GroupConversationActivity extends HeliosTalkActivity
-        implements EventListener, GroupListener,
-        GroupConversationVisitor.TextCache, TextSendController.SendListener {
+public class PrivateGroupConversationActivity extends HeliosTalkActivity
+        implements EventListener, PrivateGroupListener,
+        GroupConversationVisitor.TextCache, GroupConversationVisitor.AttachmentCache,
+        TextSendController.SendListener, TextAttachmentController.AttachmentListener {
     private static final Logger LOG =
-            Logger.getLogger(GroupConversationActivity.class.getName());
+            Logger.getLogger(PrivateGroupConversationActivity.class.getName());
     public static final String GROUP_NAME = "helios.talk.GROUP_NAME";
 
     @Inject
@@ -97,7 +112,8 @@ public class GroupConversationActivity extends HeliosTalkActivity
     @Inject
     ConversationManager conversationManager;
 
-    private GroupConversationViewModel viewModel;
+    private PrivateGroupConversationViewModel viewModel;
+    private AttachmentRetriever attachmentRetriever;
     private GroupConversationVisitor visitor;
     private GroupConversationAdapter adapter;
     private HeliosTalkRecyclerView list;
@@ -121,7 +137,7 @@ public class GroupConversationActivity extends HeliosTalkActivity
     @Nullable
     private Boolean isOwner = null;
     private boolean isDissolved = false;
-    private MenuItem /*revealMenuItem,*/ inviteMenuItem, leaveMenuItem,
+    private MenuItem inviteMenuItem, leaveMenuItem,
             dissolveMenuItem;
 
     @Override
@@ -141,7 +157,8 @@ public class GroupConversationActivity extends HeliosTalkActivity
         LOG.info("group id: " + groupId + " group name:" + groupName);
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(GroupConversationViewModel.class);
+                .get(PrivateGroupConversationViewModel.class);
+        attachmentRetriever = viewModel.getAttachmentRetriever();
 
         viewModel.isGroupDisolved().observe(this, deleted -> {
             requireNonNull(deleted);
@@ -159,24 +176,27 @@ public class GroupConversationActivity extends HeliosTalkActivity
             toolbarTitle.setText(privateGroup.getName());
         });
 
-        textInput = findViewById(R.id.text_input_container);
-        sendController = new TextSendController(textInput, this, false);
-        textInput.setSendController(sendController);
-        textInput.setMaxTextLength(MAX_MESSAGE_TEXT_LENGTH);
-        textInput.setReady(true);
-
-        visitor = new GroupConversationVisitor(this, this);
+        visitor = new GroupConversationVisitor(this, this, this);
         adapter = new GroupConversationAdapter(this, this);
-        list = findViewById(R.id.conversationView);
         layoutManager = new LinearLayoutManager(this);
+        list = findViewById(R.id.conversationView);
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
         list.setEmptyText(getString(R.string.no_private_messages));
-        GroupConversationScrollListener scrollListener =
-                new GroupConversationScrollListener(adapter, viewModel);
+        PrivateGroupConversationScrollListener scrollListener =
+                new PrivateGroupConversationScrollListener(adapter, viewModel);
         list.getRecyclerView().addOnScrollListener(scrollListener);
 
+        textInput = findViewById(R.id.text_input_container);
+        ImagePreview imagePreview = findViewById(R.id.imagePreview);
+        sendController = new TextAttachmentController(this, textInput,
+                imagePreview, this);
+        ((TextAttachmentController) sendController).setImagesSupported();
 
+        textInput.setSendController(sendController);
+        textInput.setMaxTextLength(MAX_MESSAGE_TEXT_LENGTH);
+        textInput.setReady(true);
+        textInput.setOnKeyboardShownListener(this::scrollToBottom);
     }
 
     @Override
@@ -300,7 +320,10 @@ public class GroupConversationActivity extends HeliosTalkActivity
     protected void onActivityResult(int request, int result, Intent data) {
         if (request == RequestCodes.REQUEST_GROUP_INVITE &&
                 result == RESULT_OK) {
-            displaySnackbar(R.string.groups_invitation_sent);
+            displaySnackbar(R.string.forums_invitation_sent);
+        } else if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
+                result == RESULT_OK) {
+            ((TextAttachmentController) sendController).onImageReceived(data);
         } else super.onActivityResult(request, result, data);
     }
 
@@ -340,16 +363,26 @@ public class GroupConversationActivity extends HeliosTalkActivity
         });
     }
 
+    private void loadMessageAttachments(String messageId) {
+        runOnDbThread(() -> {
+            try {
+                attachmentRetriever.getMessageAttachments(messageId);
+                displayMessageAttachments(messageId, attachmentRetriever.cacheGet(messageId));
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+            }
+        });
+    }
+
     private void eagerlyLoadMessageSize(GroupMessageHeader h) {
         try {
             String id = h.getMessageId();
             String text = textCache.get(id);
-            if (text == null) {
+            if ((text == null || text.equals("")) && h.hasText()) {
                 LOG.info("Eagerly loading text for latest message");
                 text = conversationManager.getMessageText(id);
                 textCache.put(id, requireNonNull(text));
             }
-
         } catch (DbException e) {
             logException(LOG, WARNING, e);
         }
@@ -374,6 +407,19 @@ public class GroupConversationActivity extends HeliosTalkActivity
             } else {
                 LOG.info("Concurrent update, reloading");
                 loadMessages();
+            }
+        });
+    }
+
+    private void displayMessageAttachments(String messageId, List<AttachmentItem> items) {
+        runOnUiThreadUnlessDestroyed(() -> {
+            Pair<Integer, GroupMessageItem> pair =
+                    adapter.getMessageItem(messageId);
+            if (pair != null) {
+                boolean scroll = shouldScrollWhenUpdatingMessage();
+                pair.getSecond().setAttachmentList(items);
+                adapter.notifyItemChanged(pair.getFirst());
+                if (scroll) scrollToBottom();
             }
         });
     }
@@ -423,7 +469,7 @@ public class GroupConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onFavouriteClicked(View view, GroupMessageItem messageItem) {
+    public void onFavouriteClicked(View view, ConversationItem messageItem) {
         if (messageItem.isFavourite()) {
             messageItem.setFavourite(false);
             ((ImageView) view).setImageResource(R.drawable.ic_star_disable);
@@ -551,12 +597,12 @@ public class GroupConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onSendClick(String text) {
-        if (isNullOrEmpty(text))
+    public void onSendClick(String text, List<AttachmentItem> attachments) {
+        if (isNullOrEmpty(text) && attachments.isEmpty())
             throw new AssertionError();
         long timestamp = System.currentTimeMillis();
         timestamp = Math.max(timestamp, getMinTimestampForNewMessage());
-        viewModel.sendMessage(text, /*attachmentHeaders, */timestamp);
+        viewModel.sendMessage(text, attachments, timestamp);
         textInput.clearText();
     }
 
@@ -579,5 +625,48 @@ public class GroupConversationActivity extends HeliosTalkActivity
                                              GroupMessageHeader h) {
         if (h == null) return;
         addConversationItem(h.accept(visitor));
+    }
+
+    @Override
+    public void onAttachmentClicked(View view, ConversationItem messageItem, AttachmentItem attachmentItem) {
+        GroupMessageItem item = (GroupMessageItem) messageItem;
+        Intent intent = new Intent(this, ImageActivity.class);
+        String peerName;
+        if (item.getPeerInfo().getFunnyName() == null) {
+            peerName = item.getPeerInfo().getAlias();
+        } else {
+            peerName = item.getPeerInfo().getFunnyName();
+        }
+        String message = item.getText();
+        String uri = attachmentItem.getUri().toString();
+        intent.putExtra(CONTACT_NAME, peerName);
+        intent.putExtra(ATTACHMENT_URI, uri);
+        intent.putExtra(TEXT_MESSAGE, message);
+        intent.putExtra(TIMESTAMP, messageItem.getTime());
+        startActivity(intent);
+    }
+
+    @Override
+    public List<AttachmentItem> getAttachments(String messageId) {
+        List<AttachmentItem> attachments =
+                attachmentRetriever.cacheGet(messageId);
+        if (attachments == null) {
+            loadMessageAttachments(messageId);
+            return emptyList();
+        }
+        return attachments;
+    }
+
+    @Override
+    public void onAttachImage(Intent intent) {
+        startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_IMAGE);
+    }
+
+    @Override
+    public void onTooManyAttachments() {
+        String format = getResources().getString(
+                R.string.messaging_too_many_attachments_toast);
+        String warning = String.format(format, MAX_IMAGE_ATTACHMENTS_PER_MESSAGE);
+        Toast.makeText(this, warning, LENGTH_SHORT).show();
     }
 }
