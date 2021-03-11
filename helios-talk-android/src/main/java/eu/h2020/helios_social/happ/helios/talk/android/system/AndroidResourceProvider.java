@@ -4,8 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.system.ResourceProvider;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.system.ResourceProvider;
 
 import java.io.InputStream;
 

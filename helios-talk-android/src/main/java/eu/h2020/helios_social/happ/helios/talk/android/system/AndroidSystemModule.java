@@ -1,9 +1,9 @@
 package eu.h2020.helios_social.happ.helios.talk.android.system;
 
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventExecutor;
-import eu.h2020.helios_social.happ.helios.talk.api.system.LocationUtils;
-import eu.h2020.helios_social.happ.helios.talk.api.system.ResourceProvider;
-import eu.h2020.helios_social.happ.helios.talk.api.system.SecureRandomProvider;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventExecutor;
+import eu.h2020.helios_social.modules.groupcommunications_utils.system.LocationUtils;
+import eu.h2020.helios_social.modules.groupcommunications_utils.system.ResourceProvider;
+import eu.h2020.helios_social.modules.groupcommunications_utils.system.SecureRandomProvider;
 
 import java.util.concurrent.Executor;
 

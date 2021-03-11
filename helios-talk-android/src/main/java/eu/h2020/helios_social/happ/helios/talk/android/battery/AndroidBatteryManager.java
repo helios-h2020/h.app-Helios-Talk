@@ -6,10 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import eu.h2020.helios_social.happ.helios.talk.api.battery.BatteryManager;
-import eu.h2020.helios_social.happ.helios.talk.api.battery.event.BatteryEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.lifecycle.Service;
+import eu.h2020.helios_social.modules.groupcommunications_utils.battery.BatteryManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.battery.event.BatteryEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.Service;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;

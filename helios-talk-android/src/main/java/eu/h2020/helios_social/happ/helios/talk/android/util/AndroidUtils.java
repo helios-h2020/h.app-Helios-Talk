@@ -6,9 +6,9 @@ import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
 
-import eu.h2020.helios_social.happ.helios.talk.api.Pair;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils;
+import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import static android.content.Context.MODE_PRIVATE;
 import static android.os.Build.VERSION.SDK_INT;
 import static java.util.Arrays.asList;
-import static eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NullSafety.requireNonNull;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NullSafety.requireNonNull;
 
 @NotNullByDefault
 public class AndroidUtils {

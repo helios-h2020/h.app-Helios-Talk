@@ -13,7 +13,7 @@ import android.os.Parcel;
 import android.os.StrictMode;
 import android.provider.Settings;
 
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.NotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

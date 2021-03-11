@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import eu.h2020.helios_social.happ.helios.talk.api.account.AccountManager;
-import eu.h2020.helios_social.happ.helios.talk.api.crypto.CryptoComponent;
-import eu.h2020.helios_social.happ.helios.talk.api.db.DatabaseConfig;
-import eu.h2020.helios_social.happ.helios.talk.api.identity.IdentityManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.CryptoComponent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseConfig;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
 
 import java.io.File;
 import java.util.HashSet;
@@ -25,8 +25,8 @@ import eu.h2020.helios_social.happ.helios.talk.db.account.AccountManagerImpl;
 import static android.os.Build.VERSION.SDK_INT;
 import static java.util.Arrays.asList;
 import static java.util.logging.Level.INFO;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.IoUtils.deleteFileOrDir;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logFileOrDir;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.IoUtils.deleteFileOrDir;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logFileOrDir;
 
 public class AndroidAccountManager extends AccountManagerImpl
 		implements AccountManager {
