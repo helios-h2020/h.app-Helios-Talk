@@ -2,7 +2,6 @@ package eu.h2020.helios_social.happ.helios.talk.profile;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,11 +18,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
@@ -36,13 +38,22 @@ import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
-import eu.h2020.helios_social.happ.helios.talk.api.identity.IdentityManager;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
+import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
+import eu.h2020.helios_social.modules.contentawareprofiling.profile.CoarseInterestsProfile;
+import eu.h2020.helios_social.modules.contentawareprofiling.profile.FineInterestsProfile;
+import eu.h2020.helios_social.modules.contentawareprofiling.profile.Interest;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
+import eu.h2020.helios_social.modules.groupcommunications.api.mining.ContentAwareProfilingType;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.Profile;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.ProfileBuilder;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.ProfileManager;
+
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_CONTENT_PROFILING;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 
 
 @MethodsNotNullByDefault
@@ -65,6 +76,8 @@ public class ProfileActivity extends HeliosTalkActivity {
     volatile IdentityManager identityManager;
     @Inject
     volatile ContextualEgoNetwork egoNetwork;
+    @Inject
+    volatile SettingsManager settingsManager;
 
     private ImageView avatar;
     private EditText nickname;
@@ -74,6 +87,7 @@ public class ProfileActivity extends HeliosTalkActivity {
     private EditText work;
     private EditText uni;
     private TagEditText interests;
+    private TagEditText profilerInterests;
     private EditText quote;
     private FloatingActionButton button;
     private Uri uri;
@@ -98,6 +112,7 @@ public class ProfileActivity extends HeliosTalkActivity {
         work = findViewById(R.id.work);
         uni = findViewById(R.id.university);
         interests = findViewById(R.id.interests);
+        profilerInterests = findViewById(R.id.profilerInterests);
         quote = findViewById(R.id.quote);
         button = findViewById(R.id.addNewProfilePicture);
         button.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +160,7 @@ public class ProfileActivity extends HeliosTalkActivity {
     @Override
     public void onResume() {
         super.onResume();
+        LOG.info("ON RESUME " + uri);
         loadProfile();
     }
 
@@ -184,12 +200,25 @@ public class ProfileActivity extends HeliosTalkActivity {
                         avatar.setImageBitmap(bitmap);
                     }
                 }
+            } else if (uri != null) {
+                Bitmap bitmap = null;
+                if (android.os.Build.VERSION.SDK_INT >=
+                        android.os.Build.VERSION_CODES.FROYO) {
+                    bitmap = ThumbnailUtils
+                            .extractThumbnail(BitmapFactory.decodeStream(
+                                    getContentResolver()
+                                            .openInputStream(uri)),
+                                    200,
+                                    200);
+                    avatar.setImageBitmap(bitmap);
+                }
             } else {
                 avatar.setImageResource(R.drawable.ic_person_big);
             }
         } catch (DbException | FileNotFoundException e) {
             e.printStackTrace();
         }
+        loadContentAwareProfilingInterests();
     }
 
     @Override
@@ -216,9 +245,11 @@ public class ProfileActivity extends HeliosTalkActivity {
                                         200, 200);
                         ByteArrayOutputStream stream =
                                 new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 200,
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100,
                                 stream);
                         profilePic = stream.toByteArray();
+                    } else if (p != null) {
+                        profilePic = p.getProfilePic();
                     }
                     String contextId =
                             egoNetwork.getCurrentContext().getData().toString()
@@ -245,6 +276,8 @@ public class ProfileActivity extends HeliosTalkActivity {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                Toast.makeText(this, "Profile Saved!", Toast.LENGTH_SHORT).show();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -314,6 +347,33 @@ public class ProfileActivity extends HeliosTalkActivity {
             }
         }
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    private void loadContentAwareProfilingInterests() {
+        try {
+            Settings settings = settingsManager.getSettings(SETTINGS_NAMESPACE);
+            ContentAwareProfilingType capType = ContentAwareProfilingType.fromValue(settings.getInt(PREF_CONTENT_PROFILING, 0));
+            if (capType.equals(ContentAwareProfilingType.COARSE_INTEREST_RPOFILE)) {
+                ArrayList<Interest> extracted_interests =
+                        egoNetwork.getEgo().getOrCreateInstance(CoarseInterestsProfile.class).getInterests();
+                if (extracted_interests.size() > 0) {
+                    Collections.sort(extracted_interests);
+
+                    profilerInterests.setText("profiler: " + extracted_interests.get(0).getName() + "," + "profiler: " + extracted_interests.get(1).getName() + "," + "profiler: " + extracted_interests.get(2).getName() + ",");
+                    profilerInterests.format();
+                }
+            } else if (capType.equals(ContentAwareProfilingType.FINE_INTEREST_PROFILE)) {
+                ArrayList<Interest> extracted_interests =
+                        egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
+                if (extracted_interests.size() > 0) {
+                    Collections.sort(extracted_interests);
+                    profilerInterests.setText("profiler: " + extracted_interests.get(0).getName() + "," + "profiler: " + extracted_interests.get(1).getName() + "," + "profiler: " + extracted_interests.get(2).getName() + "," + "profiler: " + extracted_interests.get(3).getName() + ",");
+                    profilerInterests.format();
+                }
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
     }
 
 }
