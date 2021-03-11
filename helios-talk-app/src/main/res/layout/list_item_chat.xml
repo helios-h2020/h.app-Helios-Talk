@@ -27,12 +27,11 @@
 			android:visibility="visible"
 			tools:src="@drawable/ic_person" />
 
-		<de.hdodenhof.circleimageview.CircleImageView
-			android:id="@+id/txtAvatarView"
-			style="@style/ProfileAvatar"
-			android:layout_width="@dimen/listitem_picture_size"
-			android:layout_height="@dimen/listitem_picture_size"
-			android:layout_gravity="bottom|left|start"
+		<ImageView
+			android:id="@+id/groupAvatarView"
+			android:layout_width="@dimen/listitem_picture_size_medium"
+			android:layout_height="@dimen/listitem_picture_size_medium"
+			android:layout_gravity="center|center_vertical|center_horizontal"
 			android:visibility="invisible"
 			tools:src="@drawable/ic_group" />
 

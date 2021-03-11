@@ -6,8 +6,9 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<eu.h2020.helios_social.happ.helios.talk.view.TextAvatarView
+	<de.hdodenhof.circleimageview.CircleImageView
 		android:id="@+id/avatar"
+		style="@style/ProfileAvatar"
 		android:layout_width="@dimen/listitem_picture_frame_size"
 		android:layout_height="@dimen/listitem_picture_frame_size"
 		android:layout_marginStart="@dimen/listitem_horizontal_margin"
@@ -15,7 +16,8 @@
 		android:layout_marginTop="@dimen/listitem_horizontal_margin"
 		android:layout_marginBottom="@dimen/listitem_horizontal_margin"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+		app:layout_constraintTop_toTopOf="parent"
+		android:src="@drawable/ic_person"/>
 
 	<com.vanniktech.emoji.EmojiTextView
 		android:id="@+id/name"

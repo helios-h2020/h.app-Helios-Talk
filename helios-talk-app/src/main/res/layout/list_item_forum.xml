@@ -44,7 +44,7 @@
 		app:layout_constraintEnd_toStartOf="@+id/dateView"
 		app:layout_constraintStart_toStartOf="@+id/forumNameView"
 		app:layout_constraintTop_toBottomOf="@+id/forumNameView"
-		tools:text="@string/no_community_posts" />
+		tools:text="@string/no_forum_posts" />
 
 	<TextView
 		android:id="@+id/dateView"
