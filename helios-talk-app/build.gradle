@@ -1,146 +1,174 @@
 apply plugin: 'com.android.application'
 
 def getStdout = { command, defaultValue ->
-	def stdout = new ByteArrayOutputStream()
-	try {
-		exec {
-			commandLine = command
-			standardOutput = stdout
-		}
-		return stdout.toString().trim()
-	} catch (Exception ignored) {
-		return defaultValue
-	}
+    def stdout = new ByteArrayOutputStream()
+    try {
+        exec {
+            commandLine = command
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    } catch (Exception ignored) {
+        return defaultValue
+    }
 }
 
 def acraVersion = '5.7.0'
 
 android {
-	compileSdkVersion 29
-	buildToolsVersion '29.0.2'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
 
-	defaultConfig {
-		minSdkVersion 26
-		targetSdkVersion 28
-		versionCode 10207
-		versionName "0.4.5"
-		applicationId "eu.h2020.helios_social.helios.talk.std"
-	}
+    defaultConfig {
+        minSdkVersion 28
+        targetSdkVersion 28
+        versionCode 10207
+        versionName "0.4.5"
+        applicationId "eu.h2020.helios_social.helios.talk"
+    }
 
-	buildTypes {
-		debug {
-			applicationIdSuffix ".debug"
-			shrinkResources false
-			minifyEnabled true
-			crunchPngs false
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-			testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt', 'proguard-test.txt'
-		}
-		release {
-			shrinkResources false
-			minifyEnabled true
-			crunchPngs false
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-		}
-	}
+    aaptOptions {
+        noCompress "tflite"
+    }
 
-	flavorDimensions "version"
-	productFlavors {
-		screenshot {
-			dimension "version"
-			minSdkVersion 26
-			applicationIdSuffix ".screenshot"
-		}
-		official {
-			dimension "version"
-		}
-	}
-	variantFilter { variant ->
-		if (variant.flavors*.name.contains("screenshot") && variant.buildType.name == "release") {
-			setIgnore(true)
-		}
-	}
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            shrinkResources false
+            minifyEnabled true
+            crunchPngs false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt', 'proguard-test.txt'
+        }
+        release {
+            shrinkResources false
+            minifyEnabled true
+            crunchPngs false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
 
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
+    flavorDimensions "version"
+    productFlavors {
+        screenshot {
+            dimension "version"
+            minSdkVersion 26
+            applicationIdSuffix ".screenshot"
+        }
+        official {
+            dimension "version"
+        }
+    }
+    variantFilter { variant ->
+        if (variant.flavors*.name.contains("screenshot") && variant.buildType.name == "release") {
+            setIgnore(true)
+        }
+    }
 
-	lintOptions {
-		checkReleaseBuilds false
-		// Or, if you prefer, you can continue to check for errors in release builds,
-		// but continue the build even when errors are found:
-		abortOnError false
-	}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
 }
 
+/*configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute module("eu.h2020.helios_social.modules.groupcommunications-utils:groupcommunications-utils") with project(':groupcommunications-utils')
+        substitute module("eu.h2020.helios_social.modules.groupcommunications:groupcommunications") with project(':groupcommunications')
+        substitute module("eu.h2020.helios_social.modules.groupcommunications-api:groupcommunications-api") with project(':groupcommunications-api')
+        substitute module("eu.h2020.helios_social.modules.groupcommunications-db:groupcommunications-db") with project(':groupcommunications-db')
+    }
+}*/
+
 dependencies {
-	def work_version = "2.4.0"
-	implementation "ch.acra:acra-mail:$acraVersion"
-	implementation "ch.acra:acra-dialog:$acraVersion"
-	implementation "ch.acra:acra-core:$acraVersion"
+    implementation fileTree(dir: "libs", include: ["*.jar"])
 
-	implementation project(path: ':groupcommunications-utils', configuration: 'default')
-	implementation 'eu.h2020.helios_social.modules.groupcommunications:groupcommunications:1.0.5'
-	implementation 'eu.h2020.helios_social.modules.groupcommunications-db:groupcommunications-db:1.0.1'
-	implementation 'eu.h2020.helios_social.modules.groupcommunications-api:groupcommunications-api:1.0.3'
+    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-dialog:$acraVersion"
+    implementation "ch.acra:acra-core:$acraVersion"
 
-	implementation project(':helios-talk-android')
-	implementation "com.google.dagger:dagger:2.24"
-	implementation 'com.google.code.findbugs:jsr305:3.0.2'
-	implementation 'com.github.helios-h2020:h.core-SocialEgoNetwork:1.1.0'
-	implementation 'com.github.helios-h2020:h.extension-SocialGraphMining:1.0.3'
-	implementation 'org.jetbrains:annotations:15.0'
+    //implementation 'com.github.hf:leveldb:1.19.0'
 
-	implementation 'com.google.android.material:material:1.2.1'
-	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-	implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
-	implementation 'com.google.code.gson:gson:2.8.6'
-	implementation("com.google.guava:guava:29.0-android")
-	implementation "androidx.work:work-runtime:$work_version"
+    implementation 'eu.h2020.helios_social.modules.groupcommunications-utils:groupcommunications-utils:1.0.6'
+    implementation 'eu.h2020.helios_social.modules.groupcommunications:groupcommunications:1.0.8'
+    implementation 'eu.h2020.helios_social.modules.groupcommunications-db:groupcommunications-db:1.0.2'
+    implementation 'eu.h2020.helios_social.modules.groupcommunications-api:groupcommunications-api:1.0.9'
 
-	implementation 'androidx.core:core-ktx:1.3.2'
-	implementation 'com.google.android.gms:play-services-location:17.1.0'
-	implementation 'eu.h2020.helios_social.core.context:context:1.0.10'
-	implementation 'eu.h2020.helios_social.modules.videocall:videocall:1.0.31'
-	implementation 'eu.h2020.helios_social.core.messaging:messaging:1.1.6'
-	implementation 'eu.h2020.helios_social.core.profile:profile:1.0.3'
+    implementation project(':helios-talk-android')
+    implementation "com.google.dagger:dagger:2.24"
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'eu.h2020.helios_social.modules.contentawareprofiling:contentawareprofiling:1.0.13'
+    implementation 'eu.h2020.helios_social.core.contextualegonetwork:contextualegonetwork:1.0.20'
+    implementation('com.github.helios-h2020:h.extension-SocialGraphMining:1.0.3') {
+        exclude module: 'h.core-SocialEgoNetwork'
+    }
+    implementation 'org.jetbrains:annotations:15.0'
 
-	implementation 'eu.h2020.helios_social.core.context:context:1.0.10'
-	implementation ('eu.h2020.helios_social.core.messagingnodejslibp2ptest:messagingnodejslibp2ptest:1.0.14')
-	implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    def exoPlayerVersion = "2.8.4"
+    implementation 'eu.h2020.helios_social.modules.filetransfer:filetransfer:1.0.10'
+    implementation 'io.tus.java.client:tus-java-client:0.4.1'
+    implementation 'io.tus.android.client:tus-android-client:0.1.9'
+    implementation "com.google.android.exoplayer:exoplayer-core:$exoPlayerVersion"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
 
-	implementation 'com.madgag.spongycastle:core:1.58.0.0'
-	implementation 'com.h2database:h2:1.4.199' // The last version that supports Java 1.6
-	implementation 'org.bitlet:weupnp:0.1.4'
-	implementation 'net.i2p.crypto:eddsa:0.2.0'
-	implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation("com.google.guava:guava:29.0-android")
+    implementation "androidx.work:work-runtime:$work_version"
 
-	implementation 'com.jaredrummler:colorpicker:1.1.0'
-	implementation 'androidx.preference:preference:1.1.0'
-	implementation 'androidx.exifinterface:exifinterface:1.0.0'
-	implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
-	implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-	implementation 'com.google.android.material:material:1.1.0-beta01'
-	implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-rc01'
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'com.google.android.gms:play-services-location:17.1.0'
+    implementation 'eu.h2020.helios_social.core.context:context:1.0.10'
+    implementation 'eu.h2020.helios_social.modules.videocall:videocall:1.0.31'
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation 'eu.h2020.helios_social.core.messaging:messaging:1.1.7'
+    implementation 'eu.h2020.helios_social.core.profile:profile:1.0.3'
 
-	implementation 'info.guardianproject.panic:panic:1.0'
-	implementation 'info.guardianproject.trustedintents:trustedintents:0.2'
-	implementation 'de.hdodenhof:circleimageview:3.0.1'
-	implementation 'com.google.zxing:core:3.3.3'  // newer version need minSdk 24
-	implementation 'uk.co.samuelwall:material-tap-target-prompt:3.0.0'
-	implementation 'com.vanniktech:emoji-google:0.6.0'
-	implementation 'com.github.kobakei:MaterialFabSpeedDial:1.2.1'
-	implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-	def glideVersion = '4.10.0'
-	implementation("com.github.bumptech.glide:glide:$glideVersion") {
-		exclude group: 'com.android.support'
-		exclude module: 'disklrucache' // when there's no disk cache, we can't accidentally use it
-	}
+    implementation 'eu.h2020.helios_social.core.context:context:1.0.10'
+    implementation('eu.h2020.helios_social.core.messagingnodejslibp2ptest:messagingnodejslibp2ptest:1.0.15')
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
-	annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
-	annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation 'com.madgag.spongycastle:core:1.58.0.0'
+    implementation 'com.h2database:h2:1.4.199' // The last version that supports Java 1.6
+    implementation 'org.bitlet:weupnp:0.1.4'
+    implementation 'net.i2p.crypto:eddsa:0.2.0'
+    implementation 'com.github.javafaker:javafaker:1.0.2'
 
-	compileOnly 'javax.annotation:jsr250-api:1.0'
+    implementation 'com.jaredrummler:colorpicker:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.1.0-beta01'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-rc01'
+
+    implementation 'info.guardianproject.panic:panic:1.0'
+    implementation 'info.guardianproject.trustedintents:trustedintents:0.2'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.google.zxing:core:3.3.3'  // newer version need minSdk 24
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:3.0.0'
+    implementation 'com.vanniktech:emoji-google:0.6.0'
+    implementation 'com.github.kobakei:MaterialFabSpeedDial:1.2.1'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    def glideVersion = '4.11.0'
+    implementation("com.github.bumptech.glide:glide:$glideVersion") {
+        exclude group: 'com.android.support'
+        exclude module: 'disklrucache' // when there's no disk cache, we can't accidentally use it
+    }
+
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
 
 }
