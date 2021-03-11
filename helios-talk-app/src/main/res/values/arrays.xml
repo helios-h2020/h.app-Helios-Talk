@@ -27,6 +27,29 @@
 		<item>@string/gender_male</item>
 	</string-array>
 
+	<string-array name="forum_options">
+		<item>@string/public_forum</item>
+		<item>@string/protected_forum</item>
+		<item>@string/secret_forum</item>
+	</string-array>
+
+	<string-array name="forum_member_options">
+		<item>@string/editor_role</item>
+		<item>@string/reader_role</item>
+	</string-array>
+
+	<string-array name="forum_member_roles">
+		<item>@string/admin_role</item>
+		<item>@string/moderator_role</item>
+		<item>@string/editor_role</item>
+		<item>@string/reader_role</item>
+	</string-array>
+
+	<string-array name="forum_types">
+		<item>@string/name_forum</item>
+		<item>@string/location_forum</item>
+	</string-array>
+
 	<string-array name="tor_network_setting_names">
 		<item>@string/tor_network_setting_automatic</item>
 		<item>@string/tor_network_setting_without_bridges</item>
