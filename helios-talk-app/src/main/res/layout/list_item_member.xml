@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout4"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true">
+
+    <FrameLayout
+        android:id="@+id/avatarFrameView"
+        android:layout_width="@dimen/listitem_picture_size_medium"
+        android:layout_height="@dimen/listitem_picture_size_medium"
+        android:layout_margin="@dimen/listitem_horizontal_margin"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarView"
+            style="@style/ProfileAvatar"
+            android:layout_width="@dimen/listitem_picture_size_medium"
+            android:layout_height="@dimen/listitem_picture_size_medium"
+            android:layout_gravity="bottom|left|start"
+            tools:src="@drawable/ic_person" />
+
+    </FrameLayout>
+
+    <com.vanniktech.emoji.EmojiTextView
+        android:id="@+id/usernameView"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginRight="@dimen/margin_medium"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/avatarFrameView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.187"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Unknown real peer username" />
+
+    <com.vanniktech.emoji.EmojiTextView
+        android:id="@+id/fakenameView"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginRight="@dimen/margin_medium"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:textColor="@color/m_grey_500"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintTop_toBottomOf="@+id/usernameView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/avatarFrameView"
+        app:layout_constraintVertical_bias="0.187"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Peer Fake Name" />
+
+    <Spinner
+        android:id="@+id/member_role"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right"
+        android:entries="@array/forum_member_roles"
+        android:gravity="right"
+        app:layout_constraintStart_toEndOf="@+id/usernameView"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginLeft="@dimen/margin_medium"
+        app:layout_constraintVertical_bias="0.187"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginRight="@dimen/margin_medium"/>
+
+
+
+    <View
+        android:id="@+id/divider"
+        style="@style/Divider.ContactList"
+        android:layout_width="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/nameView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
