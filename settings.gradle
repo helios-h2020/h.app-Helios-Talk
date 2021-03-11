@@ -1,3 +1,2 @@
-include ':groupcommunications-utils'
 include ':helios-talk-android'
 include ':helios-talk-app'
