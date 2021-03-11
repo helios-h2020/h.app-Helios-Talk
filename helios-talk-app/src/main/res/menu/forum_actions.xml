@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_forum_invite"
+        android:icon="@drawable/social_share_white"
+        android:title="@string/groups_invite_members"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_forum_member_list"
+        android:icon="@drawable/ic_group_white"
+        android:title="@string/groups_member_list"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_forum_reveal_self"
+        android:icon="@drawable/introduction_white"
+        android:title="@string/forums_reveal_self"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_forum_hide_self"
+        android:icon="@drawable/introduction_white"
+        android:title="@string/forums_hide_self"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_forum_info"
+        android:icon="@drawable/ic_info_white"
+        android:title="@string/forums_info"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_forum_leave"
+        android:icon="@drawable/action_delete_white"
+        android:title="@string/forums_leave"
+        app:showAsAction="never" />
+
+</menu>
