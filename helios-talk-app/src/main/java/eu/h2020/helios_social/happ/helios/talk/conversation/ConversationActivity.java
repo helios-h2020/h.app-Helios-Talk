@@ -2,6 +2,9 @@ package eu.h2020.helios_social.happ.helios.talk.conversation;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -14,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -47,14 +52,21 @@ import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
-import eu.h2020.helios_social.happ.helios.talk.api.Pair;
-import eu.h2020.helios_social.happ.helios.talk.api.contact.event.ContactRemovedEvent;
-import eu.h2020.helios_social.happ.helios.talk.api.db.NoSuchContactException;
-import eu.h2020.helios_social.happ.helios.talk.api.event.Event;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventBus;
-import eu.h2020.helios_social.happ.helios.talk.api.event.EventListener;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.happ.helios.talk.api.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes;
+import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
+import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
+import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
+import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
+import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
+import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.ContactRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchContactException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
 import eu.h2020.helios_social.happ.helios.talk.profile.ContactProfileActivity;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
@@ -68,15 +80,22 @@ import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageH
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import eu.h2020.helios_social.modules.groupcommunications.messaging.event.PrivateMessageReceivedEvent;
 import eu.h2020.helios_social.modules.videocall.VideoCallActivity;
+import io.tus.android.client.TusAndroidUpload;
+import io.tus.android.client.TusPreferencesURLStore;
+import io.tus.java.client.TusClient;
+import io.tus.java.client.TusUpload;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.core.view.ViewCompat.setTransitionName;
 import static androidx.lifecycle.Lifecycle.State.STARTED;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logDuration;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.logException;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.LogUtils.now;
-import static eu.h2020.helios_social.happ.helios.talk.api.util.StringUtils.isNullOrEmpty;
+import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessagingConstants.MAX_IMAGE_ATTACHMENTS_PER_MESSAGE;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.now;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils.isNullOrEmpty;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessagingConstants.MAX_MESSAGE_TEXT_LENGTH;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
 import static java.util.Objects.requireNonNull;
 import static java.util.logging.Level.WARNING;
@@ -87,10 +106,16 @@ import static java.util.logging.Logger.getLogger;
 public class ConversationActivity extends HeliosTalkActivity
         implements EventListener, ConversationListener,
         ConversationVisitor.TextCache, ActionMode.Callback,
-        TextSendController.SendListener {
+        TextSendController.SendListener,
+        ConversationVisitor.AttachmentCache,
+        TextAttachmentController.AttachmentListener {
 
     public static final String CONTACT_ID = "helios.talk.CONTACT_ID";
     public static final String GROUP_ID = "helios.talk.GROUP_ID";
+    public static final String CONTACT_NAME = "helios.talk.CONTACT_NAME";
+    public static final String ATTACHMENT_URI = "helios.talk.ATTACHMENT_URI";
+    public static final String TEXT_MESSAGE = "helios.talk.TEXT_MESSAGE";
+    public static final String TIMESTAMP = "helios.talk.TIMESTAMP";
 
     private static final Logger LOG =
             getLogger(ConversationActivity.class.getName());
@@ -118,6 +143,7 @@ public class ConversationActivity extends HeliosTalkActivity
     };
 
     private ConversationViewModel viewModel;
+    private AttachmentRetriever attachmentRetriever;
     private ConversationVisitor visitor;
     private ConversationAdapter adapter;
     private Toolbar toolbar;
@@ -149,6 +175,7 @@ public class ConversationActivity extends HeliosTalkActivity
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(ConversationViewModel.class);
+        attachmentRetriever = viewModel.getAttachmentRetriever();
 
         setContentView(R.layout.activity_conversation);
 
@@ -181,7 +208,7 @@ public class ConversationActivity extends HeliosTalkActivity
         setTransitionName(toolbarStatus,
                 UiUtils.getBulbTransitionName(contactId));
 
-        visitor = new ConversationVisitor(this, this,/* this,*/
+        visitor = new ConversationVisitor(this, this, this,
                 viewModel.getContactDisplayName());
         adapter = new ConversationAdapter(this, this);
         list = findViewById(R.id.conversationView);
@@ -196,7 +223,10 @@ public class ConversationActivity extends HeliosTalkActivity
 
         textInputView = findViewById(R.id.text_input_container);
 
-        sendController = new TextSendController(textInputView, this, false);
+        ImagePreview imagePreview = findViewById(R.id.imagePreview);
+        sendController = new TextAttachmentController(this, textInputView,
+                imagePreview, this);
+        ((TextAttachmentController) sendController).setImagesSupported();
 
         textInputView.setSendController(sendController);
         textInputView.setMaxTextLength(MAX_MESSAGE_TEXT_LENGTH);
@@ -276,8 +306,16 @@ public class ConversationActivity extends HeliosTalkActivity
         inflater.inflate(R.menu.conversation_actions, menu);
 
         // enable alias action if available
-        UiUtils.observeOnce(viewModel.getContact(), this, contact ->
-                menu.findItem(R.id.action_set_alias).setEnabled(true));
+        UiUtils.observeOnce(viewModel.getContact(), this, contact -> {
+            menu.findItem(R.id.action_set_alias).setEnabled(true);
+            if (contact.getProfilePicture() != null)
+                toolbarAvatar.setImageBitmap(BitmapFactory.decodeByteArray(
+                        contact.getProfilePicture(),
+                        0,
+                        contact.getProfilePicture().length)
+                );
+            ;
+        });
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -323,6 +361,18 @@ public class ConversationActivity extends HeliosTalkActivity
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         return false; // no update needed
+    }
+
+    @Override
+    protected void onActivityResult(int request, int result,
+                                    @Nullable Intent data) {
+        super.onActivityResult(request, result, data);
+
+        if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
+                result == RESULT_OK) {
+            // TODO: remove cast when removing feature flag
+            ((TextAttachmentController) sendController).onImageReceived(data);
+        }
     }
 
     @Override
@@ -431,14 +481,28 @@ public class ConversationActivity extends HeliosTalkActivity
         });
     }
 
+    private void loadMessageAttachments(String messageId) {
+        runOnDbThread(() -> {
+            try {
+                attachmentRetriever.getMessageAttachments(messageId);
+                displayMessageAttachments(messageId, attachmentRetriever.cacheGet(messageId));
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+            }
+        });
+    }
+
     private void eagerlyLoadMessageSize(MessageHeader h) {
         try {
-            String id = h.getMessageId();
-            String text = textCache.get(id);
-            if (text == null) {
-                LOG.info("Eagerly loading text for latest message");
-                text = conversationManager.getMessageText(id);
-                textCache.put(id, requireNonNull(text));
+
+            if (h.getMessageType() != Message.Type.IMAGES) {
+                String id = h.getMessageId();
+                String text = textCache.get(id);
+                if (text == null) {
+                    LOG.info("Eagerly loading text for latest message");
+                    text = conversationManager.getMessageText(id);
+                    textCache.put(id, requireNonNull(text));
+                }
             }
 
         } catch (DbException e) {
@@ -465,6 +529,20 @@ public class ConversationActivity extends HeliosTalkActivity
             } else {
                 LOG.info("Concurrent update, reloading");
                 loadMessages();
+            }
+        });
+    }
+
+    private void displayMessageAttachments(String messageId, List<AttachmentItem> items) {
+        runOnUiThreadUnlessDestroyed(() -> {
+            Pair<Integer, ConversationItem> pair =
+                    adapter.getMessageItem(messageId);
+            if (pair != null) {
+                boolean scroll = shouldScrollWhenUpdatingMessage();
+                ((ConversationMessageItem) pair.getSecond())
+                        .setAttachmentList(items);
+                adapter.notifyItemChanged(pair.getFirst());
+                if (scroll) scrollToBottom();
             }
         });
     }
@@ -591,13 +669,14 @@ public class ConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onSendClick(@Nullable String text/*,
-			List<AttachmentHeader> attachmentHeaders*/) {
-        if (isNullOrEmpty(text))
+    public void onSendClick(@Nullable String text,
+                            List<AttachmentItem> attachments) {
+        if (isNullOrEmpty(text) && attachments.isEmpty())
             throw new AssertionError();
         long timestamp = System.currentTimeMillis();
         timestamp = Math.max(timestamp, getMinTimestampForNewMessage());
-        viewModel.sendMessage(text, /*attachmentHeaders, */timestamp);
+
+        viewModel.sendMessage(text, attachments, timestamp);
         textInputView.clearText();
     }
 
@@ -676,8 +755,21 @@ public class ConversationActivity extends HeliosTalkActivity
     }
 
     @Override
+    public void onAttachmentClicked(View view, ConversationItem messageItem, AttachmentItem attachmentItem) {
+        Intent intent = new Intent(this, ImageActivity.class);
+        String contactName = viewModel.getContactDisplayName().getValue();
+        String message = messageItem.getText();
+        String uri = attachmentItem.getUri().toString();
+        intent.putExtra(CONTACT_NAME, contactName);
+        intent.putExtra(ATTACHMENT_URI, uri);
+        intent.putExtra(TEXT_MESSAGE, message);
+        intent.putExtra(TIMESTAMP, messageItem.getTime());
+        startActivity(intent);
+    }
+
+    @Override
     public void onFavouriteClicked(View view,
-                                   ConversationMessageItem messageItem) {
+                                   ConversationItem messageItem) {
         if (messageItem.isFavourite()) {
             messageItem.setFavourite(false);
             ((ImageView) view).setImageResource(R.drawable.ic_star_disable);
@@ -706,4 +798,36 @@ public class ConversationActivity extends HeliosTalkActivity
         return text;
     }
 
+    @Override
+    public void onAttachImage(Intent intent) {
+        startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_IMAGE);
+    }
+
+    @Override
+    public void onTooManyAttachments() {
+        String format = getResources().getString(
+                R.string.messaging_too_many_attachments_toast);
+        String warning = String.format(format, MAX_IMAGE_ATTACHMENTS_PER_MESSAGE);
+        Toast.makeText(this, warning, LENGTH_SHORT).show();
+    }
+
+    public void showError(Exception e) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Internal error");
+        builder.setMessage(e.getMessage());
+        android.app.AlertDialog dialog = builder.create();
+        dialog.show();
+        e.printStackTrace();
+    }
+
+    @Override
+    public List<AttachmentItem> getAttachments(String messageId) {
+        List<AttachmentItem> attachments =
+                attachmentRetriever.cacheGet(messageId);
+        if (attachments == null) {
+            loadMessageAttachments(messageId);
+            return emptyList();
+        }
+        return attachments;
+    }
 }
