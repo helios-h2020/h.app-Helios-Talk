@@ -22,8 +22,11 @@ public interface ContextController {
 	Context getContext(String contextId)
 			throws DbException, FormatException;
 
+	int getPendingIncomingContextInvitations()
+			throws DbException;
+
 	void storeLocationContext(LocationContextProxy locationContext,
-			ResultExceptionHandler<String, DbException> handler);
+							  ResultExceptionHandler<String, DbException> handler);
 
 	void storeGeneralContext(GeneralContextProxy generalContext,
 			ResultExceptionHandler<String, DbException> handler);
