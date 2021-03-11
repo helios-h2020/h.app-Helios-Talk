@@ -17,10 +17,10 @@
 		app:showAsAction="never" />
 
 	<item
-		android:id="@+id/action_new_community"
-		android:icon="@drawable/ic_community_white"
+		android:id="@+id/action_new_forum"
+		android:icon="@drawable/ic_forum_white"
 		android:orderInCategory="3"
-		android:title="@string/add_new_community"
+		android:title="@string/add_new_forum"
 		app:showAsAction="never" />
 
 </menu>

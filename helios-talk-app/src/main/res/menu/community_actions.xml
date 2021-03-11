@@ -4,20 +4,20 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
-		android:id="@+id/action_community_share"
+		android:id="@+id/action_forum_share"
 		android:icon="@drawable/social_share_white"
-		android:title="@string/community_share"
+		android:title="@string/forum_share"
 		app:showAsAction="ifRoom"/>
 
 	<item
-		android:id="@+id/action_community_sharing_status"
+		android:id="@+id/action_forum_sharing_status"
 		android:title="@string/sharing_status"
 		app:showAsAction="never"/>
 
 	<item
-		android:id="@+id/action_community_delete"
+		android:id="@+id/action_forum_delete"
 		android:icon="@drawable/action_delete_white"
-		android:title="@string/community_leave"
+		android:title="@string/forum_leave"
 		app:showAsAction="never"/>
 
 </menu>
