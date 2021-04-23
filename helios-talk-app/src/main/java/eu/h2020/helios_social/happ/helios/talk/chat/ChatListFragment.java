@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,6 +31,8 @@ import eu.h2020.helios_social.core.contextualegonetwork.Node;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
+import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.PendingContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
@@ -77,11 +81,13 @@ public class ChatListFragment extends HeliosContextFragment
     @Inject
     AndroidNotificationManager notificationManager;
     @Inject
-    ConversationManager conversationManager;
+    volatile ConversationManager conversationManager;
     @Inject
-    MiningManager miningManager;
+    volatile MiningManager miningManager;
     @Inject
     EventBus eventBus;
+    @Inject
+    volatile ConnectionRegistry connectionRegistry;
 
     private ChatListAdapter adapter;
     private HeliosTalkRecyclerView list;
@@ -119,15 +125,32 @@ public class ChatListFragment extends HeliosContextFragment
         list = contentView.findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         list.setAdapter(adapter);
-        list.setEmptyImage(R.drawable.ic_no_conversations);
+        list.setEmptyImage(R.drawable.ic_no_chats_illustration);
         String currentContext =
                 egoNetwork.getCurrentContext().getData().toString()
                         .split("%")[0];
 
+        list.setEmptyTitle(R.string.no_conversations);
         if (currentContext.equals("All"))
-            list.setEmptyText(getString(R.string.no_conversations));
+            list.setEmptyText(R.string.no_conversations_details);
         else
-            list.setEmptyText(getString(R.string.no_context_conversations));
+            list.setEmptyText(R.string.no_conversations_in_context_details);
+        list.setEmptyAction(R.string.no_conversation_action);
+
+        ImageView searchIcon = contentView.findViewById(R.id.searchIcon);
+        searchIcon.setOnClickListener(l -> {
+            Intent searchActivity = new Intent(getContext(),
+                    SearchActivity.class);
+            startActivity(searchActivity);
+        });
+
+        EditText searchView = contentView.findViewById(R.id.searchView);
+
+        searchView.setOnClickListener(l -> {
+            Intent searchActivity = new Intent(getContext(),
+                    SearchActivity.class);
+            startActivity(searchActivity);
+        });
 
         return contentView;
     }
@@ -171,6 +194,8 @@ public class ChatListFragment extends HeliosContextFragment
                         egoNetwork.getCurrentContext().getData().toString());
                 LOG.info("FAVOURITES: " + favourites.size());
 
+                List<ContactId> onlineContacts = connectionRegistry.getConnectedContacts();
+
                 Set<ContactId> favs = new HashSet();
                 if (favourites.size() > 0) {
                     HeaderItem headerItem = new HeaderItem("recommended");
@@ -184,8 +209,9 @@ public class ChatListFragment extends HeliosContextFragment
 
                         GroupCount count =
                                 conversationManager.getGroupCount(group.getId());
+                        boolean isConnected = onlineContacts.contains(c.getId());
                         ContactListItem item =
-                                new ContactListItem(c, group.getId(), false, count);
+                                new ContactListItem(c, group.getId(), isConnected, count);
                         item.setFavourite(true);
                         item.setLastMessageText(getLastMessage(group.getId(),
                                 GroupType.PrivateConversation));
@@ -206,9 +232,9 @@ public class ChatListFragment extends HeliosContextFragment
                     GroupCount count =
                             conversationManager
                                     .getGroupCount(group.getId());
-                    boolean connected = false;
+                    boolean isConnected = onlineContacts.contains(c.getId());
                     ContactListItem item =
-                            new ContactListItem(c, group.getId(), connected,
+                            new ContactListItem(c, group.getId(), isConnected,
                                     count);
 
                     item.setLastMessageText(getLastMessage(group.getId(),
