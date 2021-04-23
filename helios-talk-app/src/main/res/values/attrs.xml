@@ -4,6 +4,7 @@
 	<declare-styleable name="HeliosTalkRecyclerView">
 		<attr name="scrollToEnd" format="boolean" />
 		<attr name="emptyImage" format="integer" />
+		<attr name="emptyTitle" format="string" />
 		<attr name="emptyText" format="string" />
 		<attr name="emptyAction" format="string" />
 	</declare-styleable>
