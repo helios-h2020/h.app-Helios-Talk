@@ -5,30 +5,40 @@ import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNu
 @NotNullByDefault
 public interface SetupController {
 
-	void setSetupActivity(SetupActivity setupActivity);
+    void setSetupActivity(SetupActivity setupActivity);
 
-	boolean needToShowDozeFragment();
+    boolean needToShowDozeFragment();
 
-	void setAuthorName(String authorName);
+    void setAuthorName(String authorName);
 
-	float estimatePasswordStrength(String password);
+    float estimatePasswordStrength(String password);
 
-	void setPassword(String password);
+    void setPassword(String password);
 
-	/**
-	 * This should be called after the author name has been set.
-	 */
-	void showPasswordFragment();
+    void showAuthorNameFragment();
 
-	/**
-	 * This should be called after the author name and the password have been
-	 * set.
-	 */
-	void showDozeFragment();
+    void showOnBoardingStepTwo();
 
-	/**
-	 * This should be called after the author name and the password have been
-	 * set.
-	 */
-	void createAccount();
+    void showOnBoardingStepThree();
+
+    void showOnBoardingStepFour();
+
+    void showOnBoardingStepFive();
+
+    /**
+     * This should be called after the author name has been set.
+     */
+    void showPasswordFragment();
+
+    /**
+     * This should be called after the author name and the password have been
+     * set.
+     */
+    void showDozeFragment();
+
+    /**
+     * This should be called after the author name and the password have been
+     * set.
+     */
+    void createAccount();
 }
