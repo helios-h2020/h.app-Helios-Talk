@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.ContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.PendingContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationAddedEvent;
@@ -63,6 +64,8 @@ public class ContactListFragment extends HeliosContextFragment
     @Inject
     ConversationManager conversationManager;
     @Inject
+    ConnectionRegistry connectionRegistry;
+    @Inject
     EventBus eventBus;
 
     private ContactListAdapter adapter;
@@ -94,7 +97,7 @@ public class ContactListFragment extends HeliosContextFragment
         super.onCreateView(inflater, container, savedInstanceState);
         requireActivity().setTitle(R.string.contact_list_button);
 
-        View contentView = inflater.inflate(R.layout.fragment_contact_list,
+        View contentView = inflater.inflate(R.layout.contact_list_view,
                 container, false);
 
         FabSpeedDial speedDial = contentView.findViewById(R.id.speedDial);
@@ -115,14 +118,16 @@ public class ContactListFragment extends HeliosContextFragment
         list = contentView.findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         list.setAdapter(adapter);
-        list.setEmptyImage(R.drawable.ic_no_contacts);
         String currentContext =
                 egoNetwork.getCurrentContext().getData().toString()
                         .split("%")[0];
+        list.setEmptyImage(R.drawable.ic_no_contacts_illustration);
         if (currentContext.equals("All")) {
-            list.setEmptyText(getString(R.string.no_contacts));
+            list.setEmptyTitle(R.string.no_contacts);
+            list.setEmptyText(getString(R.string.no_contacts_details));
         } else {
-            list.setEmptyText(getString(R.string.no_contacts_in_context));
+            list.setEmptyTitle(R.string.no_contacts);
+            list.setEmptyText(R.string.no_contacts_in_context_details);
         }
         list.setEmptyAction(getString(R.string.no_contacts_action));
 
@@ -133,11 +138,6 @@ public class ContactListFragment extends HeliosContextFragment
     public void onMenuItemClick(FloatingActionButton fab, @Nullable TextView v,
                                 int itemId) {
         switch (itemId) {
-            case R.id.action_add_contact_nearby:
-				/*Intent intent =
-						new Intent(getContext(), ContactExchangeActivity.class);
-				startActivity(intent);*/
-                return;
             case R.id.action_add_contact_remotely:
                 startActivity(
                         new Intent(getContext(), AddContactActivity.class));
@@ -185,12 +185,13 @@ public class ContactListFragment extends HeliosContextFragment
                 String contextId =
                         egoNetwork.getCurrentContext().getData().toString()
                                 .split("%")[1];
+                List<ContactId> onlineContacts = connectionRegistry.getConnectedContacts();
                 for (Contact c : contactManager.getContacts(contextId)) {
                     ContactId id = c.getId();
                     Group g =
                             conversationManager.getContactGroup(id, contextId);
                     contacts.add(
-                            new ContactListItem(c, g.getId(), false));
+                            new ContactListItem(c, g.getId(), onlineContacts.contains(c.getId())));
 					/*try {
 						ContactId id = c.getId();
 
