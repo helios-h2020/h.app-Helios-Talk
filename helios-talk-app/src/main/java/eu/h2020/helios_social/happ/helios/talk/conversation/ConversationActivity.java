@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -57,11 +59,12 @@ import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
-import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
 import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.ContactRemovedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchContactException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.AckMessageEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
@@ -79,6 +82,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbExcept
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import eu.h2020.helios_social.modules.groupcommunications.messaging.event.PrivateMessageReceivedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.MessageSentEvent;
 import eu.h2020.helios_social.modules.videocall.VideoCallActivity;
 import io.tus.android.client.TusAndroidUpload;
 import io.tus.android.client.TusPreferencesURLStore;
@@ -133,7 +137,9 @@ public class ConversationActivity extends HeliosTalkActivity
     @Inject
     volatile ConversationManager conversationManager;
     @Inject
-    volatile EventBus eventBus;
+    volatile ConnectionRegistry connectionRegistry;
+    @Inject
+    EventBus eventBus;
 
     private final Map<String, String> textCache = new ConcurrentHashMap<>();
 
@@ -370,7 +376,6 @@ public class ConversationActivity extends HeliosTalkActivity
 
         if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
                 result == RESULT_OK) {
-            // TODO: remove cast when removing feature flag
             ((TextAttachmentController) sendController).onImageReceived(data);
         }
     }
@@ -442,15 +447,15 @@ public class ConversationActivity extends HeliosTalkActivity
 
     @UiThread
     private void displayContactOnlineStatus() {
-		/*if (connectionRegistry.isConnected(contactId)) {
-			toolbarStatus.setImageDrawable(ContextCompat.getDrawable(
-					ConversationActivity.this, R.drawable.contact_online));
-			toolbarStatus.setContentDescription(getString(R.string.online));
-		} else {
-			toolbarStatus.setImageDrawable(ContextCompat.getDrawable(
-					ConversationActivity.this, R.drawable.contact_offline));
-			toolbarStatus.setContentDescription(getString(R.string.offline));
-		}*/
+        if (connectionRegistry.isConnected(contactId)) {
+            toolbarStatus.setImageDrawable(ContextCompat.getDrawable(
+                    ConversationActivity.this, R.drawable.contact_online));
+            toolbarStatus.setContentDescription(getString(R.string.online));
+        } else {
+            toolbarStatus.setImageDrawable(ContextCompat.getDrawable(
+                    ConversationActivity.this, R.drawable.contact_offline));
+            toolbarStatus.setContentDescription(getString(R.string.offline));
+        }
     }
 
     private void loadMessages() {
@@ -621,6 +626,9 @@ public class ConversationActivity extends HeliosTalkActivity
                 LOG.info("Message received, adding");
                 onNewConversationMessage(p.getMessageHeader());
             }
+        } else if (e instanceof MessageSentEvent) {
+            MessageSentEvent messageSentEvent = (MessageSentEvent) e;
+            markMessage(messageSentEvent.getMessageId(), true, false);
         }
     }
 
@@ -647,24 +655,14 @@ public class ConversationActivity extends HeliosTalkActivity
     }
 
     @UiThread
-    private void markMessages(Collection<String> messageIds, boolean sent,
-                              boolean seen) {
+    private void markMessage(String messageId, boolean sent, boolean seen) {
         adapter.incrementRevision();
-        Set<String> messages = new HashSet<>(messageIds);
-        SparseArray<ConversationItem> list = adapter.getOutgoingMessages();
-        for (int i = 0; i < list.size(); i++) {
-            ConversationItem item = list.valueAt(i);
-            if (item instanceof VideoCallConversationItem &&
-                    item.getText() == null) {
-                ((VideoCallConversationItem) item)
-                        .setRoomId(getText(item.getId()));
-            }
-
-            if (messages.contains(item.getId())) {
-                item.setSent(sent);
-                item.setSeen(seen);
-                adapter.notifyItemChanged(list.keyAt(i));
-            }
+        HashMap<String, ConversationItem> outgoingMessages = adapter.getOutgoingMessagesAsMap();
+        if (outgoingMessages.containsKey(messageId)) {
+            ConversationItem item = outgoingMessages.get(messageId);
+            item.setSeen(seen);
+            item.setSent(sent);
+            adapter.notifyItemChanged(item.getIndex());
         }
     }
 
