@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout4"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <FrameLayout
+        android:id="@+id/resultFrameView"
+        android:layout_width="@dimen/listitem_picture_size_small"
+        android:layout_height="@dimen/listitem_picture_size_small"
+        android:layout_margin="@dimen/margin_medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/groupAvatarView"
+            android:layout_width="@dimen/listitem_picture_size_small"
+            android:layout_height="@dimen/listitem_picture_size_small"
+            android:visibility="visible"
+            tools:src="@drawable/ic_group" />
+    </FrameLayout>
+
+    <com.vanniktech.emoji.EmojiTextView
+        android:id="@+id/nameView"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_small"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:singleLine="false"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintBottom_toTopOf="@+id/tags"
+        app:layout_constraintStart_toEndOf="@+id/resultFrameView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Result Title: Papers, I love" />
+
+    <TextView
+        android:id="@+id/tags"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="@dimen/text_size_tiny"
+        app:layout_constraintBottom_toTopOf="@+id/forumType"
+        app:layout_constraintStart_toEndOf="@+id/resultFrameView"
+        app:layout_constraintTop_toBottomOf="@+id/nameView"
+        tools:text="Me: Hello World" />
+
+    <TextView
+        android:id="@+id/forumType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_tiny"
+        android:paddingStart="@dimen/margin_small"
+        android:paddingEnd="@dimen/margin_small"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_tiny"
+        android:background="@drawable/tag_bubble_small"
+        android:backgroundTint="?attr/helios_accent"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintStart_toEndOf="@+id/resultFrameView"
+        app:layout_constraintTop_toBottomOf="@+id/tags"
+        tools:text="location_forum" />
+
+    <LinearLayout
+        android:id="@+id/rightLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_medium_large"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:visibility="visible"
+            android:text="100 km" />
+
+        <Button
+            android:id="@+id/joinButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="@dimen/margin_small"
+            android:text="JOIN" />
+
+    </LinearLayout>
+
+
+    <View
+        android:id="@+id/divider"
+        style="@style/Divider.ContactList"
+        android:layout_width="0dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/nameView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
