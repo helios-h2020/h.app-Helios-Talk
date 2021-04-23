@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
@@ -27,7 +28,7 @@ public class AuthorNameFragment extends BaseFragment implements
 
 	@Inject
 	SetupController setupController;
-	private Button nextButton;
+	private TextView nextButton;
 
 	public static AuthorNameFragment newInstance() {
 		return new AuthorNameFragment();
