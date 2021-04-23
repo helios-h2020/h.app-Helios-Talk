@@ -12,6 +12,8 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashMap;
+
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
@@ -119,11 +121,22 @@ class ConversationAdapter
 
     SparseArray<ConversationItem> getOutgoingMessages() {
         SparseArray<ConversationItem> messages = new SparseArray<>();
-
         for (int i = 0; i < items.size(); i++) {
             ConversationItem item = items.get(i);
             if (!item.isIncoming()) {
                 messages.put(i, item);
+            }
+        }
+        return messages;
+    }
+
+    HashMap<String, ConversationItem> getOutgoingMessagesAsMap() {
+        HashMap<String, ConversationItem> messages = new HashMap<>();
+        for (int i = 0; i < items.size(); i++) {
+            ConversationItem item = items.get(i);
+            if (!item.isIncoming()) {
+                messages.put(item.getId(), item);
+                item.setIndex(i);
             }
         }
         return messages;
