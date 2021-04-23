@@ -5,6 +5,8 @@ import eu.h2020.helios_social.happ.account.HeliosTalkAccountModule;
 
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentModule;
 import eu.h2020.helios_social.happ.helios.talk.db.GroupCommunicationsDbModule;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
+import eu.h2020.helios_social.modules.groupcommunications.api.resourcediscovery.queries.QueryManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.CryptoExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.crypto.PasswordStrengthEstimator;
@@ -95,6 +97,8 @@ public interface AndroidComponent
 
     ConnectionManager connectionManager();
 
+    ConnectionRegistry connectionRegistry();
+
     PendingContactFactory pendingContactFactory();
 
     ContactManager contactManager();
@@ -155,6 +159,8 @@ public interface AndroidComponent
     MiningManager miningManager();
 
     CommunicationManager communicationManager();
+
+    QueryManager queryManager();
 
     void inject(SignInReminderReceiver heliosTalkService);
 
