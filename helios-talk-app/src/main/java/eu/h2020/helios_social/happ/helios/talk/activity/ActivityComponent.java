@@ -9,6 +9,11 @@ import eu.h2020.helios_social.happ.helios.talk.account.DozeFragment;
 import eu.h2020.helios_social.happ.helios.talk.account.SetPasswordFragment;
 import eu.h2020.helios_social.happ.helios.talk.account.SetupActivity;
 import eu.h2020.helios_social.happ.helios.talk.account.UnlockActivity;
+import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepFive;
+import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepFour;
+import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepOne;
+import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepThree;
+import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepTwo;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentModule;
 import eu.h2020.helios_social.happ.helios.talk.chat.ChatListFragment;
 import eu.h2020.helios_social.happ.helios.talk.contact.ContactListFragment;
@@ -46,6 +51,8 @@ import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInvite
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteFragment;
 import eu.h2020.helios_social.happ.helios.talk.profile.ContactProfileActivity;
 import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
+import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
+import eu.h2020.helios_social.happ.helios.talk.search.SearchModule;
 import eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity;
 import eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment;
 import eu.h2020.helios_social.happ.helios.talk.splash.SplashScreenActivity;
@@ -58,6 +65,7 @@ import dagger.Component;
                 CreateContextModule.class,
                 CreateGroupModule.class,
                 CreateForumModule.class,
+                SearchModule.class,
                 ForumModule.class,
                 ForumMembershipModule.class
         },
@@ -94,6 +102,8 @@ public interface ActivityComponent {
 
     void inject(SettingsActivity activity);
 
+    void inject(SearchActivity activity);
+
     void inject(ChangePasswordActivity activity);
 
     void inject(StartupFailureActivity activity);
@@ -105,6 +115,16 @@ public interface ActivityComponent {
     void inject(PendingContactListActivity activity);
 
     // Fragments
+
+    void inject(OnBoardingFragmentStepOne fragment);
+
+    void inject(OnBoardingFragmentStepTwo fragment);
+
+    void inject(OnBoardingFragmentStepThree fragment);
+
+    void inject(OnBoardingFragmentStepFour fragment);
+
+    void inject(OnBoardingFragmentStepFive fragment);
 
     void inject(AuthorNameFragment fragment);
 
