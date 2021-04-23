@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
-    tools:context="eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.GroupConversationActivity">
+    tools:context="eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
