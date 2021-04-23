@@ -57,6 +57,16 @@
     <string name="download_helios_button">Download Latest Release</string>
     <string name="startup_open_database">Decrypting Database…</string>
     <string name="welcome">Welcome to helios.</string>
+    <string name="welcome_to_talk">Welcome to helios. TALK</string>
+    <string name="enjoy">Enjoy the helios. TALK experience!</string>
+    <string name="context_social_network">A context aware distributed social networking framework</string>
+    <string name="title_context_relations">Contextual based relations</string>
+    <string name="title_secure_connections">Secure Connections</string>
+    <string name="title_forums_connections">Connect through forums</string>
+    <string name="details_context_relations">Offers the opportunity to connect with new people, practice new activities or gain knowledge about certain topics. It is used by people with common interests.</string>
+    <string name="details_secure_connections">The communications are fully distributed  on the P2P network of HELIOS, each user is the sole owner of their own information,  hereby safeguarding our privacy.</string>
+    <string name="details_forums_connections">Users can create and share forums with their connections. In these forums, HELIOS users can discuss topics of interest anonymously. Public Forums are discoverable by other users and a forum can be also connected with a specific location. </string>
+    <string name="details_account">Choose a nickname and a password. Be sure, you remember your password, otherwise you would not be able to access your communications. The password is used to encrypt and decrypt your local database.</string>
     <string name="startup_migrate_database">Upgrading Database…</string>
     <string name="startup_compact_database">Compacting Database…</string>
 
@@ -136,12 +146,17 @@
     <string name="help">Help</string>
     <string name="sorry">Sorry</string>
     <string name="error_start_activity">Unavailable on your system</string>
-    <string name="no_favourites">No favourites to show. You need to like messages to access them here.</string>
+    <string name="no_favourites">No favourites yet!</string>
+    <string name="no_favourites_details">You need to star messages to your conversations to access them here.</string>
 
     <!-- Contacts and Private Conversations-->
-    <string name="no_contacts">No contacts to show</string>
-    <string name="no_conversations">No conversations to show</string>
+    <string name="no_contacts">No contacts yet!</string>
+    <string name="no_contacts_details">Add a contact to start a new chat.</string>
+    <string name="no_conversations">No chats yet!</string>
+    <string name="no_conversations_details">No conversations available to show.</string>
+    <string name="no_conversations_in_context_details">No conversations available to show in this context.</string>
     <string name="no_contacts_action">Tap the + icon to add a contact</string>
+    <string name="no_conversation_action">Tap the + icon to start a conversation</string>
     <string name="date_no_private_messages">No messages.</string>
     <string name="no_private_messages">No messages to show</string>
     <string name="message_hint">Type message</string>
@@ -209,7 +224,7 @@
     <string name="add_new_forum">New Forum</string>
     <string name="add_contact_remotely_title_case">Add Contact at a Distance</string>
     <string name="add_contact_nearby_title">Add contact nearby</string>
-    <string name="add_contact_remotely_title">Add contact at a distance</string>
+    <string name="add_contact_remotely_title">Add contact</string>
     <string name="contact_name_hint">Give contact a nickname</string>
     <string name="contact_link_intro">Enter friend\'s link you want to add to your connections</string>
     <string name="contact_link_hint">Contact\'s link</string>
@@ -397,6 +412,7 @@
     <string name="public_forum">Public</string>
     <string name="protected_forum">Protected</string>
     <string name="secret_forum">Secret</string>
+    <string name="search_public_forums">Search for Public Forums</string>
 
     <!--Available Forum Member Roles-->
     <string name="admin_role">Admin</string>
@@ -424,6 +440,7 @@
     <string name="join_forum_toast">You joined a new Forum</string>
     <string name="join_group_toast">You joined a new Group</string>
     <string name="remove_context">Leave Context</string>
+    <string name="find_nearby_conversations">Find Nearby Conversations</string>
     <string name="add_contacts_to_context">Invite Contacts</string>
     <string name="context_add_contacts_error">There was an error adding contacts to this context.</string>
     <string name="context_add_members">Invite Contacts</string>
@@ -431,9 +448,10 @@
     <string name="dialog_message_leave_context">Are you sure that you want to remove this context?\n\nAny contacts you\'ve added in this context will remain available in #all context.</string>
     <string name="dialog_button_remove_context">Remove</string>
     <string name="context_removed_toast">Context Removed</string>
-    <string name="no_contacts_in_context">No contacts to show in current context</string>
+    <string name="no_contacts_in_context">No contacts yet!</string>
+    <string name="no_contacts_in_context_details">Add a contact to start a new chat or invite contacts to current context. </string>
     <string name="no_contacts_action_context">Tap the + icon to add a contact, or select add contacts from option menu</string>
-    <string name="no_context_conversations">No conversations available to show in this contexts</string>
+    <string name="no_context_conversations">No conversations  available to show yet in this context!</string>
     <string name="context_contact_already_added">Already invited to context</string>
 
     <string name="invite_contacts_context">Invite Contacts to Context</string>
