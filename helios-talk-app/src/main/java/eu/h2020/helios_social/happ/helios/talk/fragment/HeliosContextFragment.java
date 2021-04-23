@@ -28,6 +28,7 @@ import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactsToContextActivity;
+import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity;
@@ -35,12 +36,13 @@ import eu.h2020.helios_social.happ.helios.talk.context.ContextController;
 import eu.h2020.helios_social.happ.helios.talk.context.CreateContextActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.Themes;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
+
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
 
 public abstract class HeliosContextFragment extends BaseFragment {
 
     @Inject
-    protected ContextualEgoNetwork egoNetwork;
+    protected volatile ContextualEgoNetwork egoNetwork;
     @Inject
     protected ContactManager contactManager;
     @Inject

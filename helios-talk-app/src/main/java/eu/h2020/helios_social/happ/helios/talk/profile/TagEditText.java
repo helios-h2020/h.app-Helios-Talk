@@ -16,15 +16,12 @@ import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
@@ -91,10 +88,9 @@ public class TagEditText extends EditText {
 
         String[] strings = fullString.split(separator);
 
-
         for (int i = 0; i < strings.length; i++) {
 
-            String string = strings[i].trim();
+            String string = strings[i];
             sb.append(string);
 
             if (fullString.charAt(fullString.length() - 1) !=
@@ -124,7 +120,6 @@ public class TagEditText extends EditText {
                 sb.append(separator);
             }
         }
-
 
         lastString = sb.toString();
 

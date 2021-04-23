@@ -89,6 +89,8 @@ class ConversationVisitor implements
             if (text != null && h.getMessageType() == VIDEOCALL) {
                 ((VideoCallConversationItem) item).setRoomId(text);
             }
+        } else {
+            item.setText("");
         }
 
         return item;

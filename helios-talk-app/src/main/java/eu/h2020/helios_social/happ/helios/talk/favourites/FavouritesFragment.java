@@ -102,8 +102,9 @@ public class FavouritesFragment extends HeliosContextFragment implements EventLi
         list = contentView.findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         list.setAdapter(adapter);
-        list.setEmptyImage(R.drawable.ic_star_disable);
-        list.setEmptyText(getString(R.string.no_favourites));
+        list.setEmptyImage(R.drawable.ic_no_favourites_illustration);
+        list.setEmptyTitle(R.string.no_favourites);
+        list.setEmptyText(getString(R.string.no_favourites_details));
 
         return contentView;
     }

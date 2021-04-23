@@ -27,6 +27,10 @@ class ForumMemberListItem {
         return forumMember.getAlias();
     }
 
+    String getFakeName() {
+        return forumMember.getFakeName();
+    }
+
     PeerId getPeerId() {
         return forumMember.getPeerId();
     }

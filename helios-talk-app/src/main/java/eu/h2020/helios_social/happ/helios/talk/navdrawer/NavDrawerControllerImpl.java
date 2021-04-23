@@ -54,7 +54,7 @@ public class NavDrawerControllerImpl extends DbControllerImpl
 
 	@Override
 	public void onActivityCreate(Activity activity) {
-//		listener = (TransportStateListener) activity;
+
 	}
 
 	@Override
@@ -73,19 +73,7 @@ public class NavDrawerControllerImpl extends DbControllerImpl
 
 	@Override
 	public void eventOccurred(Event e) {
-		/*if (e instanceof TransportEnabledEvent) {
-			TransportId id = ((TransportEnabledEvent) e).getTransportId();
-			if (LOG.isLoggable(INFO)) {
-				LOG.info("TransportEnabledEvent: " + id.getString());
-			}
-			listener.stateUpdate(id, true);
-		} else if (e instanceof TransportDisabledEvent) {
-			TransportId id = ((TransportDisabledEvent) e).getTransportId();
-			if (LOG.isLoggable(INFO)) {
-				LOG.info("TransportDisabledEvent: " + id.getString());
-			}
-			listener.stateUpdate(id, false);
-		}*/
+
 	}
 
 	@Override

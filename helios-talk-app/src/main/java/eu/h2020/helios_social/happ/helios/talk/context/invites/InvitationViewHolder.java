@@ -40,7 +40,7 @@ public class InvitationViewHolder extends ViewHolder {
         this.listener = listener;
     }
 
-    public void bind(            InvitationItem item) {
+    public void bind(InvitationItem item) {
 
 
         if (item.getInvitationType()

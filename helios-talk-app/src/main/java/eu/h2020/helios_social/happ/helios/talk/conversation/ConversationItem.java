@@ -31,6 +31,7 @@ public abstract class ConversationItem {
     protected boolean favourite;
     protected MessageState state;
     protected List<AttachmentItem> list;
+    protected int index;
 
     public ConversationItem(@LayoutRes int layoutRes, MessageHeader h) {
         this.layoutRes = layoutRes;
@@ -147,4 +148,11 @@ public abstract class ConversationItem {
         return list;
     }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
 }

@@ -86,7 +86,7 @@ public class HeliosTalkApplicationImpl extends Application
 	public void onCreate() {
 		super.onCreate();
 
-		if (IS_DEBUG_BUILD) enableStrictMode();
+		//if (IS_DEBUG_BUILD) enableStrictMode();
 
 		Logger rootLogger = getLogger("");
 		Handler[] handlers = rootLogger.getHandlers();

@@ -100,6 +100,7 @@ public class ContactProfileActivity extends HeliosTalkActivity implements EventL
 
     public void displayProfile(Profile p) {
         avatar.setImageResource(R.drawable.ic_person_big);
+        if (p.getAlias() == null) return;
         nickname.setText(p.getAlias().replace("[", "").replace("]", "")
                 .replaceAll("\"", ""));
         setTitle(p.getAlias().replace("[", "").replace("]", "")

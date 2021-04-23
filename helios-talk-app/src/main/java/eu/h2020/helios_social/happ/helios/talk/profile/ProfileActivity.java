@@ -35,6 +35,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
+import eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplication;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
@@ -52,6 +53,10 @@ import eu.h2020.helios_social.modules.groupcommunications.api.profile.Profile;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.ProfileBuilder;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.ProfileManager;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_TASK_ON_HOME;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_CONTENT_PROFILING;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 
@@ -277,7 +282,12 @@ public class ProfileActivity extends HeliosTalkActivity {
                     e.printStackTrace();
                 }
                 Toast.makeText(this, "Profile Saved!", Toast.LENGTH_SHORT).show();
-                onBackPressed();
+
+                Intent i = new Intent(this, HeliosTalkApplication.ENTRY_ACTIVITY);
+                i.setFlags(FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_TASK_ON_HOME |
+                        FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -363,8 +373,12 @@ public class ProfileActivity extends HeliosTalkActivity {
                     profilerInterests.format();
                 }
             } else if (capType.equals(ContentAwareProfilingType.FINE_INTEREST_PROFILE)) {
-                ArrayList<Interest> extracted_interests =
-                        egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
+                ArrayList<Interest> extracted_interests = new ArrayList<>();
+                extracted_interests.add(new Interest("animals",1.0));
+                extracted_interests.add(new Interest("food_drinks",1.0));
+                extracted_interests.add(new Interest("movies_series_anime",1.0));
+                extracted_interests.add(new Interest("planes",1.0));
+                        //egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
                 if (extracted_interests.size() > 0) {
                     Collections.sort(extracted_interests);
                     profilerInterests.setText("profiler: " + extracted_interests.get(0).getName() + "," + "profiler: " + extracted_interests.get(1).getName() + "," + "profiler: " + extracted_interests.get(2).getName() + "," + "profiler: " + extracted_interests.get(3).getName() + ",");

@@ -46,6 +46,8 @@ public class GroupConversationVisitor implements
         if (h.hasText()) {
             String text = textCache.getText(h.getMessageId());
             item.setText(text);
+        } else {
+            item.setText("");
         }
 
         return item;

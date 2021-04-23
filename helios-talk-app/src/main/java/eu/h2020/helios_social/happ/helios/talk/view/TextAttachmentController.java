@@ -160,7 +160,6 @@ public class TextAttachmentController extends TextSendController implements Imag
 
         }
         loadingUris = false;
-        //TODO: Store Attachments?
     }
 
     private void reset() {

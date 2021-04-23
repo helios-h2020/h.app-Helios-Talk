@@ -56,7 +56,8 @@ public class AttachmentRetrieverImpl implements AttachmentRetriever {
             throws DbException {
         if (!attachmentCache.containsKey(messageId)) {
             List<AttachmentItem> attachmentItems = new ArrayList<>();
-            for (Attachment a : conversationManager.getAttachments(messageId)) {
+            List<Attachment> attachments = conversationManager.getAttachments(messageId);
+            for (Attachment a : attachments) {
                 attachmentItems.add(new AttachmentItem(Uri.parse(a.getUri()), a.getContentType(), a.getUrl()));
             }
             cachePut(messageId, attachmentItems);

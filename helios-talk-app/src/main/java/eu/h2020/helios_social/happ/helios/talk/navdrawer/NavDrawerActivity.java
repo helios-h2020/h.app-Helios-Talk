@@ -3,6 +3,8 @@ package eu.h2020.helios_social.happ.helios.talk.navdrawer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -54,6 +56,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.work.WorkManager;
@@ -80,6 +83,18 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
     // Code used in requesting runtime permissions
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+
+    private static final int REQUEST_ACCESS_MEDIA_METADATA = 0;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE
+    };
+
+    private static String[] MEDIA_LOCATION_PERMISSION = {
+            Manifest.permission.ACCESS_MEDIA_LOCATION
+    };
 
     // Constant used in the location settings dialog
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
@@ -179,6 +194,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             // do not call this again when there's existing state
             onNewIntent(getIntent());
         }
+
+        verifyStoragePermissions();
     }
 
     public void updateContexts(String id) {
@@ -551,6 +568,81 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void verifyStoragePermissions() {
+        // Check if we have write permission
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            verifyMetadataPermissions();
+            return;
+        }
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Access Storage Permission!")
+                    .setMessage(R.string.profiling_storage_permissions)
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions(
+                                    NavDrawerActivity.this,
+                                    PERMISSIONS_STORAGE,
+                                    REQUEST_EXTERNAL_STORAGE);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                        }
+                    }).create().show();
+
+        } else {
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
+        }
+    }
+
+    public void verifyMetadataPermissions() {
+        //check if access to metadata has been granted.
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Access to Media Metadata!")
+                    .setMessage(R.string.profiling_metadata_permissions)
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions(
+                                    NavDrawerActivity.this,
+                                    MEDIA_LOCATION_PERMISSION,
+                                    REQUEST_ACCESS_MEDIA_METADATA);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                        }
+                    }).create().show();
+
+        } else {
+            ActivityCompat.requestPermissions(
+                    this,
+                    MEDIA_LOCATION_PERMISSION,
+                    REQUEST_ACCESS_MEDIA_METADATA);
+        }
     }
 
     /**

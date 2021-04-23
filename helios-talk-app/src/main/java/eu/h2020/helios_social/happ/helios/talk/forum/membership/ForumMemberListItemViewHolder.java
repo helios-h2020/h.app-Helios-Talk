@@ -34,7 +34,7 @@ class ForumMemberListItemViewHolder extends RecyclerView.ViewHolder {
         // member name, avatar and author info
         avatar.setImageResource(R.drawable.ic_person);
         username.setText(item.getAlias());
-        fakename.setText("unknown");
+        fakename.setText(item.getFakeName());
         forumRole.setSelection(item.getRole().getInt());
 
         forumRole.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
