@@ -31,11 +31,14 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission-sdk-23 android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE" />
+
 
     <application
         android:name="eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplicationImpl"
@@ -175,6 +178,17 @@
             android:label="@string/groups_create_forum_title"
             android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
+        </activity>
+
+        <activity
+            android:name="eu.h2020.helios_social.happ.helios.talk.search.SearchActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:theme="@style/HeliosTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
