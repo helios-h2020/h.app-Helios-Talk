@@ -143,7 +143,7 @@ public class ProfileActivity extends HeliosTalkActivity {
                         ByteArrayOutputStream stream =
                                 new ByteArrayOutputStream();
                         selectedImage.compress(Bitmap.CompressFormat.JPEG, 100,
-                                stream);
+                                               stream);
                     }
 
                     break;
@@ -190,8 +190,8 @@ public class ProfileActivity extends HeliosTalkActivity {
                     avatar.setImageResource(R.drawable.ic_person_big);
                 } else if (uri == null && p.getProfilePic() != null) {
                     avatar.setImageBitmap(BitmapFactory
-                            .decodeByteArray(p.getProfilePic(), 0,
-                                    p.getProfilePic().length));
+                                                  .decodeByteArray(p.getProfilePic(), 0,
+                                                                   p.getProfilePic().length));
                 } else {
                     Bitmap bitmap = null;
                     if (android.os.Build.VERSION.SDK_INT >=
@@ -200,8 +200,8 @@ public class ProfileActivity extends HeliosTalkActivity {
                                 .extractThumbnail(BitmapFactory.decodeStream(
                                         getContentResolver()
                                                 .openInputStream(uri)),
-                                        200,
-                                        200);
+                                                  200,
+                                                  200);
                         avatar.setImageBitmap(bitmap);
                     }
                 }
@@ -213,8 +213,8 @@ public class ProfileActivity extends HeliosTalkActivity {
                             .extractThumbnail(BitmapFactory.decodeStream(
                                     getContentResolver()
                                             .openInputStream(uri)),
-                                    200,
-                                    200);
+                                              200,
+                                              200);
                     avatar.setImageBitmap(bitmap);
                 }
             } else {
@@ -247,11 +247,11 @@ public class ProfileActivity extends HeliosTalkActivity {
                                 .extractThumbnail(BitmapFactory.decodeStream(
                                         getContentResolver()
                                                 .openInputStream(uri)),
-                                        200, 200);
+                                                  200, 200);
                         ByteArrayOutputStream stream =
                                 new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100,
-                                stream);
+                                        stream);
                         profilePic = stream.toByteArray();
                     } else if (p != null) {
                         profilePic = p.getProfilePic();
@@ -285,9 +285,9 @@ public class ProfileActivity extends HeliosTalkActivity {
 
                 Intent i = new Intent(this, HeliosTalkApplication.ENTRY_ACTIVITY);
                 i.setFlags(FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_TASK_ON_HOME |
-                        FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_CLEAR_TOP);
+                                   FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
-                
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -314,10 +314,10 @@ public class ProfileActivity extends HeliosTalkActivity {
 				} else*/
                 if (options[item].equals("Choose from Gallery")) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                                  android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     pickPhoto.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     startActivityForResult(pickPhoto,
-                            1);//one can be replaced with any action code
+                                           1);//one can be replaced with any action code
 
                 } else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
@@ -330,7 +330,7 @@ public class ProfileActivity extends HeliosTalkActivity {
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                                                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
@@ -374,11 +374,7 @@ public class ProfileActivity extends HeliosTalkActivity {
                 }
             } else if (capType.equals(ContentAwareProfilingType.FINE_INTEREST_PROFILE)) {
                 ArrayList<Interest> extracted_interests = new ArrayList<>();
-                extracted_interests.add(new Interest("animals",1.0));
-                extracted_interests.add(new Interest("food_drinks",1.0));
-                extracted_interests.add(new Interest("movies_series_anime",1.0));
-                extracted_interests.add(new Interest("planes",1.0));
-                        //egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
+                egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
                 if (extracted_interests.size() > 0) {
                     Collections.sort(extracted_interests);
                     profilerInterests.setText("profiler: " + extracted_interests.get(0).getName() + "," + "profiler: " + extracted_interests.get(1).getName() + "," + "profiler: " + extracted_interests.get(2).getName() + "," + "profiler: " + extracted_interests.get(3).getName() + ",");
