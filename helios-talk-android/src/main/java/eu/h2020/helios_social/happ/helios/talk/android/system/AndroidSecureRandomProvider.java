@@ -22,8 +22,8 @@ import java.util.List;
 import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 
-import eu.h2020.helios_social.happ.helios.talk.db.system.UnixSecureRandomProvider;
-import eu.h2020.helios_social.happ.helios.talk.db.system.UnixSecureRandomSpi;
+import eu.h2020.helios_social.modules.groupcommunications.db.system.UnixSecureRandomProvider;
+import eu.h2020.helios_social.modules.groupcommunications.db.system.UnixSecureRandomSpi;
 
 import static android.content.Context.WIFI_SERVICE;
 import static android.os.Build.VERSION.SDK_INT;

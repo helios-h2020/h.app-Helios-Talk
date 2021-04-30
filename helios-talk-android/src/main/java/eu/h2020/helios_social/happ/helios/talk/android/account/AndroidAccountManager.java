@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 
-import eu.h2020.helios_social.happ.helios.talk.db.account.AccountManagerImpl;
+import eu.h2020.helios_social.modules.groupcommunications.db.account.AccountManagerImpl;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static java.util.Arrays.asList;
