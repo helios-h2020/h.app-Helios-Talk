@@ -12,9 +12,9 @@ import android.net.Uri;
 
 import eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Multiset;
-import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.ContactAddedEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.contact.event.PendingContactAddedEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAddedEvent;
 import eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListActivity;

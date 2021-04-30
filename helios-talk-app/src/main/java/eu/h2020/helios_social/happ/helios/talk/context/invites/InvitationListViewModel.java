@@ -14,9 +14,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationAddedEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.context.ContextInvitationRemovedEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.context.RemovePendingContextEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.RemovePendingContextEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;

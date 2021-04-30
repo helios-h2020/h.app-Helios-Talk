@@ -4,7 +4,8 @@ import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.account.HeliosTalkAccountModule;
 
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentModule;
-import eu.h2020.helios_social.happ.helios.talk.db.GroupCommunicationsDbModule;
+import eu.h2020.helios_social.modules.groupcommunications.db.GroupCommunicationsDBEagerSingletons;
+import eu.h2020.helios_social.modules.groupcommunications.db.GroupCommunicationsDBModule;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications.api.resourcediscovery.queries.QueryManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
@@ -25,7 +26,6 @@ import eu.h2020.helios_social.happ.android.LockManager;
 import eu.h2020.helios_social.happ.helios.talk.android.HeliosTalkAndroidEagerSingletons;
 import eu.h2020.helios_social.happ.helios.talk.android.HeliosTalkAndroidModule;
 import eu.h2020.helios_social.happ.helios.talk.android.system.AndroidExecutor;
-import eu.h2020.helios_social.happ.helios.talk.db.HeliosTalkDbEagerSingletons;
 import eu.h2020.helios_social.happ.helios.talk.login.SignInReminderReceiver;
 import eu.h2020.helios_social.happ.helios.talk.view.EmojiTextInputView;
 
@@ -64,14 +64,14 @@ import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager
 @Singleton
 @Component(modules = {
         GroupCommunicationsModule.class,
-        GroupCommunicationsDbModule.class,
+        GroupCommunicationsDBModule.class,
         HeliosTalkAndroidModule.class,
         HeliosTalkAccountModule.class,
         AppModule.class,
         AttachmentModule.class
 })
 public interface AndroidComponent
-        extends HeliosTalkDbEagerSingletons, HeliosTalkAndroidEagerSingletons,
+        extends GroupCommunicationsDBEagerSingletons, HeliosTalkAndroidEagerSingletons,
         GroupCommunicationsEagerSingletons, AndroidEagerSingletons {
 
     // Exposed objects

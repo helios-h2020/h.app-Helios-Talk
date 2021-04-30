@@ -43,9 +43,7 @@ import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversat
 import eu.h2020.helios_social.happ.helios.talk.forum.creation.CreateForumActivity;
 import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.Forum;
-import eu.h2020.helios_social.modules.groupcommunications.api.forum.ForumMemberRole;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.LocationForum;
-import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 import eu.h2020.helios_social.modules.groupcommunications.api.resourcediscovery.queries.Queryable;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;

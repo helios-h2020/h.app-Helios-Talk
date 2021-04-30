@@ -30,8 +30,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import eu.h2020.helios_social.modules.groupcommunications.preferences.SharedPreferencesHelper;
-import eu.h2020.helios_social.modules.groupcommunications.utils.ContextualEgoNetworkConfig;
-import eu.h2020.helios_social.modules.groupcommunications.utils.InternalStorageConfig;
+import eu.h2020.helios_social.modules.groupcommunications.api.utils.ContextualEgoNetworkConfig;
+import eu.h2020.helios_social.modules.groupcommunications.api.utils.InternalStorageConfig;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.os.Build.VERSION.SDK_INT;
