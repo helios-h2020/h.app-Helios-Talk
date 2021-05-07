@@ -82,6 +82,7 @@ public class AppModule {
 	}
 
 	@Provides
+	@Singleton
 	InternalStorageConfig providesInternalStorageConfig(
 			Application app) {
 		File internalStorageDir =

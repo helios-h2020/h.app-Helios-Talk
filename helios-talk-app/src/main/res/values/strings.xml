@@ -433,6 +433,8 @@
     <string name="get_current_location_button">Get Current Location</string>
 
     <string name="location_permission_prompt">Location permission is needed for core functionality</string>
+    <string name="location_permission_search_prompt">Location permission is needed for searching
+        based on location</string>
     <string name="create_context_button">Create Context</string>
     <string name="create_context_title">Create Context</string>
     <string name="context_created_toast">Context created</string>
