@@ -373,8 +373,7 @@ public class ProfileActivity extends HeliosTalkActivity {
                     profilerInterests.format();
                 }
             } else if (capType.equals(ContentAwareProfilingType.FINE_INTEREST_PROFILE)) {
-                ArrayList<Interest> extracted_interests = new ArrayList<>();
-                egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
+                ArrayList<Interest> extracted_interests = egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
                 if (extracted_interests.size() > 0) {
                     Collections.sort(extracted_interests);
                     profilerInterests.setText("profiler: " + extracted_interests.get(0).getName() + "," + "profiler: " + extracted_interests.get(1).getName() + "," + "profiler: " + extracted_interests.get(2).getName() + "," + "profiler: " + extracted_interests.get(3).getName() + ",");
