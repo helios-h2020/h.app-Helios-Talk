@@ -69,7 +69,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatEx
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupMessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroup;
-import eu.h2020.helios_social.modules.groupcommunications.messaging.event.GroupMessageReceivedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;

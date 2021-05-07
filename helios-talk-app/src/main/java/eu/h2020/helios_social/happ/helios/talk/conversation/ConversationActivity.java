@@ -73,8 +73,8 @@ import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactMan
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
-import eu.h2020.helios_social.modules.groupcommunications.messaging.event.PrivateMessageReceivedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.MessageSentEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PrivateMessageReceivedEvent;
 import eu.h2020.helios_social.modules.videocall.VideoCallActivity;
 
 import static android.widget.Toast.LENGTH_SHORT;

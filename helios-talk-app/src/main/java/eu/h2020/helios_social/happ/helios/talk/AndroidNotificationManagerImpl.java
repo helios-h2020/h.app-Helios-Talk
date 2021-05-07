@@ -13,6 +13,7 @@ import android.net.Uri;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Multiset;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAddedEvent;
@@ -32,6 +33,7 @@ import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.Param
 import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
 import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.settings.event.SettingsUpdatedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PrivateMessageReceivedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.system.Clock;
 import eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils;
 
@@ -41,8 +43,6 @@ import eu.h2020.helios_social.happ.helios.talk.splash.SplashScreenActivity;
 import eu.h2020.helios_social.happ.helios.talk.util.HeliosTalkNotificationBuilder;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.utils.Pair;
-import eu.h2020.helios_social.modules.groupcommunications.messaging.event.GroupMessageReceivedEvent;
-import eu.h2020.helios_social.modules.groupcommunications.messaging.event.PrivateMessageReceivedEvent;
 
 import java.util.Set;
 import java.util.concurrent.Callable;

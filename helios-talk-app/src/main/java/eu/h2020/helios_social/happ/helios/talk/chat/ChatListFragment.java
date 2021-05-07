@@ -33,6 +33,7 @@ import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
@@ -63,8 +64,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.conversation.Conve
 import eu.h2020.helios_social.modules.groupcommunications.api.mining.MiningManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.peer.PeerInfo;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroup;
-import eu.h2020.helios_social.modules.groupcommunications.messaging.event.GroupMessageReceivedEvent;
-import eu.h2020.helios_social.modules.groupcommunications.messaging.event.PrivateMessageReceivedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PrivateMessageReceivedEvent;
 import io.github.kobakei.materialfabspeeddial.FabSpeedDial;
 
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;

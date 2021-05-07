@@ -75,7 +75,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.forum.ForumMemberR
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.LocationForum;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.SeasonalForum;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupMessageHeader;
-import eu.h2020.helios_social.modules.groupcommunications.messaging.event.GroupMessageReceivedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.lifecycle.Lifecycle.State.STARTED;
