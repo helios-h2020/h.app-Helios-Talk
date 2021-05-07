@@ -13,7 +13,6 @@ import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecu
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.JoinForumEvent;
 import eu.h2020.helios_social.happ.helios.talk.contactselection.ContactSelectorControllerImpl;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
@@ -81,9 +80,6 @@ class CreateForumControllerImpl extends ContactSelectorControllerImpl
                                 dafaultMemberRole
                         );
                 groupManager.addGroup(forum);
-                eventBus.broadcast(
-                        new JoinForumEvent(forum.getId(), forum.getPassword(),
-                                forumType));
                 handler.onResult(forum.getId());
             } catch (DbException e) {
                 logException(LOG, WARNING, e);
@@ -114,9 +110,6 @@ class CreateForumControllerImpl extends ContactSelectorControllerImpl
                                 defaultMemberRole, latitude, longitude, radius
                         );
                 groupManager.addGroup(forum);
-                eventBus.broadcast(
-                        new JoinForumEvent(forum.getId(), forum.getPassword(),
-                                forumType));
                 handler.onResult(forum.getId());
             } catch (DbException e) {
                 logException(LOG, WARNING, e);
@@ -131,7 +124,7 @@ class CreateForumControllerImpl extends ContactSelectorControllerImpl
     protected boolean isDisabled(String groupId, Contact contact)
             throws DbException, FormatException {
         return !groupManager.isInvitationAllowed(groupId,
-                GroupType.PublicForum);
+                                                 GroupType.PublicForum);
     }
 
     @Override
