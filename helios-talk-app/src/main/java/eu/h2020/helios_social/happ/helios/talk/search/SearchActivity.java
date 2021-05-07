@@ -8,25 +8,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.widget.SearchView;
 
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -34,8 +30,6 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import eu.h2020.helios_social.core.sensor.SensorValueListener;
-import eu.h2020.helios_social.core.sensor.ext.LocationSensor;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
@@ -58,7 +52,7 @@ import static java.util.logging.Logger.getLogger;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
-public class SearchActivity extends HeliosTalkActivity implements SensorValueListener, EventListener, SearchView.OnQueryTextListener, ResultsActionListener {
+public class SearchActivity extends HeliosTalkActivity implements EventListener, SearchView.OnQueryTextListener, ResultsActionListener {
     private static final Logger LOG =
             getLogger(SearchActivity.class.getName());
 
@@ -74,17 +68,12 @@ public class SearchActivity extends HeliosTalkActivity implements SensorValueLis
     private SearchView searchView;
     private ResultListAdapter resultListAdapter;
     private ProgressBar progress;
-    // Tracks the status of the location updates request
-    private Boolean mRequestingLocationUpdates;
-    // Access the location sensor
-    private LocationSensor mLocationSensor;
-    private Location mCurrentLocation;
     private HeliosTalkRecyclerView resultsList;
     private Toolbar toolbar;
     private String queryID;
     private boolean isLocationQueryInProgress;
-    private Double lat;
-    private Double lng;
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     @Inject
     SearchController searchController;
@@ -125,11 +114,8 @@ public class SearchActivity extends HeliosTalkActivity implements SensorValueLis
                     Intent intent = new Intent(SearchActivity.this, CreateForumActivity.class);
                     startActivity(intent);
                 } else if (searchOptions.get(position).equals("Find forums nearby")) {
-                    startLocationUpdatesHandler();
-                    if (lat != null && lng != null) {
-                        LOG.info("Submitting Location Query: " + lat + ", " + lng);
-                        onQueryLocationSubmit();
-                    }
+                    searchForumsByLastKnownLocation();
+
                 } else {
                     LOG.info("Submitting Text Query: " + searchView.getQuery().toString());
                     onQueryTextSubmit(searchView.getQuery().toString());
@@ -141,12 +127,7 @@ public class SearchActivity extends HeliosTalkActivity implements SensorValueLis
         progress = findViewById(R.id.progress_bar);
         progress.setVisibility(View.INVISIBLE);
 
-        mRequestingLocationUpdates = false;
-
-        // Init LocationSensor
-        mLocationSensor = new LocationSensor(this);
-        // Only for demo UI to obtain updates to location coordinates via ValueListener
-        mLocationSensor.registerValueListener(this);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         resultListAdapter = new ResultListAdapter(this, this);
 
@@ -169,34 +150,40 @@ public class SearchActivity extends HeliosTalkActivity implements SensorValueLis
     }
 
     @Override
-    public void receiveValue(Object location) {
-        // updates the current location
-        mCurrentLocation = (Location) location;
-        LOG.info("location updates: " + mCurrentLocation);
-        lat = mCurrentLocation.getLatitude();
-        lng = mCurrentLocation.getLongitude();
-        mLocationSensor.stopUpdates();
-    }
-
-    public void startLocationUpdatesHandler() {
-        LOG.info("starting location updates...!");
+    public void onResume() {
+        super.onResume();
         if (!checkPermissions()) {
             requestPermissions();
         }
-        if (!mRequestingLocationUpdates) {
-            mRequestingLocationUpdates = true;
-            mLocationSensor.startUpdates();
+    }
+
+    public void searchForumsByLastKnownLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            LOG.info("Permissions are missing");
+            requestPermissions();
+        } else {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                LOG.info("Submitting Location Query: " + location.getLatitude() + ", " + location.getLongitude());
+                                sumbitLocationQuery(location.getLatitude(), location.getLongitude());
+                            }
+                        }
+                    });
         }
     }
 
     private void requestPermissions() {
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION);
+                                                                    Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (shouldProvideRationale) {
-            showSnackbar(R.string.location_permission_prompt,
-                    android.R.string.ok, new View.OnClickListener() {
+            showSnackbar(R.string.location_permission_search_prompt,
+                         android.R.string.ok, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             // Request permission
@@ -210,15 +197,15 @@ public class SearchActivity extends HeliosTalkActivity implements SensorValueLis
                     });
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                                              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                              REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 
     private boolean checkPermissions() {
-        LOG.info("check permissions");
+        LOG.info("check location permissions");
         int permissionState = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                                                                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -265,7 +252,7 @@ public class SearchActivity extends HeliosTalkActivity implements SensorValueLis
         }
     }
 
-    public boolean onQueryLocationSubmit() {
+    private void sumbitLocationQuery(double lat, double lng) {
         isLocationQueryInProgress = true;
         if (results.size() > 0) {
             results.clear();
@@ -286,7 +273,6 @@ public class SearchActivity extends HeliosTalkActivity implements SensorValueLis
                 progress.setVisibility(View.INVISIBLE);
             }
         }, 30000);
-        return false;
     }
 
     @Override
