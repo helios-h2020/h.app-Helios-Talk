@@ -112,13 +112,13 @@ public class FavouritesFragment extends HeliosContextFragment implements EventLi
     @Override
     public void onStart() {
         super.onStart();
-        loadFavourites();
         list.startPeriodicUpdate();
     }
 
     @SuppressLint("RestrictedApi")
     public void onResume() {
         super.onResume();
+        loadFavourites();
         actionBar.invalidateOptionsMenu();
     }
 
