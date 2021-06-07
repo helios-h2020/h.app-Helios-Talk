@@ -58,7 +58,8 @@ public class AttachmentRetrieverImpl implements AttachmentRetriever {
             List<AttachmentItem> attachmentItems = new ArrayList<>();
             List<Attachment> attachments = conversationManager.getAttachments(messageId);
             for (Attachment a : attachments) {
-                attachmentItems.add(new AttachmentItem(Uri.parse(a.getUri()), a.getContentType(), a.getUrl()));
+                if (a.getUri() != null)
+                    attachmentItems.add(new AttachmentItem(Uri.parse(a.getUri()), a.getContentType(), a.getUrl()));
             }
             cachePut(messageId, attachmentItems);
         }
