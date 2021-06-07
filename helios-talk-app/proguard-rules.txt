@@ -37,3 +37,6 @@
 -dontwarn com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper
 
 -keep class org.webrtc.** { *; }
+
+-keep class eu.h2020.helios_social.modules.socialgraphmining.** { *; }
+-keepclassmembers class eu.h2020.helios_social.modules.socialgraphmining.** { *; }
