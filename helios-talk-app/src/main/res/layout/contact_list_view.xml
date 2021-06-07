@@ -18,7 +18,6 @@
         app:fab_fabBackgroundColor="?attr/helios_accent"
         app:fab_fabDrawable="@drawable/ic_action_add"
         app:fab_fabRippleColor="@android:color/transparent"
-        app:fab_menu="@menu/contact_list_actions"
         app:fab_miniFabBackgroundColor="?attr/helios_accent"
         app:fab_miniFabTextBackground="?attr/helios_accent"
         app:fab_miniFabTextColor="@android:color/white"
