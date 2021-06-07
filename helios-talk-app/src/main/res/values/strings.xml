@@ -149,6 +149,10 @@
     <string name="no_favourites">No favourites yet!</string>
     <string name="no_favourites_details">You need to star messages to your conversations to access them here.</string>
 
+    <!--Share Content-->
+    <string name="share_content_to_helios_talk_hint">helios. Talk Chats</string>
+    <string name="share_content_select_context">Select Context:</string>
+
     <!-- Contacts and Private Conversations-->
     <string name="no_contacts">No contacts yet!</string>
     <string name="no_contacts_details">Add a contact to start a new chat.</string>
@@ -167,6 +171,7 @@
     <string name="image_attach_error_too_big">Image too big. Limit is %d MB.</string>
     <string name="image_attach_error_invalid_mime_type">Image format unsupported: %s</string>
     <string name="set_contact_alias">Change contact name</string>
+    <string name="share_contact">Share Contact</string>
     <string name="set_contact_alias_hint">Contact name</string>
     <string name="set_alias_button">Change</string>
     <string name="delete_all_messages">Delete all messages</string>
@@ -224,7 +229,9 @@
     <string name="add_new_forum">New Forum</string>
     <string name="add_contact_remotely_title_case">Add Contact at a Distance</string>
     <string name="add_contact_nearby_title">Add contact nearby</string>
-    <string name="add_contact_remotely_title">Add contact</string>
+    <string name="add_contact_remotely_title">Add contact to helios. TALK</string>
+    <string name="send_connection_request">Send Connection Request</string>
+    <string name="invite_contact_to_context">Invite contacts to context</string>
     <string name="contact_name_hint">Give contact a nickname</string>
     <string name="contact_link_intro">Enter friend\'s link you want to add to your connections</string>
     <string name="contact_link_hint">Contact\'s link</string>
@@ -289,6 +296,12 @@
     <string name="different_person_button">Different Person</string>
     <string name="duplicate_link_dialog_text_3">%s and %s sent you the same link.\n\nOne of them may be trying to discover who your contacts are.\n\nDon\'t tell them you received the same link from someone else.</string>
     <string name="pending_contact_updated_toast">Pending contact updated</string>
+
+    <!--Share Contacts-->
+    <string name="contact_sent">You have shared a contact with %1$s.</string>
+    <string name="contact_received">%1$s shared a contact with you. Click to send a
+        connection request!</string>
+    <string name="contact_placeholder">contact name</string>
 
     <!-- Introductions -->
 
@@ -425,6 +438,10 @@
     <string name="location_forum">Location</string>
 
     <!--Contexts-->
+    <string name="intro_context">You can view contexts as a way to organize your contacts.
+        In different contexts you can initiate different threads of one-on-one or
+        group conversations with your contacts by inviting them to join the context. </string>
+    <string name="context_type">Select Context Type:</string>
     <string name="choose_context_hint">Choose a name for your context</string>
     <string name="choose_radius_hint">Radius</string>
 
@@ -465,6 +482,9 @@
     <string name="dialog_title_remove_pending_context_invite">Confirm Removal</string>
 
     <!-- Private Groups -->
+    <string name="intro_private_groups">Private groups of conversation can be shared only
+        by the owner/creator. If you want your contacts to share the conversation, you can
+        create a Forum instead.</string>
     <string name="dialog_title_remove_pending_group_invite">Confirm Removal</string>
     <string name="waiting_group_response">Waiting for connection response in private group...</string>
     <string name="dialog_message_remove_pending_group_invite">Are you sure you want to reject private group invite?</string>
@@ -473,6 +493,11 @@
     <string name="no_pending_invitations">No pending Invitations…</string>
 
     <!-- Communities -->
+    <string name="intro_forums">Forums are sharable conversations and can be public (searchable
+        and can be joined by anyone), protected (searchable but administrators and moderators
+        need to approve your participation) or private (not searchable, can be joined only if
+        directly invited from a member). Forums can also be linked with a specific location.
+    </string>
     <string name="create_forum_title">Create Forum</string>
     <string name="choose_forum_hint">Choose a name for your forum</string>
 
