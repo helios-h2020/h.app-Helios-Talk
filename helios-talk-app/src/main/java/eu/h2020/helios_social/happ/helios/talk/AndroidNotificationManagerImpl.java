@@ -10,7 +10,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Multiset;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
@@ -104,6 +107,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
     private final Clock clock;
     private final Context appContext;
     private final NotificationManager notificationManager;
+    private final GroupManager groupManager;
     private final AtomicBoolean used = new AtomicBoolean(false);
 
     // The following must only be accessed on the main UI thread
@@ -125,13 +129,15 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
 
     @Inject
     AndroidNotificationManagerImpl(SettingsManager settingsManager,
-                                   AndroidExecutor androidExecutor, Application app, Clock clock) {
+                                   AndroidExecutor androidExecutor, Application app, Clock clock,
+                                   GroupManager groupManager) {
         this.settingsManager = settingsManager;
         this.androidExecutor = androidExecutor;
         this.clock = clock;
         appContext = app.getApplicationContext();
         notificationManager = (NotificationManager)
                 appContext.getSystemService(NOTIFICATION_SERVICE);
+        this.groupManager = groupManager;
     }
 
     @Override
@@ -147,15 +153,15 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             // Create notification channels
             Callable<Void> task = () -> {
                 createNotificationChannel(CONTACT_CHANNEL_ID,
-                        R.string.contact_list_button);
+                                          R.string.contact_list_button);
                 createNotificationChannel(GROUP_CHANNEL_ID,
-                        R.string.groups_button);
+                                          R.string.groups_button);
                 createNotificationChannel(FORUM_CHANNEL_ID,
-                        R.string.communities_button);
+                                          R.string.communities_button);
                 createNotificationChannel(INVITATIONS_CHANNEL_ID,
-                        R.string.context_group_invitations);
+                                          R.string.context_group_invitations);
                 createNotificationChannel(CONNECTIONS_CHANNEL_ID,
-                        R.string.connections);
+                                          R.string.connections);
                 return null;
             };
             try {
@@ -171,7 +177,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
                                            @StringRes int name) {
         NotificationChannel nc =
                 new NotificationChannel(channelId, appContext.getString(name),
-                        IMPORTANCE_DEFAULT);
+                                        IMPORTANCE_DEFAULT);
         nc.setLockscreenVisibility(VISIBILITY_SECRET);
         nc.enableVibration(true);
         nc.enableLights(true);
@@ -240,7 +246,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             PendingContactAddedEvent p = (PendingContactAddedEvent) e;
             if (p.getPendingContact().getPendingContactType() == PendingContactType.INCOMING)
                 showConnectionRequestNotification(p.getPendingContact().getId().getId(),
-                        p.getPendingContact().getAlias());
+                                                  p.getPendingContact().getAlias());
         }/*else if (e instanceof ForumPostReceivedEvent) {
 			ForumPostReceivedEvent f = (ForumPostReceivedEvent) e;
 			showForumPostNotification(f.getGroupId());
@@ -354,7 +360,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
                 b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
             }
             notificationManager.notify(PRIVATE_MESSAGE_NOTIFICATION_ID,
-                    b.build());
+                                       b.build());
         }
     }
 
@@ -401,7 +407,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
 
             notificationManager.notify(INVITATIONS_NOTIFICATION_ID,
-                    b.build());
+                                       b.build());
         }
     }
 
@@ -437,7 +443,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
         Intent i = new Intent(appContext, NotificationCleanupService.class);
         i.setData(uri);
         b.setDeleteIntent(PendingIntent.getService(appContext, nextRequestId++,
-                i, 0));
+                                                   i, 0));
     }
 
 	/*@Override
@@ -467,7 +473,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
         } else if (settings.getBoolean(PREF_NOTIFY_CONNECTIONS, true)) {
             HeliosTalkNotificationBuilder b =
                     new HeliosTalkNotificationBuilder(appContext,
-                            CONNECTIONS_CHANNEL_ID);
+                                                      CONNECTIONS_CHANNEL_ID);
             b.setSmallIcon(R.drawable.ic_contacts);
             b.setColorRes(R.color.helios_primary);
             b.setContentTitle(appContext.getText(R.string.app_name));
@@ -486,7 +492,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             t.addNextIntent(i);
             b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
             notificationManager.notify(CONNECTION_REQUESTS_NOTIFICATION_ID,
-                    b.build());
+                                       b.build());
         }
     }
 
@@ -516,7 +522,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
         } else if (settings.getBoolean(PREF_NOTIFY_GROUP, true)) {
             HeliosTalkNotificationBuilder b =
                     new HeliosTalkNotificationBuilder(appContext,
-                            GROUP_CHANNEL_ID);
+                                                      GROUP_CHANNEL_ID);
             b.setSmallIcon(R.drawable.notification_private_group);
             b.setColorRes(R.color.helios_primary);
             b.setContentTitle(appContext.getText(R.string.app_name));
@@ -528,14 +534,23 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             if (mayAlertAgain) setAlertProperties(b);
             setDeleteIntent(b, GROUP_URI);
             Set<String> groups = groupCounts.keySet();
+            String g = groups.iterator().next();
+
+            Class conversationActivityClass = PrivateGroupConversationActivity.class;
+            try {
+                if (groupManager.getGroupType(g) != GroupType.PrivateGroup) {
+                    conversationActivityClass = ForumConversationActivity.class;
+                }
+            } catch (DbException ex) {
+
+            }
             if (groups.size() == 1) {
                 // Touching the notification shows the relevant group
-                Intent i = new Intent(appContext, PrivateGroupConversationActivity.class);
-                String g = groups.iterator().next();
+                Intent i = new Intent(appContext, conversationActivityClass);
                 i.putExtra(GROUP_ID, g);
                 i.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 TaskStackBuilder t = TaskStackBuilder.create(appContext);
-                t.addParentStack(PrivateGroupConversationActivity.class);
+                t.addParentStack(conversationActivityClass);
                 t.addNextIntent(i);
                 b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
             } else {
@@ -549,7 +564,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
                 b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
             }
             notificationManager.notify(GROUP_MESSAGE_NOTIFICATION_ID,
-                    b.build());
+                                       b.build());
         }
     }
 
@@ -636,7 +651,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
     private void updateContactAddedNotification() {
         HeliosTalkNotificationBuilder b =
                 new HeliosTalkNotificationBuilder(appContext,
-                        CONTACT_CHANNEL_ID);
+                                                  CONTACT_CHANNEL_ID);
         b.setSmallIcon(R.drawable.notification_contact_added);
         b.setColorRes(R.color.helios_primary);
         b.setContentTitle(appContext.getText(R.string.app_name));
@@ -656,7 +671,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
         b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
 
         notificationManager.notify(CONTACT_ADDED_NOTIFICATION_ID,
-                b.build());
+                                   b.build());
     }
 
     @Override
@@ -672,7 +687,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
                     new NotificationChannel(REMINDER_CHANNEL_ID, appContext
                             .getString(
                                     R.string.reminder_notification_channel_title),
-                            IMPORTANCE_LOW);
+                                            IMPORTANCE_LOW);
             channel.setLockscreenVisibility(
                     NotificationCompat.VISIBILITY_SECRET);
             notificationManager.createNotificationChannel(channel);
@@ -731,13 +746,13 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
     @Override
     public void blockContactNotification(ContactId c, String groupId) {
         androidExecutor.runOnUiThread((Runnable) () -> blockedContact = new Pair(c.getId(),
-                groupId));
+                                                                                 groupId));
     }
 
     @Override
     public void unblockContactNotification(ContactId c, String groupId) {
         androidExecutor.runOnUiThread(() -> {
-            if (c.getId().equals(blockedContact.getFirst())
+            if (blockedContact != null && c.getId().equals(blockedContact.getFirst())
                     && groupId.equals(blockedContact.getSecond()))
                 blockedContact = null;
         });
