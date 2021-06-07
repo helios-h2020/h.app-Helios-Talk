@@ -29,10 +29,15 @@ import eu.h2020.helios_social.happ.helios.talk.logging.CachingLogHandler;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.modules.groupcommunications.GroupCommunicationsEagerSingletons;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
 import static eu.h2020.helios_social.happ.helios.talk.TestingConstants.IS_DEBUG_BUILD;
@@ -66,6 +71,7 @@ public class HeliosTalkApplicationImpl extends Application
             getLogger(HeliosTalkApplicationImpl.class.getName());
 
     private final CachingLogHandler logHandler = new CachingLogHandler();
+    private FileHandler fileHandler;
 
     private AndroidComponent applicationComponent;
     private volatile SharedPreferences prefs;
@@ -89,6 +95,7 @@ public class HeliosTalkApplicationImpl extends Application
         //if (IS_DEBUG_BUILD) enableStrictMode();
 
         Logger rootLogger = getLogger("");
+
         Handler[] handlers = rootLogger.getHandlers();
         // Disable the Android logger for release builds
         for (Handler handler : handlers) rootLogger.removeHandler(handler);
@@ -100,6 +107,16 @@ public class HeliosTalkApplicationImpl extends Application
             for (Handler handler : handlers) rootLogger.addHandler(handler);
         }
         rootLogger.addHandler(logHandler);
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("YYYY-M-d_HHmmss");
+            String LOG_FILE = "helios-talk-" + format.format(Calendar.getInstance().getTime()) + ".log";
+            fileHandler = new FileHandler(getApplicationContext()
+                                                  .getExternalFilesDir("/logs") + "/" + LOG_FILE);
+            fileHandler.setFormatter(new SimpleFormatter());
+            rootLogger.addHandler(fileHandler);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
         rootLogger.setLevel(IS_DEBUG_BUILD ? FINE : INFO);
 
         LOG.info("Created");
