@@ -81,6 +81,11 @@
         <item name="android:textSize">@dimen/text_size_medium</item>
     </style>
 
+    <style name="HeliosButtonFlat.CustomNeutral" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
     <style name="HeliosButton.Positive" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
