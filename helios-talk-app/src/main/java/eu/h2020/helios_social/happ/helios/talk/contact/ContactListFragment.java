@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
+import eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactsToContextActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
@@ -44,6 +45,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactMan
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import io.github.kobakei.materialfabspeeddial.FabSpeedDial;
 
+import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.now;
@@ -98,23 +100,28 @@ public class ContactListFragment extends HeliosContextFragment
         requireActivity().setTitle(R.string.contact_list_button);
 
         View contentView = inflater.inflate(R.layout.contact_list_view,
-                container, false);
+                                            container, false);
 
         FabSpeedDial speedDial = contentView.findViewById(R.id.speedDial);
+        if (egoNetwork.getCurrentContext().getData().toString().split("%")[1].equals("All"))
+            speedDial.inflateMenu(R.menu.contact_list_actions);
+        else
+            speedDial.inflateMenu(R.menu.contact_list_actions_in_context);
+
         speedDial.addOnMenuItemClickListener(this);
 
         BaseContactListAdapter.OnContactClickListener<ContactListItem>
                 onContactClickListener =
                 (view, item) -> {
                     Intent i = new Intent(getActivity(),
-                            ConversationActivity.class);
+                                          ConversationActivity.class);
                     ContactId contactId = item.getContact().getId();
                     i.putExtra(CONTACT_ID, contactId.getId());
                     i.putExtra(GROUP_ID, item.getGroupId());
                     startActivity(i);
                 };
         adapter = new ContactListAdapter(requireContext(),
-                onContactClickListener);
+                                         onContactClickListener);
         list = contentView.findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         list.setAdapter(adapter);
@@ -137,10 +144,22 @@ public class ContactListFragment extends HeliosContextFragment
     @Override
     public void onMenuItemClick(FloatingActionButton fab, @Nullable TextView v,
                                 int itemId) {
+        LOG.info("Selected Item Id: " + itemId);
         switch (itemId) {
             case R.id.action_add_contact_remotely:
                 startActivity(
                         new Intent(getContext(), AddContactActivity.class));
+                return;
+            case R.id.action_invite_to_context:
+                Intent inviteContactsToContextActivity = new Intent(
+                        getContext(),
+                        InviteContactsToContextActivity.class
+                );
+                inviteContactsToContextActivity.putExtra(CONTEXT_ID,
+                                                         egoNetwork.getCurrentContext().getData().toString()
+                                                                 .split("%")[1]);
+                startActivity(inviteContactsToContextActivity);
+                return;
         }
     }
 
@@ -148,7 +167,6 @@ public class ContactListFragment extends HeliosContextFragment
     public void onStart() {
         super.onStart();
         eventBus.addListener(this);
-        loadContacts();
         list.startPeriodicUpdate();
     }
 
@@ -156,6 +174,7 @@ public class ContactListFragment extends HeliosContextFragment
     public void onResume() {
         super.onResume();
         actionBar.invalidateOptionsMenu();
+        loadContacts();
     }
 
     @Override
@@ -173,14 +192,6 @@ public class ContactListFragment extends HeliosContextFragment
             try {
                 long start = now();
                 List<ContactListItem> contacts = new ArrayList<>();
-                String currentContext =
-                        egoNetwork.getCurrentContext().getData().toString();
-                Collection<ContactId> contextMembers = null;
-				/*if (!currentContext.equals("All@All"))
-					contextMembers =
-							contextManager.getMembers(
-									new Context.Builder(currentContext)
-											.build());*/
 
                 String contextId =
                         egoNetwork.getCurrentContext().getData().toString()
@@ -188,25 +199,9 @@ public class ContactListFragment extends HeliosContextFragment
                 List<ContactId> onlineContacts = connectionRegistry.getConnectedContacts();
                 for (Contact c : contactManager.getContacts(contextId)) {
                     ContactId id = c.getId();
-                    Group g =
-                            conversationManager.getContactGroup(id, contextId);
+                    Group g = conversationManager.getContactGroup(id, contextId);
                     contacts.add(
                             new ContactListItem(c, g.getId(), onlineContacts.contains(c.getId())));
-					/*try {
-						ContactId id = c.getId();
-
-						/*if (contextMembers == null ||
-								contextMembers.contains(id)) {
-							GroupCount count =
-									conversationManager.getGroupCount(id);
-							boolean connected =
-									connectionRegistry.isConnected(c.getId());
-							contacts.add(
-									new ContactListItem(c, connected, count));
-						}
-					} catch (NoSuchContactException e) {
-						// Continue
-					}*/
                 }
                 logDuration(LOG, "Full load", start);
                 displayContacts(revision, contacts);
