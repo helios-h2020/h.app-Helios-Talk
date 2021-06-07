@@ -3,6 +3,7 @@ package eu.h2020.helios_social.happ.helios.talk.conversation;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.ActionMode;
@@ -41,6 +42,8 @@ import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
@@ -50,11 +53,21 @@ import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
 import eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
+import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
+import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
+import eu.h2020.helios_social.happ.helios.talk.conversation.sharecontacts.ShareContactActivity;
+import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
+import eu.h2020.helios_social.modules.groupcommunications.api.peer.PeerInfo;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.ContactExistsException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.InvalidActionException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.PendingContactExistsException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactRemovedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchContactException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
@@ -127,6 +140,8 @@ public class ConversationActivity extends HeliosTalkActivity
     volatile ConnectionRegistry connectionRegistry;
     @Inject
     EventBus eventBus;
+    @Inject
+    ConnectionController connectionController;
 
     private final Map<String, String> textCache = new ConcurrentHashMap<>();
 
@@ -194,15 +209,15 @@ public class ConversationActivity extends HeliosTalkActivity
             if (deleted) finish();
         });
         viewModel.getAddedPrivateMessage().observeEvent(this,
-                this::onAddedPrivateMessage);
+                                                        this::onAddedPrivateMessage);
 
         setTransitionName(toolbarAvatar,
-                UiUtils.getAvatarTransitionName(contactId));
+                          UiUtils.getAvatarTransitionName(contactId));
         setTransitionName(toolbarStatus,
-                UiUtils.getBulbTransitionName(contactId));
+                          UiUtils.getBulbTransitionName(contactId));
 
         visitor = new ConversationVisitor(this, this, this,
-                viewModel.getContactDisplayName());
+                                          viewModel.getContactDisplayName());
         adapter = new ConversationAdapter(this, this);
         list = findViewById(R.id.conversationView);
         layoutManager = new LinearLayoutManager(this);
@@ -218,7 +233,7 @@ public class ConversationActivity extends HeliosTalkActivity
 
         ImagePreview imagePreview = findViewById(R.id.imagePreview);
         sendController = new TextAttachmentController(this, textInputView,
-                imagePreview, this);
+                                                      imagePreview, this);
         ((TextAttachmentController) sendController).setImagesSupported();
 
         textInputView.setSendController(sendController);
@@ -258,9 +273,25 @@ public class ConversationActivity extends HeliosTalkActivity
         if (signedIn()) {
             viewModel.setContactId(contactId);
             viewModel.setGroupId(groupId);
-            viewModel.setContextId(
-                    egoNetwork.getCurrentContext().getData().toString()
-                            .split("%")[1]);
+
+            UiUtils.observeOnce(viewModel.getContext(), this, context -> {
+                String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
+                if (!cid.equals(context.getId())) {
+                    egoNetwork.setCurrent(egoNetwork.getOrCreateContext(context.getName() + "%" + context.getId()));
+                    if (context instanceof GeneralContextProxy) {
+                        GeneralContextProxy generalContext = (GeneralContextProxy) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
+
+                    } else if (context instanceof LocationContextProxy) {
+                        LocationContextProxy generalContext = (LocationContextProxy) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
+                    }
+                }
+            });
         }
     }
 
@@ -300,14 +331,13 @@ public class ConversationActivity extends HeliosTalkActivity
 
         // enable alias action if available
         UiUtils.observeOnce(viewModel.getContact(), this, contact -> {
-            menu.findItem(R.id.action_set_alias).setEnabled(true);
+            //menu.findItem(R.id.action_set_alias).setEnabled(true);
             if (contact.getProfilePicture() != null)
                 toolbarAvatar.setImageBitmap(BitmapFactory.decodeByteArray(
                         contact.getProfilePicture(),
                         0,
                         contact.getProfilePicture().length)
                 );
-            ;
         });
 
         return super.onCreateOptionsMenu(menu);
@@ -326,18 +356,18 @@ public class ConversationActivity extends HeliosTalkActivity
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            case R.id.action_set_alias:
-				/*AliasDialogFragment.newInstance().show(
-						getSupportFragmentManager(), AliasDialogFragment.TAG);*/
-                return true;
-            case R.id.action_delete_all_messages:
-                //askToDeleteAllMessages();
-                return true;
             case R.id.action_social_remove_person:
+                Toast.makeText(this, "Temporarily Unavailable Operation!", Toast.LENGTH_LONG).show();
                 //askToRemoveContact();
                 return true;
             case R.id.start_video_call:
                 startVideoCall();
+                return true;
+            case R.id.action_share_contact:
+                Intent intent = new Intent(this, ShareContactActivity.class);
+                intent.putExtra(CONTACT_ID, contactId.getId());
+                intent.putExtra(CONTACT_NAME, viewModel.getContactDisplayName().getValue());
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -549,10 +579,11 @@ public class ConversationActivity extends HeliosTalkActivity
         List<ConversationItem> items = new ArrayList<>(headers.size());
         for (MessageHeader h : headers) {
             ConversationItem item = h.accept(visitor);
-            if (item instanceof VideoCallConversationItem &&
-                    item.getText() == null) {
-                ((VideoCallConversationItem) item)
-                        .setRoomId(getText(item.getId()));
+            if (item instanceof VideoCallConversationItem && ((VideoCallConversationItem) item).getRoomId() == null) {
+                ((VideoCallConversationItem) item).setRoomId(getText(item.getId()));
+            } else if (item instanceof SharedContactConversationItem && ((SharedContactConversationItem) item).getPeerInfo() == null) {
+                PeerInfo peerInfo = new Gson().fromJson(getText(item.getId()), PeerInfo.class);
+                ((SharedContactConversationItem) item).setPeerInfo(peerInfo);
             }
             items.add(item);
         }
@@ -581,9 +612,13 @@ public class ConversationActivity extends HeliosTalkActivity
                 boolean scroll = shouldScrollWhenUpdatingMessage();
                 if (pair.getSecond() instanceof ConversationMessageItem) {
                     pair.getSecond().setText(text);
-                } else {
+                } else if (pair.getSecond() instanceof VideoCallConversationItem) {
                     ((VideoCallConversationItem) pair.getSecond())
                             .setRoomId(text);
+                } else {
+                    PeerInfo peerInfo = new Gson().fromJson(text, PeerInfo.class);
+                    ((SharedContactConversationItem) pair.getSecond())
+                            .setPeerInfo(peerInfo);
                 }
                 adapter.notifyItemChanged(pair.getFirst());
                 if (scroll) scrollToBottom();
@@ -625,6 +660,9 @@ public class ConversationActivity extends HeliosTalkActivity
                 item.getText() == null) {
             ((VideoCallConversationItem) item)
                     .setRoomId(getText(item.getId()));
+        } else if (item instanceof SharedContactConversationItem && item.getText() == null) {
+            PeerInfo peerInfo = new Gson().fromJson(item.getId(), PeerInfo.class);
+            ((SharedContactConversationItem) item).setPeerInfo(peerInfo);
         }
         adapter.incrementRevision();
         adapter.add(item);
@@ -709,12 +747,27 @@ public class ConversationActivity extends HeliosTalkActivity
                 (dialog, which) -> removeContact();
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(ConversationActivity.this,
-                        R.style.HeliosDialogTheme);
+                                        R.style.HeliosDialogTheme);
         builder.setTitle(getString(R.string.dialog_title_delete_contact));
         builder.setMessage(
                 getString(R.string.dialog_message_delete_contact));
         builder.setNegativeButton(R.string.delete, okListener);
         builder.setPositiveButton(R.string.cancel, null);
+        builder.show();
+    }
+
+    private void sendConnectionRequestDialog(PeerInfo peerInfo) {
+        DialogInterface.OnClickListener yesListener =
+                (dialog, which) -> {
+                    sendConnectionRequest(requireNonNull(peerInfo));
+                };
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(ConversationActivity.this,
+                                        R.style.HeliosDialogTheme);
+        builder.setTitle(getString(R.string.send_connection_request));
+        builder.setMessage("Are you sure you want to send a connection request to " + peerInfo.getAlias());
+        builder.setPositiveButton(R.string.dialog_yes, yesListener);
+        builder.setNegativeButton(R.string.cancel, null);
         builder.show();
     }
 
@@ -774,6 +827,12 @@ public class ConversationActivity extends HeliosTalkActivity
         }
     }
 
+    @Override
+    public void onSharedContactClicked(View view, ConversationItem messageItem) {
+        SharedContactConversationItem item = (SharedContactConversationItem) messageItem;
+        sendConnectionRequestDialog(item.getPeerInfo());
+    }
+
 
     @Nullable
     @Override
@@ -814,5 +873,37 @@ public class ConversationActivity extends HeliosTalkActivity
             return emptyList();
         }
         return attachments;
+    }
+
+    void sendConnectionRequest(PeerInfo peerInfo) {
+        connectionController.sendConnectionRequest(peerInfo, new UiResultExceptionHandler<Void, Exception>(this) {
+            @Override
+            public void onResultUi(Void v) {
+                Toast.makeText(ConversationActivity.this,
+                               "Connection Request to " + peerInfo.getAlias() + " has been sent!",
+                               Toast.LENGTH_LONG
+                ).show();
+            }
+
+            @Override
+            public void onExceptionUi(Exception exception) {
+                if (exception instanceof ContactExistsException)
+                    Toast.makeText(ConversationActivity.this,
+                                   "You are already Connected with " + peerInfo.getAlias(),
+                                   Toast.LENGTH_LONG
+                    ).show();
+                else if (exception instanceof PendingContactExistsException)
+                    Toast.makeText(ConversationActivity.this,
+                                   "You have already sent connection request to " + peerInfo.getAlias(),
+                                   Toast.LENGTH_LONG
+                    ).show();
+                else if (exception instanceof InvalidActionException)
+                    Toast.makeText(ConversationActivity.this,
+                                   ((InvalidActionException) exception).getMessage(),
+                                   Toast.LENGTH_LONG
+                    ).show();
+                exception.printStackTrace();
+            }
+        });
     }
 }
