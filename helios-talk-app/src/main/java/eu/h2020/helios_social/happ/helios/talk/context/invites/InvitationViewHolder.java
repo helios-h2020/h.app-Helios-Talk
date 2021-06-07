@@ -41,8 +41,6 @@ public class InvitationViewHolder extends ViewHolder {
     }
 
     public void bind(InvitationItem item) {
-
-
         if (item.getInvitationType()
                 .equals(InvitationItem.InvitationType.CONTEXT)) {
             icon.setImageResource(R.drawable.ic_context_white);
@@ -50,7 +48,7 @@ public class InvitationViewHolder extends ViewHolder {
                     (ContextInvitation) item.getInvitation();
             name.setText(contextInvite.getName());
             time.setText(UiUtils.formatDate(time.getContext(),
-                    contextInvite.getTimestamp()));
+                                            contextInvite.getTimestamp()));
 
             String type = "";
             if (contextInvite.getContextType().equals(ContextType.LOCATION)) {
@@ -65,15 +63,15 @@ public class InvitationViewHolder extends ViewHolder {
 
             if (contextInvite.isIncoming()) {
                 message.setText(String.format(prompted_incoming,
-                        item.getContactName(),
-                        item.getInvitation().getName() + type + " context")
+                                              item.getContactName(),
+                                              item.getInvitation().getName() + type + " context")
                 );
             } else {
                 message.setText(
                         String.format(prompted_outgoing,
-                                item.getContactName(),
-                                item.getInvitation().getName() +
-                                        type + " context."));
+                                      item.getContactName(),
+                                      item.getInvitation().getName() +
+                                              type + " context."));
             }
 
             deleteButton.setOnClickListener(v -> {
@@ -93,47 +91,46 @@ public class InvitationViewHolder extends ViewHolder {
                 outgoingRequet.setVisibility(View.GONE);
             }
         } else {
-
             GroupInvitation groupInvitation =
                     (GroupInvitation) item.getInvitation();
             name.setText(groupInvitation.getName());
             time.setText(UiUtils.formatDate(time.getContext(),
-                    groupInvitation.getTimestamp()));
+                                            groupInvitation.getTimestamp()));
             String prompted_outgoing =
                     "You invited %s to join " + groupInvitation.getGroupInvitationType().toString() + " \"%s\" in context \"%s\"";
             String prompted_incoming =
                     "%s invited you to join " + groupInvitation.getGroupInvitationType().toString() + " \"%s\" in context \"%s\"";
             if (groupInvitation.getGroupInvitationType()
                     .equals(GroupInvitationType.PrivateGroup)) {
+                icon.setImageResource(R.drawable.ic_group_white);
                 if (groupInvitation.isIncoming()) {
-                    icon.setImageResource(R.drawable.ic_group_white);
                     message.setText(String.format(prompted_incoming,
-                            item.getContactName(),
-                            item.getInvitation().getName(),
-                            item.getContextName())
+                                                  item.getContactName(),
+                                                  item.getInvitation().getName(),
+                                                  item.getContextName())
                     );
                 } else {
                     message.setText(
                             String.format(prompted_outgoing,
-                                    item.getContactName(),
-                                    item.getInvitation().getName(),
-                                    item.getContextName()
+                                          item.getContactName(),
+                                          item.getInvitation().getName(),
+                                          item.getContextName()
                             ));
                 }
             } else {
                 icon.setImageResource(R.drawable.ic_community_white);
                 if (groupInvitation.isIncoming()) {
                     message.setText(String.format(prompted_incoming,
-                            item.getContactName(),
-                            item.getInvitation().getName(),
-                            item.getContextName())
+                                                  item.getContactName(),
+                                                  item.getInvitation().getName(),
+                                                  item.getContextName())
                     );
                 } else {
                     message.setText(
                             String.format(prompted_outgoing,
-                                    item.getContactName(),
-                                    item.getInvitation().getName(),
-                                    item.getContextName()
+                                          item.getContactName(),
+                                          item.getInvitation().getName(),
+                                          item.getContextName()
                             ));
                 }
             }

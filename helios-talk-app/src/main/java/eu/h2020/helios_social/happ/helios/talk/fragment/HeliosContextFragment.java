@@ -66,19 +66,21 @@ public abstract class HeliosContextFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    public void onResume() {
+        super.onResume();
         String[] currentContext =
                 egoNetwork.getCurrentContext().getData().toString()
                         .split("%");
-        actionBar.setTitle(
-                "\t" + currentContext[0]);
+        if (currentContext[0].equals("All")) actionBar.setTitle("\t" + "General");
+        else actionBar.setTitle("\t" + currentContext[0]);
         styleBasedOnContext(currentContext[1]);
     }
 
-    private void styleBasedOnContext(String contextId) {
+    protected void styleBasedOnContext(String contextId) {
         try {
             if (contextId.equals("All")) {
-                int defaultColor = getActivity().getResources()
-                        .getColor(R.color.helios_default_context_color);
                 getActivity().setTheme(R.style.HeliosTheme);
                 actionBar.setBackgroundDrawable(
                         new ColorDrawable(
@@ -87,8 +89,7 @@ public abstract class HeliosContextFragment extends BaseFragment {
             } else {
                 Themes themes = new Themes(getActivity());
                 Integer color = contextController.getContextColor(contextId);
-                getActivity()
-                        .setTheme(themes.getTheme(color));
+                getActivity().setTheme(themes.getTheme(color));
                 actionBar.setBackgroundDrawable(
                         new ColorDrawable(color));
             }
@@ -121,7 +122,7 @@ public abstract class HeliosContextFragment extends BaseFragment {
             e.printStackTrace();
         }
         friendRequests.setIcon(buildCounterDrawable(incomingConnectionRequests,
-                R.drawable.ic_person_white));
+                                                    R.drawable.ic_person_white));
         MenuItem invites = menu.findItem(R.id.pending_contexts);
         invites.setIcon(buildCounterDrawable(inviteCounter, R.drawable.ic_notifications));
     }
@@ -139,7 +140,8 @@ public abstract class HeliosContextFragment extends BaseFragment {
         } else {
             menu.getItem(2).setEnabled(true);
             menu.getItem(3).setEnabled(true);
-            menu.getItem(4).setEnabled(true);
+            //temporarily: TODO
+            menu.getItem(4).setEnabled(false);
 
         }
     }
@@ -151,29 +153,30 @@ public abstract class HeliosContextFragment extends BaseFragment {
             case R.id.action_create_context:
                 Intent i1 =
                         new Intent(getContext(),
-                                CreateContextActivity.class);
+                                   CreateContextActivity.class);
                 startActivity(i1);
                 return true;
             case R.id.action_add_contacts_to_context:
                 Intent inviteContactsToContextActivity =
                         new Intent(getContext(),
-                                InviteContactsToContextActivity.class);
+                                   InviteContactsToContextActivity.class);
                 inviteContactsToContextActivity.putExtra(CONTEXT_ID,
-                        egoNetwork.getCurrentContext().getData().toString()
-                                .split("%")[1]);
+                                                         egoNetwork.getCurrentContext().getData().toString()
+                                                                 .split("%")[1]);
                 startActivity(inviteContactsToContextActivity);
                 return true;
             case R.id.action_context_delete:
-                showDeleteContextDialog();
+                //showDeleteContextDialog();
+                //TODO
                 return true;
             case R.id.pending_contacts:
                 Intent pendingContactListActivity = new Intent(getActivity(),
-                        PendingContactListActivity.class);
+                                                               PendingContactListActivity.class);
                 startActivity(pendingContactListActivity);
                 return true;
             case R.id.pending_contexts:
                 Intent inviteListActivity = new Intent(getActivity(),
-                        InvitationListActivity.class);
+                                                       InvitationListActivity.class);
                 startActivity(inviteListActivity);
                 return true;
             default:
@@ -187,11 +190,11 @@ public abstract class HeliosContextFragment extends BaseFragment {
         DialogInterface.OnClickListener okListener =
                 (dialog, which) -> deleteContext(contextId);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),
-                R.style.HeliosDialogTheme);
+                                                              R.style.HeliosDialogTheme);
         builder.setTitle(getString(R.string.dialog_title_leave_context));
         builder.setMessage(getString(R.string.dialog_message_leave_context));
         builder.setNegativeButton(R.string.dialog_button_remove_context,
-                okListener);
+                                  okListener);
         builder.setPositiveButton(R.string.cancel, null);
         builder.show();
     }

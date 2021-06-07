@@ -73,7 +73,7 @@ public class InvitationListActivity extends HeliosTalkActivity
                 .observe(this, this::onContextInvitationsChanged);
 
         adapter = new InvitationListAdapter(this, this,
-                InvitationItem.class);
+                                            InvitationItem.class);
         list = findViewById(R.id.list);
         list.setEmptyText(R.string.no_pending_invitations);
         list.setLayoutManager(new LinearLayoutManager(this));
@@ -114,7 +114,7 @@ public class InvitationListActivity extends HeliosTalkActivity
                 getString(
                         R.string.dialog_message_remove_pending_group_invite));
         builder.setNegativeButton(R.string.delete_group_invite,
-                removeListener);
+                                  removeListener);
         builder.setPositiveButton(R.string.cancel, null);
         // re-enable remove button when dialog is dismissed/canceled
         builder.setOnDismissListener(dialog -> adapter.notifyDataSetChanged());
@@ -127,18 +127,18 @@ public class InvitationListActivity extends HeliosTalkActivity
 
         if (item.getInvitationType() == InvitationItem.InvitationType.FORUM) {
             Toast.makeText(InvitationListActivity.this,
-                    R.string.join_forum_toast,
-                    LENGTH_LONG)
+                           R.string.join_forum_toast,
+                           LENGTH_LONG)
                     .show();
         } else {
             Toast.makeText(InvitationListActivity.this,
-                    R.string.join_group_toast,
-                    LENGTH_LONG)
+                           R.string.join_group_toast,
+                           LENGTH_LONG)
                     .show();
         }
         egoNetwork.setCurrent(
                 egoNetwork.getOrCreateContext(item.getContextName() + "%" +
-                        item.getInvitation().getContextId()));
+                                                      item.getInvitation().getContextId()));
 
 
         Intent intent = new Intent(this, NavDrawerActivity.class);
@@ -162,7 +162,7 @@ public class InvitationListActivity extends HeliosTalkActivity
                 getString(
                         R.string.dialog_message_remove_pending_context_invite));
         builder.setNegativeButton(R.string.delete_context_invite,
-                removeListener);
+                                  removeListener);
         builder.setPositiveButton(R.string.cancel, null);
         // re-enable remove button when dialog is dismissed/canceled
         builder.setOnDismissListener(dialog -> adapter.notifyDataSetChanged());
@@ -170,16 +170,14 @@ public class InvitationListActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onJoinContext(
-            InvitationItem item) {
+    public void onJoinContext(InvitationItem item) {
         viewModel.joinPendingContext((ContextInvitation) item.getInvitation());
         Toast.makeText(InvitationListActivity.this,
-                R.string.join_context_toast,
-                LENGTH_LONG)
+                       R.string.join_context_toast,
+                       LENGTH_LONG)
                 .show();
-        egoNetwork.setCurrent(
-                egoNetwork.getOrCreateContext(item.getContextName() + "%" +
-                        item.getInvitation().getContextId()));
+        egoNetwork.setCurrent(egoNetwork.getOrCreateContext(item.getContextName() + "%" +
+                                                                    item.getInvitation().getContextId()));
 
         Intent intent = new Intent(this, NavDrawerActivity.class);
         intent.setFlags(

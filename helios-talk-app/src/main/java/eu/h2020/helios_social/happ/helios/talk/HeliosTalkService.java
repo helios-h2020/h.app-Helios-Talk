@@ -32,7 +32,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import androidx.core.app.NotificationCompat;
-//import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 
 import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
 import static android.app.NotificationManager.IMPORTANCE_NONE;

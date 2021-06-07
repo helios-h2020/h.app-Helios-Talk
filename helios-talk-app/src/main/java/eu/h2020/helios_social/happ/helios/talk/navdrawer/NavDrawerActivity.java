@@ -21,6 +21,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.CommunicationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
@@ -88,8 +89,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.MANAGE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
     private static String[] MEDIA_LOCATION_PERMISSION = {
@@ -125,6 +125,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     EventBus eventBus;
     @Inject
     IdentityManager identityManager;
+    @Inject
+    CommunicationManager communicationManager;
 
 
     private DrawerLayout drawerLayout;
@@ -170,8 +172,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         actionBar.setHomeButtonEnabled(true);
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.nav_drawer_open_description,
-                R.string.nav_drawer_close_description);
+                                                 R.string.nav_drawer_open_description,
+                                                 R.string.nav_drawer_close_description);
         drawerLayout.addDrawerListener(drawerToggle);
 
         navigation.setNavigationItemSelectedListener(this);
@@ -188,7 +190,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             showSignOutFragment();
         } else if (state == null) {
             startFragment(ChatListFragment.newInstance(),
-                    0);
+                          0);
         }
         if (state == null) {
             // do not call this again when there's existing state
@@ -198,37 +200,27 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         verifyStoragePermissions();
     }
 
-    public void updateContexts(String id) {
+    public void loadContexts(String id) {
         contextMenu.clear();
         contexts = new ArrayList();
         try {
             contexts = (ArrayList) contextManager.getContexts();
             LOG.info("Updating contexts menu: " + contexts.size());
+            int activeItem = 0;
             for (int i = 0; i < contexts.size(); i++) {
                 DBContext c = contexts.get(i);
-                boolean active = false;
-                if (c.getId().equals(id))
-                    active = true;
-                contextMenu.add(0, i,
-                        Menu.CATEGORY_SECONDARY,
-                        c.getName())
-                        .setIcon(R.drawable.ic_context_2)
-                        .setChecked(active);
 
-				/*if (findLocationContextByName(locationContexts,
-						c.getContextName()) == null &&
-						c.getLatitude() != null) {
-					LocationContext lc = new LocationContext(
-							contexts.get(i).getContextName(),
-							c.getLatitude(), c.getLongitude(),
-							c.getRadius()
-					);
-					lc.registerContextListener(this);
-					mLocationSensor.registerValueListener(lc);
-					locationContexts.add(lc);
-			}*/
+                String cname = c.getName();
+                if (c.getId().equals(id)) activeItem = i;
+                if (cname.equals("All")) cname = "General";
+                contextMenu.add(0, i,
+                                Menu.CATEGORY_SECONDARY,
+                                cname)
+                        .setIcon(R.drawable.ic_context_2);
             }
             contextMenu.setGroupCheckable(0, true, true);
+
+            navigation.setCheckedItem(activeItem);
         } catch (
                 DbException e) {
             e.printStackTrace();
@@ -258,41 +250,24 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragmentContainer,
-                                    selectedFragment).commit();
+                                     selectedFragment).commit();
                     return true;
                 }
             };
 
     @Override
-    @SuppressLint("NewApi")
     public void onStart() {
         super.onStart();
-		/*updateTransports();
-		lockManager.checkIfLockable();
-		if (mRequestingLocationUpdates && checkPermissions()) {
-			mLocationSensor.startUpdates();
-		} else if (!checkPermissions()) {
-			requestPermissions();
-		}*/
         if (signedIn()) {
-            updateContexts("All");
+            String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
+            loadContexts(cid);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("ONRESUME");
-        styleBasedOnContext(
-                egoNetwork.getCurrentContext().getData().toString()
-                        .split("%")[1]);
-		/*if (mRequestingLocationUpdates && checkPermissions()) {
-			mLocationSensor.startUpdates();
-		} else if (!checkPermissions()) {
-			requestPermissions();
-		}*/
     }
-
 
     @Override
     protected void onActivityResult(int request, int result,
@@ -300,15 +275,15 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         super.onActivityResult(request, result, data);
         if (request == RequestCodes.REQUEST_PASSWORD && result == RESULT_OK) {
             controller.shouldAskForDozeWhitelisting(this,
-                    new UiResultHandler<Boolean>(this) {
-                        @Override
-                        public void onResultUi(Boolean ask) {
-                            if (ask) {
-                                showDozeDialog(
-                                        getString(R.string.setup_doze_intro));
-                            }
-                        }
-                    });
+                                                    new UiResultHandler<Boolean>(this) {
+                                                        @Override
+                                                        public void onResultUi(Boolean ask) {
+                                                            if (ask) {
+                                                                showDozeDialog(
+                                                                        getString(R.string.setup_doze_intro));
+                                                            }
+                                                        }
+                                                    });
         }
 
         switch (request) {
@@ -340,7 +315,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
     private void exitIfStartupFailed(Intent intent) {
         if (intent.getBooleanExtra(HeliosTalkService.EXTRA_STARTUP_FAILED,
-                false)) {
+                                   false)) {
             finish();
             LOG.info("Exiting");
             System.exit(0);
@@ -353,8 +328,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (R.id.nav_btn_settings == fragmentId) {
             startActivity(new Intent(this, SettingsActivity.class));
-        } else if (R.id.nav_btn_stats == fragmentId) {
-            //startActivity(new Intent(this, StatsActivity.class));
+        /*} else if (R.id.nav_btn_stats == fragmentId) {
+            //startActivity(new Intent(this, StatsActivity.class));*/
         } else if (R.id.nav_btn_signout == fragmentId) {
             signOut();
         } else {
@@ -364,6 +339,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             egoNetwork.setCurrent(egoNetwork.getOrCreateContext(
                     current.getName() + "%" + current.getId()));
 
+            styleBasedOnContext(current.getId());
             bottomNav.setSelectedItemId(R.id.nav_conversations);
         }
     }
@@ -449,10 +425,10 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         FragmentTransaction trans =
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.fade_in,
-                                R.anim.fade_out, R.anim.fade_in,
-                                R.anim.fade_out)
+                                             R.anim.fade_out, R.anim.fade_in,
+                                             R.anim.fade_out)
                         .replace(R.id.fragmentContainer, fragment,
-                                fragment.getUniqueTag());
+                                 fragment.getUniqueTag());
         if (isAddedToBackStack) {
             trans.addToBackStack(fragment.getUniqueTag());
         }
@@ -461,7 +437,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
     private void clearBackStack() {
         getSupportFragmentManager().popBackStackImmediate(null,
-                POP_BACK_STACK_INCLUSIVE);
+                                                          POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override
@@ -478,10 +454,10 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     public void eventOccurred(Event e) {
         if (e instanceof ContextAddedEvent) {
             LOG.info("CONTEXT ADDED: " +
-                    ((ContextAddedEvent) e).getContext().getName());
-            updateContexts(((ContextAddedEvent) e).getContext().getId());
+                             ((ContextAddedEvent) e).getContext().getName());
+            loadContexts(((ContextAddedEvent) e).getContext().getId());
         } else if (e instanceof ContextRemovedEvent) {
-            updateContexts("All");
+            loadContexts("All");
         }
     }
 
@@ -566,22 +542,22 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
      */
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                                                                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
     public void verifyStoragePermissions() {
         // Check if we have write permission
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                                              Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                                                  Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             verifyMetadataPermissions();
             return;
         }
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(this)
                     .setTitle("Access Storage Permission!")
                     .setMessage(R.string.profiling_storage_permissions)
@@ -612,12 +588,12 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     public void verifyMetadataPermissions() {
         //check if access to metadata has been granted.
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                              Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(this)
                     .setTitle("Access to Media Metadata!")
                     .setMessage(R.string.profiling_metadata_permissions)
@@ -651,25 +627,25 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     private void requestPermissions() {
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION);
+                                                                    Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (shouldProvideRationale) {
             showSnackbar(R.string.location_permission_prompt,
-                    android.R.string.ok, new View.OnClickListener() {
+                         android.R.string.ok, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             // Request permission
                             ActivityCompat
                                     .requestPermissions(NavDrawerActivity.this,
-                                            new String[]{
-                                                    Manifest.permission.ACCESS_FINE_LOCATION},
-                                            REQUEST_PERMISSIONS_REQUEST_CODE);
+                                                        new String[]{
+                                                                Manifest.permission.ACCESS_FINE_LOCATION},
+                                                        REQUEST_PERMISSIONS_REQUEST_CODE);
                         }
                     });
         } else {
             ActivityCompat.requestPermissions(NavDrawerActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                                              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                              REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 

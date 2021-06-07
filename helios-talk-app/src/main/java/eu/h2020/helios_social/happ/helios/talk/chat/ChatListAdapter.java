@@ -128,5 +128,4 @@ public class ChatListAdapter
 		}
 		return TYPE_ITEM;
 	}
-
 }
