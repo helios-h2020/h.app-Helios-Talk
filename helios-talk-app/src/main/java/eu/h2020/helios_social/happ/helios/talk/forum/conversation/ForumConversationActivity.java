@@ -2,6 +2,7 @@ package eu.h2020.helios_social.happ.helios.talk.forum.conversation;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -23,6 +24,8 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.snackbar.Snackbar;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,10 +52,17 @@ import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
+import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
+import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.ContactExistsException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.InvalidActionException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.PendingContactExistsException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
@@ -117,6 +127,8 @@ public class ForumConversationActivity extends HeliosTalkActivity
     ConversationManager conversationManager;
     @Inject
     ForumController forumController;
+    @Inject
+    ConnectionController connectionController;
 
     private ForumConversationViewModel viewModel;
     private AttachmentRetriever attachmentRetriever;
@@ -173,7 +185,7 @@ public class ForumConversationActivity extends HeliosTalkActivity
             if (deleted) finish();
         });
         viewModel.getAddedGroupMessage().observeEvent(this,
-                this::onAddedGroupMessage);
+                                                      this::onAddedGroupMessage);
 
         setContentView(R.layout.activity_forum_conversation);
 
@@ -216,13 +228,60 @@ public class ForumConversationActivity extends HeliosTalkActivity
         textInput = findViewById(R.id.text_input_container);
         ImagePreview imagePreview = findViewById(R.id.imagePreview);
         sendController = new TextAttachmentController(this, textInput,
-                imagePreview, this);
+                                                      imagePreview, this);
         ((TextAttachmentController) sendController).setImagesSupported();
 
         textInput.setSendController(sendController);
         textInput.setMaxTextLength(MAX_MESSAGE_TEXT_LENGTH);
         textInput.setReady(true);
         textInput.setOnKeyboardShownListener(this::scrollToBottom);
+
+        registerForContextMenu(list);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position = -1;
+        try {
+            position = adapter.getPosition();
+            GroupMessageItem messageItem = adapter.getItemAt(position);
+            if (messageItem != null) {
+                connectionController.sendConnectionRequest(messageItem.getPeerInfo(), new UiResultExceptionHandler<Void, Exception>(this) {
+                    @Override
+                    public void onResultUi(Void v) {
+                        Toast.makeText(ForumConversationActivity.this,
+                                       "Connection Request to " + messageItem.getPeerInfo().getAlias() + " has been sent!",
+                                       Toast.LENGTH_LONG
+                        ).show();
+                    }
+
+                    @Override
+                    public void onExceptionUi(Exception exception) {
+                        if (exception instanceof ContactExistsException)
+                            Toast.makeText(ForumConversationActivity.this,
+                                           "You are already Connected with " + messageItem.getPeerInfo().getAlias(),
+                                           Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof PendingContactExistsException)
+                            Toast.makeText(ForumConversationActivity.this,
+                                           "You have already sent connection request to " + messageItem.getPeerInfo().getAlias(),
+                                           Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof InvalidActionException)
+                            Toast.makeText(ForumConversationActivity.this,
+                                           ((InvalidActionException) exception).getMessage(),
+                                           Toast.LENGTH_LONG
+                            ).show();
+                        exception.printStackTrace();
+                    }
+                });
+            }
+
+
+        } catch (Exception e) {
+            return super.onContextItemSelected(item);
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -271,9 +330,26 @@ public class ForumConversationActivity extends HeliosTalkActivity
         if (signedIn()) {
             viewModel.setGroupName(groupName);
             viewModel.setGroupId(groupId);
-            viewModel.setContextId(
-                    egoNetwork.getCurrentContext().getData().toString()
-                            .split("%")[1]);
+
+            UiUtils.observeOnce(viewModel.getContext(), this, context -> {
+                String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
+                if (!cid.equals(context.getId())) {
+                    egoNetwork.setCurrent(egoNetwork.getOrCreateContext(context.getName() + "%" + context.getId()));
+                    if (context instanceof GeneralContextProxy) {
+                        GeneralContextProxy generalContext = (GeneralContextProxy) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
+
+                    } else if (context instanceof LocationContextProxy) {
+                        LocationContextProxy generalContext = (LocationContextProxy) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
+                    }
+                }
+            });
+
             loadIdentityVisibility();
         }
     }
@@ -564,6 +640,11 @@ public class ForumConversationActivity extends HeliosTalkActivity
         }
     }
 
+    @Override
+    public void onSharedContactClicked(View view, ConversationItem messageItem) {
+        throw new NotImplementedException("This functionality is not implemented for forum conversations");
+    }
+
     /**
      * Creates GroupMessageItems from headers loaded from the database.
      * <p>
@@ -647,20 +728,20 @@ public class ForumConversationActivity extends HeliosTalkActivity
             revealSelfMenuItem.setVisible(true);
         }
         forumController.revealSelf(groupId, doReveal,
-                new UiResultExceptionHandler<Void, Exception>(this) {
-                    @Override
-                    public void onResultUi(Void v) {
+                                   new UiResultExceptionHandler<Void, Exception>(this) {
+                                       @Override
+                                       public void onResultUi(Void v) {
 
-                    }
+                                       }
 
-                    @Override
-                    public void onExceptionUi(Exception exception) {
-                        if (exception instanceof DbException)
-                            handleDbException((DbException) exception);
-                        else
-                            LOG.warning(exception.getMessage());
-                    }
-                });
+                                       @Override
+                                       public void onExceptionUi(Exception exception) {
+                                           if (exception instanceof DbException)
+                                               handleDbException((DbException) exception);
+                                           else
+                                               LOG.warning(exception.getMessage());
+                                       }
+                                   });
     }
 
 
@@ -738,28 +819,28 @@ public class ForumConversationActivity extends HeliosTalkActivity
             stringBuilder.append("Your true identity has been revealed in this forum!\n");
         } else {
             stringBuilder.append("Your true identity is concealed in this forum, only the " +
-                    "administrators and moderators of this forum have access in your true " +
-                    "identity!\n");
+                                         "administrators and moderators of this forum have access in your true " +
+                                         "identity!\n");
         }
         info = stringBuilder.toString();
     }
 
     private void leaveForum() {
         forumController.leaveForum(viewModel.getForum().getValue(),
-                new UiResultExceptionHandler<Void, Exception>(this) {
-                    @Override
-                    public void onResultUi(Void v) {
-                        onBackPressed();
-                    }
+                                   new UiResultExceptionHandler<Void, Exception>(this) {
+                                       @Override
+                                       public void onResultUi(Void v) {
+                                           onBackPressed();
+                                       }
 
-                    @Override
-                    public void onExceptionUi(Exception exception) {
-                        if (exception instanceof DbException)
-                            handleDbException((DbException) exception);
-                        else
-                            LOG.warning(exception.getMessage());
-                    }
-                });
+                                       @Override
+                                       public void onExceptionUi(Exception exception) {
+                                           if (exception instanceof DbException)
+                                               handleDbException((DbException) exception);
+                                           else
+                                               LOG.warning(exception.getMessage());
+                                       }
+                                   });
     }
 
     @Override
