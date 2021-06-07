@@ -69,6 +69,7 @@
     <color name="msg_stroke">@color/msg_stroke_light</color>
     <color name="msg_status_bubble_background">#66000000</color>
     <color name="msg_selected_background">@color/helios_accent</color>
+    <color name="msg_link_color">#0645AD</color>
 
     <!-- text colors -->
     <color name="text_link">@color/blue_light</color>
