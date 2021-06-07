@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout4"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <FrameLayout
+        android:id="@+id/avatarFrameView"
+        android:layout_width="@dimen/listitem_picture_frame_size_medium"
+        android:layout_height="@dimen/listitem_picture_frame_size_medium"
+        android:layout_margin="@dimen/listitem_horizontal_margin"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarView"
+            style="@style/ProfileAvatar"
+            android:layout_width="@dimen/listitem_picture_size_medium"
+            android:layout_height="@dimen/listitem_picture_size_medium"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            tools:src="@drawable/ic_person" />
+
+        <ImageView
+            android:id="@+id/groupAvatarView"
+            android:layout_width="@dimen/listitem_picture_size_medium"
+            android:layout_height="@dimen/listitem_picture_size_medium"
+            android:layout_gravity="center|center_vertical|center_horizontal"
+            android:visibility="invisible"
+            tools:src="@drawable/ic_group" />
+    </FrameLayout>
+
+    <com.vanniktech.emoji.EmojiTextView
+        android:id="@+id/chatTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/listitem_vertical_margin"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:maxLines="2"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintEnd_toStartOf="@+id/send"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/avatarFrameView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.187"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="This is a name of the chat" />
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_margin="@dimen/margin_small"
+        android:backgroundTint="@color/blue_elio"
+        android:text="SEND"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider"
+        style="@style/Divider.ContactList"
+        android:layout_width="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/chatTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
