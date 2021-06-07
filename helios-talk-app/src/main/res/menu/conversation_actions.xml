@@ -7,22 +7,11 @@
 		android:icon="@drawable/ic_videocall_white"
 		android:title="@string/video_call_button"
 		app:showAsAction="ifRoom"/>
-	<!--<item
-		android:id="@+id/action_introduction"
-		android:icon="@drawable/introduction_white"
-		android:title="@string/introduction_menu_item"
-		android:enabled="false"
-		app:showAsAction="never"/>-->
 
 	<item
-		android:id="@+id/action_set_alias"
-		android:enabled="false"
-		android:title="@string/set_contact_alias"
-		app:showAsAction="never" />
-
-	<item
-		android:id="@+id/action_delete_all_messages"
-		android:title="@string/delete_all_messages"
+		android:id="@+id/action_share_contact"
+		android:enabled="true"
+		android:title="@string/share_contact"
 		app:showAsAction="never" />
 
 	<item
