@@ -16,9 +16,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import eu.h2020.helios_social.core.context.Context;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.Group;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
 import eu.h2020.helios_social.happ.helios.talk.viewmodel.LiveEvent;
@@ -52,12 +55,13 @@ public class PrivateGroupConversationViewModel extends AndroidViewModel {
     private final MessagingManager messagingManager;
     private final ConversationManager conversationManager;
     private final GroupManager groupManager;
+    private final ContextManager contextManager;
     private final GroupMessageFactory groupMessageFactory;
     private final AttachmentRetriever attachmentRetriever;
 
     @Nullable
     private String groupId = null;
-    private String contextId = null;
+    private final MutableLiveData<Context> context = new MutableLiveData<>();
     private String groupName = null;
     private final MutableLiveData<PrivateGroup> privateGroup =
             new MutableLiveData<>();
@@ -73,6 +77,7 @@ public class PrivateGroupConversationViewModel extends AndroidViewModel {
             MessagingManager messagingManager,
             ConversationManager conversationManager,
             GroupManager groupManager,
+            ContextManager contextManager,
             GroupMessageFactory groupMessageFactory,
             AttachmentRetriever attachmentRetriever) {
         super(application);
@@ -81,6 +86,7 @@ public class PrivateGroupConversationViewModel extends AndroidViewModel {
         this.messagingManager = messagingManager;
         this.conversationManager = conversationManager;
         this.groupManager = groupManager;
+        this.contextManager = contextManager;
         this.groupMessageFactory = groupMessageFactory;
         groupDisolved.setValue(false);
     }
@@ -93,16 +99,27 @@ public class PrivateGroupConversationViewModel extends AndroidViewModel {
         if (this.groupId == null) {
             this.groupId = groupId;
             loadGroup(groupId);
+            loadContext(groupId);
         } else if (!groupId.equals(this.groupId)) {
             throw new IllegalStateException();
         }
     }
 
 
-    void setContextId(String contextId) {
-        if (this.contextId == null) {
-            this.contextId = contextId;
-        }
+    private void loadContext(String groupId) {
+        dbExecutor.execute(() -> {
+            try {
+                long start = now();
+                Group group = conversationManager.getContactGroup(groupId);
+                Context currentContext = contextManager.getContext(group.getContextId());
+                context.postValue(currentContext);
+                logDuration(LOG, "Loading context", start);
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+            } catch (FormatException e) {
+                logException(LOG, WARNING, e);
+            }
+        });
     }
 
     void setGroupName(String groupName) {
@@ -209,5 +226,9 @@ public class PrivateGroupConversationViewModel extends AndroidViewModel {
 
     LiveEvent<GroupMessageHeader> getAddedGroupMessage() {
         return addedHeader;
+    }
+
+    LiveData<Context> getContext() {
+        return context;
     }
 }
