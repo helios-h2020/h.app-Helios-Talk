@@ -22,6 +22,9 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
+import java.util.logging.Logger;
+
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
@@ -41,119 +44,126 @@ import static java.util.Objects.requireNonNull;
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
 public class NicknameFragment extends BaseFragment {
+    private static final String TAG = NicknameFragment.class.getName();
+    private final Logger LOG = Logger.getLogger(TAG);
 
-	private static final String TAG = NicknameFragment.class.getName();
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
-	@Inject
-	ViewModelProvider.Factory viewModelFactory;
+    private AddContactViewModel viewModel;
 
-	private AddContactViewModel viewModel;
+    private TextInputLayout contactNameLayout;
+    private TextInputEditText contactNameInput;
 
-	private TextInputLayout contactNameLayout;
-	private TextInputEditText contactNameInput;
+    private TextInputLayout messageLayout;
+    private TextInputEditText messageInput;
+    private Button addButton;
+    private ProgressBar progressBar;
 
-	private TextInputLayout messageLayout;
-	private TextInputEditText messageInput;
-	private Button addButton;
-	private ProgressBar progressBar;
+    @Override
+    public String getUniqueTag() {
+        return TAG;
+    }
 
-	@Override
-	public String getUniqueTag() {
-		return TAG;
-	}
+    @Override
+    public void injectFragment(ActivityComponent component) {
+        component.inject(this);
+    }
 
-	@Override
-	public void injectFragment(ActivityComponent component) {
-		component.inject(this);
-	}
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        if (getActivity() == null || getContext() == null) return null;
 
-	@Nullable
-	@Override
-	public View onCreateView(LayoutInflater inflater,
-			@Nullable ViewGroup container,
-			@Nullable Bundle savedInstanceState) {
-		if (getActivity() == null || getContext() == null) return null;
+        View v = inflater.inflate(R.layout.fragment_nickname,
+                                  container, false);
 
-		View v = inflater.inflate(R.layout.fragment_nickname,
-				container, false);
+        viewModel = ViewModelProviders.of(getActivity(), viewModelFactory)
+                .get(AddContactViewModel.class);
 
-		viewModel = ViewModelProviders.of(getActivity(), viewModelFactory)
-				.get(AddContactViewModel.class);
+        contactNameLayout = v.findViewById(R.id.contactNameLayout);
+        contactNameInput = v.findViewById(R.id.contactNameInput);
 
-		contactNameLayout = v.findViewById(R.id.contactNameLayout);
-		contactNameInput = v.findViewById(R.id.contactNameInput);
+        messageLayout = v.findViewById(R.id.messageLayout);
+        messageInput = v.findViewById(R.id.messageInput);
 
-		messageLayout = v.findViewById(R.id.messageLayout);
-		messageInput = v.findViewById(R.id.messageInput);
+        addButton = v.findViewById(R.id.addButton);
+        addButton.setOnClickListener(view -> onAddButtonClicked());
 
-		addButton = v.findViewById(R.id.addButton);
-		addButton.setOnClickListener(view -> onAddButtonClicked());
+        progressBar = v.findViewById(R.id.progressBar);
 
-		progressBar = v.findViewById(R.id.progressBar);
+        return v;
+    }
 
-		return v;
-	}
+    @Nullable
+    private String getNicknameOrNull() {
+        Editable text = contactNameInput.getText();
+        if (text == null || text.toString().trim().length() == 0) {
+            contactNameLayout.setError(getString(R.string.nickname_missing));
+            contactNameInput.requestFocus();
+            return null;
+        }
+        String name = text.toString().trim();
+        if (utf8IsTooLong(name, MAX_IDENTITY_NAME_LENGTH)) {
+            contactNameLayout.setError(getString(R.string.name_too_long));
+            contactNameInput.requestFocus();
+            return null;
+        }
+        contactNameLayout.setError(null);
+        return name;
+    }
 
-	@Nullable
-	private String getNicknameOrNull() {
-		Editable text = contactNameInput.getText();
-		if (text == null || text.toString().trim().length() == 0) {
-			contactNameLayout.setError(getString(R.string.nickname_missing));
-			contactNameInput.requestFocus();
-			return null;
-		}
-		String name = text.toString().trim();
-		if (utf8IsTooLong(name, MAX_IDENTITY_NAME_LENGTH)) {
-			contactNameLayout.setError(getString(R.string.name_too_long));
-			contactNameInput.requestFocus();
-			return null;
-		}
-		contactNameLayout.setError(null);
-		return name;
-	}
+    @Nullable
+    private String getMessage() {
+        Editable text = messageInput.getText();
 
-	@Nullable
-	private String getMessage() {
-		Editable text = messageInput.getText();
+        String message = text.toString().trim();
+        if (utf8IsTooLong(message, MAX_SHORT_MESSAGE_LENGTH)) {
+            messageLayout.setError(getString(R.string.message_too_long));
+            messageInput.requestFocus();
+            return null;
+        }
+        messageLayout.setError(null);
+        return message;
+    }
 
-		String message = text.toString().trim();
-		if (utf8IsTooLong(message, MAX_SHORT_MESSAGE_LENGTH)) {
-			messageLayout.setError(getString(R.string.message_too_long));
-			messageInput.requestFocus();
-			return null;
-		}
-		messageLayout.setError(null);
-		return message;
-	}
+    private void onAddButtonClicked() {
+        String name = getNicknameOrNull();
+        if (name == null) return;  // invalid nickname
+        String message = getMessage();
 
-	private void onAddButtonClicked() {
-		String name = getNicknameOrNull();
-		if (name == null) return;  // invalid nickname
-		String message = getMessage();
+        addButton.setVisibility(INVISIBLE);
+        progressBar.setVisibility(VISIBLE);
 
-		addButton.setVisibility(INVISIBLE);
-		progressBar.setVisibility(VISIBLE);
+        viewModel.getAddContactResult()
+                .observe(getViewLifecycleOwner(), result -> {
+                    if (result == null) {
+                        LOG.info("RESULT IN CONNECTION IS NULL ");
+                        return;
+                    }
+                    if (result.hasError()) {
+                        LOG.info("RESULT IN CONNECTION HAS ERROR " + result.getException());
+                        handleException(name,
+                                        requireNonNull(result.getException()));
+                    } else {
+                        LOG.info("NO ERROR AT ALL ");
+                        showPendingContactListActivity();
+                    }
+                });
+        viewModel.addContact(name, message);
+    }
 
-		viewModel.getAddContactResult()
-				.observe(getViewLifecycleOwner(), result -> {
-					if (result == null) return;
-					if (result.hasError())
-						handleException(name,
-								requireNonNull(result.getException()));
-					else
-						showPendingContactListActivity();
-				});
-		viewModel.addContact(name, message);
-	}
+    private void showPendingContactListActivity() {
+        Intent intent = new Intent(getActivity(),
+                                   PendingContactListActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
-	private void showPendingContactListActivity() {
-		Intent intent = new Intent(getActivity(),
-				PendingContactListActivity.class);
-		startActivity(intent);
-		finish();
-	}
+    private void handleException(String name, Exception e) {
 
-	private void handleException(String name, Exception e) {
 		/*if (e instanceof ContactExistsException) {
 			ContactExistsException ce = (ContactExistsException) e;
 			handleExistingContact(name, ce.);
@@ -170,7 +180,7 @@ public class NicknameFragment extends BaseFragment {
 			Toast.makeText(getContext(), stringRes, LENGTH_LONG).show();
 			finish();
 		}*/
-	}
+    }
 
 	/*private void handleExistingContact(String name, Author existing) {
 		/*OnClickListener listener = (d, w) -> {
@@ -195,38 +205,38 @@ public class NicknameFragment extends BaseFragment {
 				R.string.duplicate_link_dialog_text_1, listener);
 	}*/
 
-	private void showSameLinkDialog(String name1, String name2,
-			@StringRes int existsRes, OnClickListener samePersonListener) {
-		Context ctx = requireContext();
-		Builder b = new Builder(ctx, R.style.HeliosDialogTheme_Neutral);
-		b.setTitle(getString(R.string.duplicate_link_dialog_title));
-		String msg = getString(existsRes, name1) + "\n\n" +
-				getString(R.string.duplicate_link_dialog_text_2, name2, name1);
-		b.setMessage(msg);
-		b.setPositiveButton(R.string.same_person_button, samePersonListener);
-		b.setNegativeButton(R.string.different_person_button, (d, w) -> {
-			d.dismiss();
-			showWarningDialog(name1, name2);
-		});
-		b.setCancelable(false);
-		b.show();
-	}
+    private void showSameLinkDialog(String name1, String name2,
+                                    @StringRes int existsRes, OnClickListener samePersonListener) {
+        Context ctx = requireContext();
+        Builder b = new Builder(ctx, R.style.HeliosDialogTheme_Neutral);
+        b.setTitle(getString(R.string.duplicate_link_dialog_title));
+        String msg = getString(existsRes, name1) + "\n\n" +
+                getString(R.string.duplicate_link_dialog_text_2, name2, name1);
+        b.setMessage(msg);
+        b.setPositiveButton(R.string.same_person_button, samePersonListener);
+        b.setNegativeButton(R.string.different_person_button, (d, w) -> {
+            d.dismiss();
+            showWarningDialog(name1, name2);
+        });
+        b.setCancelable(false);
+        b.show();
+    }
 
-	private void showWarningDialog(String name1, String name2) {
-		Context ctx = requireContext();
-		Builder b = new Builder(ctx, R.style.HeliosDialogTheme);
-		Drawable icon = getDrawable(ctx, R.drawable.alerts_and_states_error);
-		setTint(requireNonNull(icon), getColor(ctx, R.color.color_primary));
-		b.setIcon(icon);
-		b.setTitle(getString(R.string.duplicate_link_dialog_title));
-		b.setMessage(
-				getString(R.string.duplicate_link_dialog_text_3, name1, name2));
-		b.setPositiveButton(R.string.ok, (d, w) -> {
-			d.dismiss();
-			finish();
-		});
-		b.setCancelable(false);
-		b.show();
-	}
+    private void showWarningDialog(String name1, String name2) {
+        Context ctx = requireContext();
+        Builder b = new Builder(ctx, R.style.HeliosDialogTheme);
+        Drawable icon = getDrawable(ctx, R.drawable.alerts_and_states_error);
+        setTint(requireNonNull(icon), getColor(ctx, R.color.color_primary));
+        b.setIcon(icon);
+        b.setTitle(getString(R.string.duplicate_link_dialog_title));
+        b.setMessage(
+                getString(R.string.duplicate_link_dialog_text_3, name1, name2));
+        b.setPositiveButton(R.string.ok, (d, w) -> {
+            d.dismiss();
+            finish();
+        });
+        b.setCancelable(false);
+        b.show();
+    }
 
 }
