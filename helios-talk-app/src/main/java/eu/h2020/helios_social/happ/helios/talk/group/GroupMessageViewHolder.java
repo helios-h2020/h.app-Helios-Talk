@@ -1,10 +1,13 @@
 package eu.h2020.helios_social.happ.helios.talk.group;
 
 import android.content.Context;
+import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.Nullable;
@@ -24,7 +27,7 @@ import eu.h2020.helios_social.happ.helios.talk.view.AuthorView;
 
 @UiThread
 @NotNullByDefault
-public class GroupMessageViewHolder extends ViewHolder {
+public class GroupMessageViewHolder extends ViewHolder implements View.OnCreateContextMenuListener {
 
     private final ImageAdapter adapter;
     protected final ConversationListener listener;
@@ -54,7 +57,7 @@ public class GroupMessageViewHolder extends ViewHolder {
         list = v.findViewById(R.id.imageList);
         list.setRecycledViewPool(imageViewPool);
         layoutConstraints.clone(v.getContext(),
-                R.layout.list_item_group_conversation_msg);
+                                R.layout.list_item_group_conversation_msg);
         adapter = new ImageAdapter(v.getContext(), listener);
         list.setAdapter(adapter);
         list.addItemDecoration(imageItemDecoration);
@@ -67,6 +70,9 @@ public class GroupMessageViewHolder extends ViewHolder {
         author.setAuthor(item.getPeerInfo());
         long timestamp = item.getTime();
         author.setDate(timestamp);
+        if (item.getPeerInfo().getAlias() != null) {
+            author.setOnCreateContextMenuListener(this);
+        }
 
         if (item.getAttachmentList().size() > 0) {
             text.setText(item.getText());
@@ -98,4 +104,9 @@ public class GroupMessageViewHolder extends ViewHolder {
         return itemKey;
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(Menu.NONE, R.id.action_send_connection_request,
+                 Menu.NONE, R.string.send_connection_request);
+    }
 }
