@@ -1,6 +1,7 @@
 package eu.h2020.helios_social.happ.helios.talk.conversation;
 
 import android.content.Context;
+import android.util.Log;
 
 
 import javax.annotation.Nullable;
@@ -8,15 +9,20 @@ import javax.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.lifecycle.LiveData;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.GroupMessage;
+import eu.h2020.helios_social.modules.groupcommunications.api.peer.PeerInfo;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationMessageVisitor;
 
+import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.CONTACT;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.IMAGES;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.TEXT;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.VIDEOCALL;
@@ -47,7 +53,7 @@ class ConversationVisitor implements
         if (!h.isIncoming()) {
             if (h.getMessageType() == VIDEOCALL) {
                 String text = ctx.getString(R.string.video_request_sent,
-                        contactName.getValue());
+                                            contactName.getValue());
                 item = new VideoCallConversationItem(
                         R.layout.list_item_conversation_videocall_notice_out,
                         text,
@@ -56,6 +62,13 @@ class ConversationVisitor implements
                 item = new ConversationMessageItem(
                         R.layout.list_item_conversation_msg_out,
                         h);
+            } else if (h.getMessageType() == CONTACT) {
+                String text = ctx.getString(R.string.contact_sent,
+                                            contactName.getValue());
+                item = new SharedContactConversationItem(
+                        R.layout.list_item_conversation_share_contact_out,
+                        text,
+                        h);
             } else {
                 item = new ConversationMessageItem(
                         R.layout.list_item_conversation_msg_out, h);
@@ -63,7 +76,7 @@ class ConversationVisitor implements
         } else {
             if (h.getMessageType() == VIDEOCALL) {
                 String text = ctx.getString(R.string.video_request_received,
-                        contactName.getValue());
+                                            contactName.getValue());
                 item = new VideoCallConversationItem(
                         R.layout.list_item_conversation_videocall_notice_in,
                         text,
@@ -71,6 +84,13 @@ class ConversationVisitor implements
             } else if (h.getMessageType() == IMAGES) {
                 item = new ConversationMessageItem(
                         R.layout.list_item_conversation_msg_in,
+                        h);
+            } else if (h.getMessageType() == CONTACT) {
+                String text = ctx.getString(R.string.contact_received,
+                                            contactName.getValue());
+                item = new SharedContactConversationItem(
+                        R.layout.list_item_conversation_share_contact_in,
+                        text,
                         h);
             } else {
                 item = new ConversationMessageItem(
@@ -85,8 +105,12 @@ class ConversationVisitor implements
         }
         if (h.hasText()) {
             text = textCache.getText(h.getMessageId());
-            if (text != null && h.getMessageType() != VIDEOCALL) item.setText(text);
-            if (text != null && h.getMessageType() == VIDEOCALL) {
+            if (text != null && h.getMessageType() != VIDEOCALL && h.getMessageType() != CONTACT)
+                item.setText(text);
+            if (text != null && h.getMessageType() == CONTACT) {
+                PeerInfo peerInfo = new Gson().fromJson(text, PeerInfo.class);
+                ((SharedContactConversationItem) item).setPeerInfo(peerInfo);
+            } else if (text != null && h.getMessageType() == VIDEOCALL) {
                 ((VideoCallConversationItem) item).setRoomId(text);
             }
         } else {
