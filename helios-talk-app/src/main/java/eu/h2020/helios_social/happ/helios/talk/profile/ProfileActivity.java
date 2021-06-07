@@ -24,8 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
@@ -39,14 +38,13 @@ import eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplication;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
+import eu.h2020.helios_social.modules.contentawareprofiling.interestcategories.InterestCategories;
+import eu.h2020.helios_social.modules.groupcommunications.api.mining.MiningManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
 import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
-import eu.h2020.helios_social.modules.contentawareprofiling.profile.CoarseInterestsProfile;
-import eu.h2020.helios_social.modules.contentawareprofiling.profile.FineInterestsProfile;
-import eu.h2020.helios_social.modules.contentawareprofiling.profile.Interest;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.mining.ContentAwareProfilingType;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.Profile;
@@ -83,6 +81,8 @@ public class ProfileActivity extends HeliosTalkActivity {
     volatile ContextualEgoNetwork egoNetwork;
     @Inject
     volatile SettingsManager settingsManager;
+    @Inject
+    volatile MiningManager miningManager;
 
     private ImageView avatar;
     private EditText nickname;
@@ -362,23 +362,16 @@ public class ProfileActivity extends HeliosTalkActivity {
     private void loadContentAwareProfilingInterests() {
         try {
             Settings settings = settingsManager.getSettings(SETTINGS_NAMESPACE);
-            ContentAwareProfilingType capType = ContentAwareProfilingType.fromValue(settings.getInt(PREF_CONTENT_PROFILING, 0));
-            if (capType.equals(ContentAwareProfilingType.COARSE_INTEREST_RPOFILE)) {
-                ArrayList<Interest> extracted_interests =
-                        egoNetwork.getEgo().getOrCreateInstance(CoarseInterestsProfile.class).getInterests();
-                if (extracted_interests.size() > 0) {
-                    Collections.sort(extracted_interests);
-
-                    profilerInterests.setText("profiler: " + extracted_interests.get(0).getName() + "," + "profiler: " + extracted_interests.get(1).getName() + "," + "profiler: " + extracted_interests.get(2).getName() + ",");
-                    profilerInterests.format();
+            ContentAwareProfilingType profilingType = ContentAwareProfilingType.fromValue(settings.getInt(PREF_CONTENT_PROFILING, 0));
+            if (profilingType.getValue() != 0) {
+                List<InterestCategories> interests = miningManager.getSmoothPersonalizedProfile(profilingType);
+                String profilerInterestText = "";
+                for (InterestCategories interest : interests) {
+                    profilerInterestText += "profiler: " + interest.toString() + ",";
                 }
-            } else if (capType.equals(ContentAwareProfilingType.FINE_INTEREST_PROFILE)) {
-                ArrayList<Interest> extracted_interests = egoNetwork.getEgo().getOrCreateInstance(FineInterestsProfile.class).getInterests();
-                if (extracted_interests.size() > 0) {
-                    Collections.sort(extracted_interests);
-                    profilerInterests.setText("profiler: " + extracted_interests.get(0).getName() + "," + "profiler: " + extracted_interests.get(1).getName() + "," + "profiler: " + extracted_interests.get(2).getName() + "," + "profiler: " + extracted_interests.get(3).getName() + ",");
+                profilerInterests.setText(profilerInterestText);
+                if (!profilerInterestText.isEmpty())
                     profilerInterests.format();
-                }
             }
         } catch (DbException e) {
             e.printStackTrace();
