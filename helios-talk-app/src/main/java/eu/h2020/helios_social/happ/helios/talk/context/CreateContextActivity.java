@@ -12,9 +12,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,6 +101,8 @@ public class CreateContextActivity extends HeliosTalkActivity
 	private TextView latitudeTextView;
 	private TextView longitudeTextView;
 	private TextView radiusTextView;
+	private LinearLayout contextLocationLayout;
+	private Spinner contextType;
 
 	// Tracks the status of the location updates request
 	private Boolean mRequestingLocationUpdates;
@@ -151,6 +156,26 @@ public class CreateContextActivity extends HeliosTalkActivity
 
 		createContextButton = findViewById(R.id.createContextButton);
 		createContextButton.setOnClickListener(v -> createContext());
+
+		contextLocationLayout = findViewById(R.id.context_location_layout);
+
+		contextType = findViewById(R.id.context_type);
+		contextType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				if (position == 0) {
+					contextLocationLayout.setVisibility(View.GONE);
+				} else if (position == 1) {
+					contextLocationLayout.setVisibility(View.VISIBLE);
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
+
 		progress = findViewById(R.id.createContextProgressBar);
 
 		// Locate the UI widgets.
