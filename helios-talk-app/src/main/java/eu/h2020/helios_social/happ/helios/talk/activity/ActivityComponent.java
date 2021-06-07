@@ -14,7 +14,6 @@ import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFrag
 import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepOne;
 import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepThree;
 import eu.h2020.helios_social.happ.helios.talk.account.onboarding.OnBoardingFragmentStepTwo;
-import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentModule;
 import eu.h2020.helios_social.happ.helios.talk.chat.ChatListFragment;
 import eu.h2020.helios_social.happ.helios.talk.contact.ContactListFragment;
 import eu.h2020.helios_social.happ.helios.talk.contact.connection.AddContactActivity;
@@ -27,7 +26,10 @@ import eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListAct
 import eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.sharing.InvitingContactsFragment;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity;
+import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationModule;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
+import eu.h2020.helios_social.happ.helios.talk.conversation.sharecontacts.ShareContactActivity;
+import eu.h2020.helios_social.happ.helios.talk.conversation.sharecontacts.ShareContactFragment;
 import eu.h2020.helios_social.happ.helios.talk.favourites.FavouritesFragment;
 import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumModule;
@@ -55,6 +57,9 @@ import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
 import eu.h2020.helios_social.happ.helios.talk.search.SearchModule;
 import eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity;
 import eu.h2020.helios_social.happ.helios.talk.settings.SettingsFragment;
+import eu.h2020.helios_social.happ.helios.talk.share.ShareContentActivity;
+import eu.h2020.helios_social.happ.helios.talk.share.ShareContentModule;
+import eu.h2020.helios_social.happ.helios.talk.shared.SharedModule;
 import eu.h2020.helios_social.happ.helios.talk.splash.SplashScreenActivity;
 
 import dagger.Component;
@@ -67,7 +72,10 @@ import dagger.Component;
                 CreateForumModule.class,
                 SearchModule.class,
                 ForumModule.class,
-                ForumMembershipModule.class
+                ConversationModule.class,
+                SharedModule.class,
+                ForumMembershipModule.class,
+                ShareContentModule.class
         },
         dependencies = AndroidComponent.class)
 public interface ActivityComponent {
@@ -83,6 +91,8 @@ public interface ActivityComponent {
     void inject(NavDrawerActivity activity);
 
     void inject(ConversationActivity activity);
+
+    void inject(ShareContactActivity activity);
 
     void inject(ImageActivity activity);
 
@@ -113,6 +123,8 @@ public interface ActivityComponent {
     void inject(AddContactActivity activity);
 
     void inject(PendingContactListActivity activity);
+
+    void inject(ShareContentActivity activity);
 
     // Fragments
 
@@ -149,6 +161,8 @@ public interface ActivityComponent {
     void inject(CreateForumFragment fragment);
 
     void inject(ForumInviteFragment fragment);
+
+    void inject(ShareContactFragment fragment);
 
     void inject(LinkExchangeFragment fragment);
 
