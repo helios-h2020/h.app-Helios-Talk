@@ -16,9 +16,12 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import eu.h2020.helios_social.core.context.Context;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.Group;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
 import eu.h2020.helios_social.happ.helios.talk.viewmodel.LiveEvent;
@@ -55,6 +58,8 @@ public class ForumConversationViewModel extends AndroidViewModel {
     private final GroupManager groupManager;
     private final GroupMessageFactory groupMessageFactory;
     private final AttachmentRetriever attachmentRetriever;
+    private final ContextManager contextManager;
+    private final MutableLiveData<Context> context = new MutableLiveData<>();
 
     @Nullable
     private String groupId = null;
@@ -76,6 +81,7 @@ public class ForumConversationViewModel extends AndroidViewModel {
             MessagingManager messagingManager,
             ConversationManager conversationManager,
             GroupManager groupManager,
+            ContextManager contextManager,
             GroupMessageFactory groupMessageFactory,
             AttachmentRetriever attachmentRetriever) {
         super(application);
@@ -83,6 +89,7 @@ public class ForumConversationViewModel extends AndroidViewModel {
         this.messagingManager = messagingManager;
         this.conversationManager = conversationManager;
         this.groupManager = groupManager;
+        this.contextManager = contextManager;
         this.groupMessageFactory = groupMessageFactory;
         this.attachmentRetriever = attachmentRetriever;
         forumDisolved.setValue(false);
@@ -96,16 +103,27 @@ public class ForumConversationViewModel extends AndroidViewModel {
         if (this.groupId == null) {
             this.groupId = groupId;
             loadForum(groupId);
+            loadContext(groupId);
         } else if (!groupId.equals(this.groupId)) {
             throw new IllegalStateException();
         }
     }
 
-
-    void setContextId(String contextId) {
-        if (this.contextId == null) {
-            this.contextId = contextId;
-        }
+    private void loadContext(String groupId) {
+        dbExecutor.execute(() -> {
+            try {
+                long start = now();
+                Group group = conversationManager.getContactGroup(groupId);
+                Context currentContext = contextManager.getContext(group.getContextId());
+                this.contextId = currentContext.getId();
+                context.postValue(currentContext);
+                logDuration(LOG, "Loading context", start);
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+            } catch (FormatException e) {
+                logException(LOG, WARNING, e);
+            }
+        });
     }
 
     void setGroupName(String groupName) {
@@ -220,5 +238,9 @@ public class ForumConversationViewModel extends AndroidViewModel {
 
     LiveEvent<GroupMessageHeader> getAddedGroupMessage() {
         return addedHeader;
+    }
+
+    LiveData<Context> getContext() {
+        return context;
     }
 }
