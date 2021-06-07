@@ -100,21 +100,7 @@
         <activity
             android:name="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
             android:launchMode="singleTask"
-            android:theme="@style/HeliosTheme.NoActionBar">
-            <intent-filter android:label="@string/add_contact_remotely_title_case">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="helios" />
-            </intent-filter>
-            <intent-filter android:label="@string/add_contact_remotely_title_case">
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/HeliosTheme.NoActionBar"></activity>
 
         <activity
             android:name="eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity"
@@ -125,6 +111,33 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
+        </activity>
+
+        <activity
+            android:name="eu.h2020.helios_social.happ.helios.talk.share.ShareContentActivity"
+            android:label="@string/share_content_to_helios_talk_hint"
+            android:theme="@style/HeliosTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -198,6 +211,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity" />
+        </activity>
+
+        <activity
+            android:name=".conversation.sharecontacts.ShareContactActivity"
+            android:label="@string/share_contact"
+            android:parentActivityName=".conversation.ConversationActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".conversation.ConversationActivity" />
         </activity>
 
         <activity
@@ -296,9 +319,20 @@
 
         <activity
             android:name="eu.h2020.helios_social.happ.helios.talk.contact.connection.AddContactActivity"
-            android:label="@string/add_contact_remotely_title_case"
+            android:label="@string/add_contact_remotely_title"
             android:theme="@style/HeliosTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "helios://" -->
+                <data
+                    android:host="helios-social.com"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity"
