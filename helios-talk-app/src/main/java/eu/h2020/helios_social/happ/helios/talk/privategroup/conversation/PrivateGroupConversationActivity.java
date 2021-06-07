@@ -1,6 +1,7 @@
 package eu.h2020.helios_social.happ.helios.talk.privategroup.conversation;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -35,6 +36,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
@@ -43,15 +46,25 @@ import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
 import eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
+import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
+import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationListener;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
+import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
+import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
+import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.ContactExistsException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.InvalidActionException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.db.PendingContactExistsException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
@@ -111,6 +124,8 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     EventBus eventBus;
     @Inject
     ConversationManager conversationManager;
+    @Inject
+    ConnectionController connectionController;
 
     private PrivateGroupConversationViewModel viewModel;
     private AttachmentRetriever attachmentRetriever;
@@ -165,7 +180,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
             if (deleted) finish();
         });
         viewModel.getAddedGroupMessage().observeEvent(this,
-                this::onAddedGroupMessage);
+                                                      this::onAddedGroupMessage);
 
         setContentView(R.layout.activity_group_conversation);
 
@@ -190,13 +205,60 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         textInput = findViewById(R.id.text_input_container);
         ImagePreview imagePreview = findViewById(R.id.imagePreview);
         sendController = new TextAttachmentController(this, textInput,
-                imagePreview, this);
+                                                      imagePreview, this);
         ((TextAttachmentController) sendController).setImagesSupported();
 
         textInput.setSendController(sendController);
         textInput.setMaxTextLength(MAX_MESSAGE_TEXT_LENGTH);
         textInput.setReady(true);
         textInput.setOnKeyboardShownListener(this::scrollToBottom);
+
+        registerForContextMenu(list);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position = -1;
+        try {
+            position = adapter.getPosition();
+            GroupMessageItem messageItem = adapter.getItemAt(position);
+            if (messageItem != null) {
+                connectionController.sendConnectionRequest(messageItem.getPeerInfo(), new UiResultExceptionHandler<Void, Exception>(this) {
+                    @Override
+                    public void onResultUi(Void v) {
+                        Toast.makeText(PrivateGroupConversationActivity.this,
+                                       "Connection Request to " + messageItem.getPeerInfo().getAlias() + " has been sent!",
+                                       Toast.LENGTH_LONG
+                        ).show();
+                    }
+
+                    @Override
+                    public void onExceptionUi(Exception exception) {
+                        if (exception instanceof ContactExistsException)
+                            Toast.makeText(PrivateGroupConversationActivity.this,
+                                           "You are already Connected with " + messageItem.getPeerInfo().getAlias(),
+                                           Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof PendingContactExistsException)
+                            Toast.makeText(PrivateGroupConversationActivity.this,
+                                           "You have already sent connection request to " + messageItem.getPeerInfo().getAlias(),
+                                           Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof InvalidActionException)
+                            Toast.makeText(PrivateGroupConversationActivity.this,
+                                           ((InvalidActionException) exception).getMessage(),
+                                           Toast.LENGTH_LONG
+                            ).show();
+                        exception.printStackTrace();
+                    }
+                });
+            }
+
+
+        } catch (Exception e) {
+            return super.onContextItemSelected(item);
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -245,9 +307,27 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         if (signedIn()) {
             viewModel.setGroupName(groupName);
             viewModel.setGroupId(groupId);
-            viewModel.setContextId(
-                    egoNetwork.getCurrentContext().getData().toString()
-                            .split("%")[1]);
+
+            UiUtils.observeOnce(viewModel.getContext(), this, context -> {
+                String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
+                if (!cid.equals(context.getId())) {
+                    egoNetwork.setCurrent(egoNetwork.getOrCreateContext(context.getName() + "%" + context.getId()));
+                    if (context instanceof GeneralContextProxy) {
+                        GeneralContextProxy generalContext = (GeneralContextProxy) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
+
+                    } else if (context instanceof LocationContextProxy) {
+                        LocationContextProxy generalContext = (LocationContextProxy) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
+                    }
+                }
+            });
+
+
         }
     }
 
@@ -487,6 +567,11 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onSharedContactClicked(View view, ConversationItem messageItem) {
+        throw new NotImplementedException("This functionality is not implemented for forum conversations");
     }
 
     @Override
