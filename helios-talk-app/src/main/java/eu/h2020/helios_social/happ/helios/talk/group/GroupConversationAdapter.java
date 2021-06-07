@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -32,6 +33,7 @@ public class GroupConversationAdapter extends
     private ConversationListener listener;
     private final RecyclerView.RecycledViewPool imageViewPool;
     private final ImageItemDecoration imageItemDecoration;
+    private int position;
 
     @Nullable
     private SelectionTracker<String> tracker = null;
@@ -70,7 +72,7 @@ public class GroupConversationAdapter extends
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 type, viewGroup, false);
         return new GroupMessageViewHolder(v, listener,
-                imageViewPool, imageItemDecoration);
+                                          imageViewPool, imageItemDecoration);
     }
 
     @Override
@@ -78,6 +80,13 @@ public class GroupConversationAdapter extends
         GroupMessageItem item = items.get(position);
         boolean selected = tracker != null && tracker.isSelected(item.getKey());
         ui.bind(ctx, item, selected);
+        ui.author.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(ui.getAdapterPosition());
+                return false;
+            }
+        });
     }
 
     @Override
@@ -135,5 +144,19 @@ public class GroupConversationAdapter extends
 
     public boolean isScrolledToBottom(LinearLayoutManager layoutManager) {
         return layoutManager.findLastVisibleItemPosition() == items.size() - 1;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull GroupMessageViewHolder holder) {
+        holder.author.setOnLongClickListener(null);
+        super.onViewRecycled(holder);
     }
 }
