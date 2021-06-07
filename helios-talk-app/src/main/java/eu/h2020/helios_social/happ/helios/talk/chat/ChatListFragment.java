@@ -91,6 +91,7 @@ public class ChatListFragment extends HeliosContextFragment
 
     private ChatListAdapter adapter;
     private HeliosTalkRecyclerView list;
+    private FabSpeedDial speedDial;
 
     public static ChatListFragment newInstance() {
         Bundle args = new Bundle();
@@ -117,8 +118,8 @@ public class ChatListFragment extends HeliosContextFragment
         super.onCreateView(inflater, container, savedInstanceState);
 
         View contentView = inflater.inflate(R.layout.fragment_chat_list,
-                container, false);
-        FabSpeedDial speedDial = contentView.findViewById(R.id.speedDial);
+                                            container, false);
+        speedDial = contentView.findViewById(R.id.speedDial);
         speedDial.addOnMenuItemClickListener(this);
 
         adapter = new ChatListAdapter(requireContext());
@@ -140,7 +141,7 @@ public class ChatListFragment extends HeliosContextFragment
         ImageView searchIcon = contentView.findViewById(R.id.searchIcon);
         searchIcon.setOnClickListener(l -> {
             Intent searchActivity = new Intent(getContext(),
-                    SearchActivity.class);
+                                               SearchActivity.class);
             startActivity(searchActivity);
         });
 
@@ -148,7 +149,7 @@ public class ChatListFragment extends HeliosContextFragment
 
         searchView.setOnClickListener(l -> {
             Intent searchActivity = new Intent(getContext(),
-                    SearchActivity.class);
+                                               SearchActivity.class);
             startActivity(searchActivity);
         });
 
@@ -159,14 +160,13 @@ public class ChatListFragment extends HeliosContextFragment
     public void onStart() {
         super.onStart();
         eventBus.addListener(this);
-        loadChats();
         list.startPeriodicUpdate();
     }
 
-    @SuppressLint("RestrictedApi")
+    @Override
     public void onResume() {
         super.onResume();
-        actionBar.invalidateOptionsMenu();
+        loadChats();
     }
 
     @Override
@@ -189,10 +189,8 @@ public class ChatListFragment extends HeliosContextFragment
                         egoNetwork.getCurrentContext().getData().toString()
                                 .split("%")[1];
 
-
                 HashMap<Node, Double> favourites = miningManager.getNextInteractionRecommendations(
                         egoNetwork.getCurrentContext().getData().toString());
-                LOG.info("FAVOURITES: " + favourites.size());
 
                 List<ContactId> onlineContacts = connectionRegistry.getConnectedContacts();
 
@@ -214,7 +212,7 @@ public class ChatListFragment extends HeliosContextFragment
                                 new ContactListItem(c, group.getId(), isConnected, count);
                         item.setFavourite(true);
                         item.setLastMessageText(getLastMessage(group.getId(),
-                                GroupType.PrivateConversation));
+                                                               GroupType.PrivateConversation));
                         item.setWeight((int) (fav.getValue() * 1000));
 
                         if (count.getMsgCount() > 0) {
@@ -235,10 +233,10 @@ public class ChatListFragment extends HeliosContextFragment
                     boolean isConnected = onlineContacts.contains(c.getId());
                     ContactListItem item =
                             new ContactListItem(c, group.getId(), isConnected,
-                                    count);
+                                                count);
 
                     item.setLastMessageText(getLastMessage(group.getId(),
-                            GroupType.PrivateConversation));
+                                                           GroupType.PrivateConversation));
                     if (count.getMsgCount() > 0)
                         chats.add(item);
                 }
@@ -254,7 +252,7 @@ public class ChatListFragment extends HeliosContextFragment
                                 new GroupItem((PrivateGroup) group, count, false);
 
                         item.setLastMessageText(getLastMessage(group.getId(),
-                                GroupType.PrivateGroup));
+                                                               GroupType.PrivateGroup));
                         chats.add(item);
                     } else {
                         ForumItem item =
@@ -262,7 +260,7 @@ public class ChatListFragment extends HeliosContextFragment
                         System.out.println();
 
                         item.setLastMessageText(getLastMessage(group.getId(),
-                                group.getGroupType()));
+                                                               group.getGroupType()));
                         chats.add(item);
                     }
                 }
@@ -331,6 +329,9 @@ public class ChatListFragment extends HeliosContextFragment
                         Message.Type.VIDEOCALL) && !latest.isIncoming()) {
                     lastMessage = username +
                             "Sent a Video Call";
+                } else if (((MessageHeader) latest).getMessageType().equals(
+                        Message.Type.CONTACT)) {
+                    lastMessage = username + "have shared a contact";
                 } else {
                     lastMessage = username +
                             conversationManager
@@ -350,12 +351,12 @@ public class ChatListFragment extends HeliosContextFragment
                 return;
             case R.id.action_new_group:
                 Intent intent = new Intent(getActivity(),
-                        CreateGroupActivity.class);
+                                           CreateGroupActivity.class);
                 startActivity(intent);
                 return;
             case R.id.action_new_forum:
                 Intent createForumIntent = new Intent(getActivity(),
-                        CreateForumActivity.class);
+                                                      CreateForumActivity.class);
                 startActivity(createForumIntent);
                 return;
         }
