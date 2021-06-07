@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_background_selectable"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/message_bubble_margin">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/message_bubble_margin_tail"
+        android:layout_marginLeft="@dimen/message_bubble_margin_tail"
+        android:layout_marginEnd="@dimen/message_bubble_margin_non_tail"
+        android:layout_marginRight="@dimen/message_bubble_margin_non_tail"
+        android:layout_marginBottom="@dimen/message_bubble_margin"
+        android:background="@drawable/notice_in_bottom"
+        android:elevation="@dimen/message_bubble_elevation">
+
+        <com.vanniktech.emoji.EmojiTextView
+            android:id="@+id/text"
+            style="@style/TextMessage.Notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+            android:layout_marginTop="@dimen/message_bubble_padding_top_inner"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/contact_received" />
+
+        <View
+            android:id="@+id/rectangle_2"
+            android:layout_width="4dp"
+            android:layout_height="28dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
+            android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+            android:background="@drawable/rectangle_2"
+            android:backgroundTint="?android:attr/textColorSecondary"
+            app:layout_constraintBottom_toTopOf="@id/time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text"  />
+
+        <ImageView
+            android:id="@+id/contactIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_contacts"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
+            android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+            android:tint="?android:attr/textColorPrimary"
+            app:layout_constraintBottom_toTopOf="@id/time"
+            app:layout_constraintStart_toEndOf="@id/rectangle_2"
+            app:layout_constraintTop_toBottomOf="@+id/text" />
+
+        <Button
+            android:id="@+id/contact_name"
+            android:textAllCaps="false"
+            style="@style/HeliosButtonFlat.CustomNeutral"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:clickable="true"
+            android:textFontWeight="@integer/google_play_services_version"
+            android:textSize="@dimen/text_size_large"
+            android:gravity="left"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/contactIcon"
+            app:layout_constraintBottom_toTopOf="@id/time"
+            app:layout_constraintTop_toBottomOf="@+id/text"
+            tools:text="@string/contact_placeholder" />
+
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/TextMessage.Timestamp"
+            android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contact_name"
+            tools:text="Dec 24, 13:37" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
