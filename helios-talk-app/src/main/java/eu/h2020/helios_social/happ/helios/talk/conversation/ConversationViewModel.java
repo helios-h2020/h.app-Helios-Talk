@@ -1,10 +1,7 @@
 package eu.h2020.helios_social.happ.helios.talk.conversation;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
-import java.lang.reflect.Array;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -19,12 +16,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import eu.h2020.helios_social.core.context.Context;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
+import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.Group;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchContactException;
-import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.IoExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.settings.Settings;
 import eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsManager;
@@ -66,14 +66,15 @@ public class ConversationViewModel extends AndroidViewModel {
     private final SettingsManager settingsManager;
     private final PrivateMessageFactory privateMessageFactory;
     private final AttachmentRetriever attachmentRetriever;
+    private final ContextManager contextManager;
 
     @Nullable
     private ContactId contactId = null;
     private String contextId = null;
     private String messagingGroupId = null;
     private final MutableLiveData<Contact> contact = new MutableLiveData<>();
-    /*private final LiveData<AuthorId> contactAuthorId =
-            Transformations.map(contact, c -> c.getAuthor().getId());*/
+    private final MutableLiveData<Context> context = new MutableLiveData<>();
+
     private final LiveData<String> contactName =
             Transformations.map(contact, UiUtils::getContactDisplayName);
     private final MutableLiveData<Boolean> imageSupport =
@@ -96,6 +97,7 @@ public class ConversationViewModel extends AndroidViewModel {
                           MessagingManager messagingManager,
                           ConversationManager conversationManager,
                           ContactManager contactManager,
+                          ContextManager contextManager,
                           SettingsManager settingsManager,
                           AttachmentRetriever attachmentRetriever,
                           PrivateMessageFactory privateMessageFactory) {
@@ -103,6 +105,7 @@ public class ConversationViewModel extends AndroidViewModel {
         this.dbExecutor = dbExecutor;
         this.messagingManager = messagingManager;
         this.contactManager = contactManager;
+        this.contextManager = contextManager;
         this.settingsManager = settingsManager;
         this.privateMessageFactory = privateMessageFactory;
         this.conversationManager = conversationManager;
@@ -123,16 +126,10 @@ public class ConversationViewModel extends AndroidViewModel {
         }
     }
 
-
-    void setContextId(String contextId) {
-        if (this.contextId == null) {
-            this.contextId = contextId;
-        }
-    }
-
     void setGroupId(String groupId) {
         if (this.messagingGroupId == null) {
             this.messagingGroupId = groupId;
+            loadContext(messagingGroupId);
         }
     }
 
@@ -149,6 +146,25 @@ public class ConversationViewModel extends AndroidViewModel {
             } catch (NoSuchContactException e) {
                 contactDeleted.postValue(true);
             } catch (DbException e) {
+                logException(LOG, WARNING, e);
+            }
+        });
+    }
+
+    private void loadContext(String groupId) {
+        dbExecutor.execute(() -> {
+            try {
+                long start = now();
+                Group group = conversationManager.getContactGroup(groupId);
+                Context currentContext = contextManager.getContext(group.getContextId());
+                this.contextId = currentContext.getId();
+                context.postValue(currentContext);
+                logDuration(LOG, "Loading context", start);
+            } catch (NoSuchContactException e) {
+                contactDeleted.postValue(true);
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+            } catch (FormatException e) {
                 logException(LOG, WARNING, e);
             }
         });
@@ -257,7 +273,7 @@ public class ConversationViewModel extends AndroidViewModel {
         try {
             Message pm;
             pm = privateMessageFactory.createVideoCallMessage(groupId,
-                    timestamp, room_id);
+                                                              timestamp, room_id);
 
             MessageHeader h = messagingManager.sendPrivateMessage(
                     contactId,
@@ -274,6 +290,9 @@ public class ConversationViewModel extends AndroidViewModel {
         return contact;
     }
 
+    LiveData<Context> getContext() {
+        return context;
+    }
 
     LiveData<String> getContactDisplayName() {
         return contactName;
