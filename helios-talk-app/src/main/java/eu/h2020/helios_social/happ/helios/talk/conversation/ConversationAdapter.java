@@ -69,16 +69,20 @@ class ConversationAdapter
         switch (type) {
             case R.layout.list_item_conversation_msg_in:
                 return new ConversationMessageViewHolder(v, listener, true,
-                        imageViewPool, imageItemDecoration);
+                                                         imageViewPool, imageItemDecoration);
             case R.layout.list_item_conversation_msg_out:
                 return new ConversationMessageViewHolder(v, listener, false,
-                        imageViewPool, imageItemDecoration);
+                                                         imageViewPool, imageItemDecoration);
             case R.layout.list_item_conversation_videocall_notice_out:
                 return new ConversationVideocallViewHolder(v, listener, false);
             case R.layout.list_item_conversation_videocall_notice_in:
                 return new ConversationVideocallViewHolder(v, listener, true);
+            case R.layout.list_item_conversation_share_contact_out:
+                return new SharedContactViewHolder(v, listener, false);
+            case R.layout.list_item_conversation_share_contact_in:
+                return new SharedContactViewHolder(v, listener, true);
             default:
-                throw new IllegalArgumentException("Unknown ConversationItem");
+                throw new IllegalArgumentException("Unknown Conversation Item");
         }
     }
 
@@ -147,9 +151,10 @@ class ConversationAdapter
         for (int i = 0; i < items.size(); i++) {
             ConversationItem item = items.get(i);
             if ((item instanceof ConversationMessageItem ||
-                    item instanceof VideoCallConversationItem) &&
+                    item instanceof VideoCallConversationItem ||
+                    item instanceof SharedContactConversationItem) &&
                     item.getId().equals(messageId)) {
-                return new Pair<>(i, item);
+                return new Pair(i, item);
             }
         }
         return null;
