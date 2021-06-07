@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_invite_to_context"
+        android:icon="@drawable/ic_nearby"
+        android:orderInCategory="2"
+        android:title="@string/invite_contact_to_context"
+        app:showAsAction="never" />
+
+</menu>
