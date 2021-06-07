@@ -16,4 +16,6 @@ public interface ConversationListener {
 
 	void onFavouriteClicked(View view, ConversationItem messageItem);
 
+	void onSharedContactClicked(View view, ConversationItem messageItem);
+
 }
