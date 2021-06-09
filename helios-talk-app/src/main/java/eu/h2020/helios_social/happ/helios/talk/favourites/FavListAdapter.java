@@ -76,7 +76,7 @@ public class FavListAdapter extends HeliosTalkAdapter<FavItem, FavItemViewHolder
 
     @Override
     public int compare(FavItem c1, FavItem c2) {
-        return Long.compare(c1.getTime(), c2.getTime());
+        return -Long.compare(c1.getTime(), c2.getTime());
     }
 
     @Override
