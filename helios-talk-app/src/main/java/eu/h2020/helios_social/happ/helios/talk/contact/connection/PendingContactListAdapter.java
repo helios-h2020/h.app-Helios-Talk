@@ -40,7 +40,7 @@ class PendingContactListAdapter extends
 	public int compare(PendingContactItem item1, PendingContactItem item2) {
 		long timestamp1 = item1.getPendingContact().getTimestamp();
 		long timestamp2 = item2.getPendingContact().getTimestamp();
-		return Long.compare(timestamp1, timestamp2);
+		return -Long.compare(timestamp1, timestamp2);
 	}
 
 	@Override
