@@ -41,7 +41,7 @@ class InvitationListAdapter extends
 			InvitationItem item1, InvitationItem item2) {
 		long timestamp1 = item1.getInvitation().getTimestamp();
 		long timestamp2 = item2.getInvitation().getTimestamp();
-		return Long.compare(timestamp1, timestamp2);
+		return -Long.compare(timestamp1, timestamp2);
 	}
 
 	@Override
