@@ -20,5 +20,4 @@ class ConversationMessageItem extends ConversationItem {
         super(layoutRes, h);
     }
 
-
 }
