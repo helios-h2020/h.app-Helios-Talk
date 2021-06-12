@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/message_bubble_elevation">
+
+    <View
+        android:id="@+id/divider"
+        style="@style/Divider.ThreadItem"
+        android:layout_marginTop="@dimen/margin_small"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <eu.h2020.helios_social.happ.helios.talk.view.AuthorView
+        android:id="@+id/author"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingLeft="@dimen/margin_medium"
+        android:paddingTop="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:paddingRight="@dimen/margin_medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="1"
+        app:persona="normal" />
+
+    <LinearLayout
+        android:id="@+id/attachmentsPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/message_bubble_margin_tail"
+        android:layout_marginLeft="@dimen/message_bubble_margin_tail"
+        android:layout_marginTop="@dimen/message_bubble_margin"
+        android:layout_marginEnd="@dimen/message_bubble_margin_tail"
+        android:layout_marginBottom="@dimen/message_bubble_margin"
+        android:elevation="@dimen/message_bubble_elevation"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/msgContent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/author">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/promptText"
+                style="@style/TextMessage.Notice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+                android:layout_marginTop="@dimen/message_bubble_padding_top_inner"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="@string/file_attachment_shared" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_small"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/rectangle_2"
+                android:layout_width="4dp"
+                android:layout_height="28dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+                android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
+                android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+                android:background="@drawable/rectangle_2"
+                android:backgroundTint="?android:attr/textColorSecondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/fileAttachmentIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+                android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
+                android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+                android:src="@drawable/ic_file_attachment"
+                android:tint="?android:attr/textColorSecondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/rectangle_2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/file_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textFontWeight="@integer/google_play_services_version"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/openButton"
+                app:layout_constraintStart_toEndOf="@id/fileAttachmentIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/attachment_placeholder" />
+
+            <Button
+                android:id="@+id/openButton"
+                style="@style/HeliosButton.Positive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+                android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
+                android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
+                android:layout_weight="1"
+                android:text="@string/open_file"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/msgContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/author"
+        app:layout_constraintTop_toBottomOf="@+id/attachmentsPreview">
+
+        <com.vanniktech.emoji.EmojiTextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:layout_weight="1"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:padding="@dimen/margin_medium"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorLink="?android:attr/textColorPrimary"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/text_size_medium"
+            tools:text="@string/message_placeholder" />
+
+        <ImageView
+            android:id="@+id/favourite"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
+            android:layout_weight="0"
+            android:paddingRight="@dimen/margin_medium"
+            android:src="@drawable/ic_star_disable"
+            app:layout_constrainedWidth="true" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
