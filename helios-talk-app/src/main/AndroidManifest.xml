@@ -76,6 +76,16 @@
             android:enabled="false"
             android:exported="false" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="eu.h2020.helios_social.helios.talk.debug.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <activity
             android:name="eu.h2020.helios_social.happ.helios.talk.login.StartupActivity"
             android:label="@string/app_name"></activity>
