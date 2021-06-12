@@ -81,6 +81,10 @@ class ConversationAdapter
                 return new SharedContactViewHolder(v, listener, false);
             case R.layout.list_item_conversation_share_contact_in:
                 return new SharedContactViewHolder(v, listener, true);
+            case R.layout.list_item_conversation_msg_out_file:
+                return new FileAttachmentViewHolder(v, listener, false);
+            case R.layout.list_item_conversation_msg_in_file:
+                return new FileAttachmentViewHolder(v, listener, true);
             default:
                 throw new IllegalArgumentException("Unknown Conversation Item");
         }

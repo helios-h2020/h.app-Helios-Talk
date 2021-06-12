@@ -14,6 +14,7 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationListener;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ImageItemDecoration;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
@@ -27,7 +28,7 @@ import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 @UiThread
 @NotNullByDefault
 public class GroupConversationAdapter extends
-        HeliosTalkAdapter<GroupMessageItem, GroupMessageViewHolder> implements
+        HeliosTalkAdapter<GroupMessageItem, GroupConversationItemViewHolder> implements
         ItemReturningAdapter<GroupMessageItem> {
 
     private ConversationListener listener;
@@ -51,7 +52,7 @@ public class GroupConversationAdapter extends
     @LayoutRes
     @Override
     public int getItemViewType(int position) {
-        ConversationItem item = items.get(position);
+        GroupMessageItem item = items.get(position);
         return item.getLayout();
     }
 
@@ -67,16 +68,22 @@ public class GroupConversationAdapter extends
     }
 
     @Override
-    public GroupMessageViewHolder onCreateViewHolder(ViewGroup viewGroup,
-                                                     @LayoutRes int type) {
+    public GroupConversationItemViewHolder onCreateViewHolder(ViewGroup viewGroup,
+                                                              @LayoutRes int type) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 type, viewGroup, false);
-        return new GroupMessageViewHolder(v, listener,
-                                          imageViewPool, imageItemDecoration);
+        switch (type) {
+            case R.layout.list_item_group_conversation_file_msg:
+                return new GroupFileMessageViewHolder(v, listener);
+            case R.layout.list_item_group_conversation_msg:
+                return new GroupMessageViewHolder(v, listener, imageViewPool, imageItemDecoration);
+            default:
+                throw new IllegalArgumentException("Unknown Conversation Item");
+        }
     }
 
     @Override
-    public void onBindViewHolder(GroupMessageViewHolder ui, int position) {
+    public void onBindViewHolder(GroupConversationItemViewHolder ui, int position) {
         GroupMessageItem item = items.get(position);
         boolean selected = tracker != null && tracker.isSelected(item.getKey());
         ui.bind(ctx, item, selected);
@@ -155,7 +162,7 @@ public class GroupConversationAdapter extends
     }
 
     @Override
-    public void onViewRecycled(@NonNull GroupMessageViewHolder holder) {
+    public void onViewRecycled(@NonNull GroupConversationItemViewHolder holder) {
         holder.author.setOnLongClickListener(null);
         super.onViewRecycled(holder);
     }
