@@ -151,7 +151,7 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (imageUri != null) {
-            Attachment attachment = new Attachment(imageUri.toString(), null, getContentResolver().getType(imageUri));
+            Attachment attachment = new Attachment(imageUri.toString(), null, getContentResolver().getType(imageUri), imageUri.getPath().replaceAll(".*/", ""));
             List<Attachment> attachments = new ArrayList<>();
             attachments.add(attachment);
             shareContentItem = new ShareContentItem(ShareContentType.IMAGES, attachments, sharedText);
@@ -167,7 +167,8 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
                 attachments.add(new Attachment(
                         imageUri.toString(),
                         null,
-                        getContentResolver().getType(imageUri))
+                        getContentResolver().getType(imageUri),
+                        imageUri.getPath().replaceAll(".*/", ""))
                 );
             }
             shareContentItem = new ShareContentItem(ShareContentType.IMAGES, attachments, sharedText);

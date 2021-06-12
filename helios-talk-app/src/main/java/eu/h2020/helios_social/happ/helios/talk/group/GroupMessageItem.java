@@ -32,9 +32,4 @@ public class GroupMessageItem extends ConversationItem {
         return peerInfo;
     }
 
-    @LayoutRes
-    public int getLayout() {
-        return R.layout.list_item_group_conversation_msg;
-    }
-
 }

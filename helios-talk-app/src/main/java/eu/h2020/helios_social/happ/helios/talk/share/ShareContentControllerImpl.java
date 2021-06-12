@@ -113,11 +113,12 @@ public class ShareContentControllerImpl extends DbControllerImpl implements Shar
                 if (attachmentManager.validateAttachments(attachments)) {
                     long timestamp = System.currentTimeMillis();
 
-                    Message message = privateMessageFactory.createImageAttachmentMessage(
+                    Message message = privateMessageFactory.createAttachmentMessage(
                             groupId,
                             timestamp,
                             text,
-                            attachments);
+                            attachments,
+                            Message.Type.IMAGES);
 
                     messagingManager.sendPrivateMessage(
                             contactId,
@@ -165,9 +166,10 @@ public class ShareContentControllerImpl extends DbControllerImpl implements Shar
                             groupManager.getFakeIdentity(group.getId());
                     long timestamp = System.currentTimeMillis();
 
-                    GroupMessage message = groupMessageFactory.createImageAttachmentMessage(
+                    GroupMessage message = groupMessageFactory.createAttachmentMessage(
                             group.getId(),
                             attachments,
+                            Message.Type.IMAGES,
                             text,
                             timestamp,
                             fakeIdentity.getFirst(),

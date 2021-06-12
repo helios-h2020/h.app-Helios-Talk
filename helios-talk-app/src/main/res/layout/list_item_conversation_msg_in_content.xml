@@ -52,13 +52,13 @@
 
 	<ImageView
 		android:id="@+id/favourite"
-		android:layout_width="20dp"
-		android:layout_height="20dp"
+		android:layout_width="24dp"
+		android:layout_height="24dp"
 		android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
 		android:layout_marginTop="@dimen/message_bubble_padding_top_inner"
 		android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
 		android:layout_marginBottom="@dimen/message_bubble_padding_bottom_inner"
-		android:src="@drawable/ic_disable_heart"
+		android:src="@drawable/ic_star_disable"
 		app:layout_constrainedWidth="true"
 		app:layout_constraintBottom_toTopOf="@+id/statusLayout"
 		app:layout_constraintEnd_toEndOf="parent"

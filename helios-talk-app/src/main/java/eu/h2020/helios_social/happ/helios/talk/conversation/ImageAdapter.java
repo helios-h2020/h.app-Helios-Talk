@@ -60,7 +60,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
         AttachmentItem item = items.get(position);
         // set onClick listener
         imageViewHolder.itemView.setOnClickListener(v -> {
-                    if (listener != null) listener.onAttachmentClicked(v, conversationItem, item);
+                    if (listener != null) listener.onImageClicked(v, conversationItem, item);
                 }
         );
         // bind view holder

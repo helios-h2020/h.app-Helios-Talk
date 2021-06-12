@@ -189,7 +189,7 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
                             // Request permission
                             ActivityCompat
                                     .requestPermissions(
-                                            getParent(),
+                                            SearchActivity.this,
                                             new String[]{
                                                     Manifest.permission.ACCESS_FINE_LOCATION},
                                             REQUEST_PERMISSIONS_REQUEST_CODE);

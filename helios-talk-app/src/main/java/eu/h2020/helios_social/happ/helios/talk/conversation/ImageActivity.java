@@ -81,10 +81,6 @@ public class ImageActivity extends HeliosTalkActivity {
                 .downsample(FIT_CENTER)
                 .transition(withCrossFade())
                 .into(imageView);
-
-            //imageView.setImageURI(uri);
-
-
     }
 
     @Override

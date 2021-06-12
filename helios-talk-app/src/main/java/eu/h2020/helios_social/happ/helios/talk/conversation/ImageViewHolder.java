@@ -1,18 +1,14 @@
 package eu.h2020.helios_social.happ.helios.talk.conversation;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
