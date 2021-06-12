@@ -23,6 +23,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageH
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationMessageVisitor;
 
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.CONTACT;
+import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.FILE_ATTACHMENT;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.IMAGES;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.TEXT;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.VIDEOCALL;
@@ -69,6 +70,13 @@ class ConversationVisitor implements
                         R.layout.list_item_conversation_share_contact_out,
                         text,
                         h);
+            } else if (h.getMessageType() == FILE_ATTACHMENT) {
+                String promptText = ctx.getString(R.string.file_attachment_sent,
+                                                  contactName.getValue());
+                item = new FileAttachmentConversationItem(
+                        R.layout.list_item_conversation_msg_out_file,
+                        h,
+                        promptText);
             } else {
                 item = new ConversationMessageItem(
                         R.layout.list_item_conversation_msg_out, h);
@@ -92,14 +100,22 @@ class ConversationVisitor implements
                         R.layout.list_item_conversation_share_contact_in,
                         text,
                         h);
+            } else if (h.getMessageType() == FILE_ATTACHMENT) {
+                String promptText = ctx.getString(R.string.file_attachment_received,
+                                                  contactName.getValue());
+                item = new FileAttachmentConversationItem(
+                        R.layout.list_item_conversation_msg_in_file,
+                        h,
+                        promptText);
             } else {
                 item = new ConversationMessageItem(
                         R.layout.list_item_conversation_msg_in,
                         h);
             }
         }
+
         String text;
-        if (h.getMessageType() == IMAGES) {
+        if (h.getMessageType() == IMAGES || h.getMessageType() == FILE_ATTACHMENT) {
             List<AttachmentItem> attachments = attachmentCache.getAttachments(h.getMessageId());
             ((ConversationMessageItem) item).setAttachmentList(attachments);
         }
