@@ -138,6 +138,7 @@
     <string name="send">Send</string>
     <string name="allow">Allow</string>
     <string name="open">Open</string>
+    <string name="open_file">Open File</string>
     <string name="no_data">No data</string>
     <string name="ellipsis">…</string>
     <string name="text_too_long">The entered text is too long</string>
@@ -167,6 +168,8 @@
     <string name="message_placeholder">Message Placeholder</string>
     <string name="image_caption_hint">Add a caption (optional)</string>
     <string name="image_attach">Attach image</string>
+    <string name="file_attach">Attach file</string>
+    <string name="capture_image_attach">Capture image from camera</string>
     <string name="image_attach_error">Could not attach image(s)</string>
     <string name="image_attach_error_too_big">Image too big. Limit is %d MB.</string>
     <string name="image_attach_error_invalid_mime_type">Image format unsupported: %s</string>
@@ -201,6 +204,10 @@
     <string name="dialog_title_image_support">You can now send images to this contact</string>
     <string name="dialog_message_image_support">Tap this icon to attach images.</string>
     <string name="messaging_too_many_attachments_toast">Only the first %d images will be sent</string>
+    <string name="attachment_placeholder">file_name.txt</string>
+    <string name="file_attachment_received">%1$s shared a file with you. </string>
+    <string name="file_attachment_sent">You have shared a file with %1$s.</string>
+    <string name="file_attachment_shared">Shared a file.</string>
 
     <!-- Adding Contacts -->
 
@@ -779,5 +786,13 @@
 
     <string name="profiling_metadata_permissions">We need access to read and metadata from picture for optimizing the results of the Profiling Module.
                             The process is run on device and all results are stored locally in the internal memory.</string>
+
+    <!--Turn Server Details (for Video Calls)-->
+    <string name="TURN_URL">turn:77.231.202.135:3478</string>
+    <string name="TURN_user">user1</string>
+    <string name="TURN_credential">user1</string>
+    <string name="STUN_URL">stun:77.231.202.135:3478</string>
+    <string name="API_endpoint">https://77.231.202.135:11794</string>
+
 
 </resources>
