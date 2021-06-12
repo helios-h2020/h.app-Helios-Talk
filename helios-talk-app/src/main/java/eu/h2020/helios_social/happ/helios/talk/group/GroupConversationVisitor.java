@@ -15,6 +15,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.conversation.Conve
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupMessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessageHeader;
 
+import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.FILE_ATTACHMENT;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message.Type.IMAGES;
 
 @UiThread
@@ -35,11 +36,20 @@ public class GroupConversationVisitor implements
 
     @Override
     public GroupMessageItem visitMessageHeader(MessageHeader h) {
-        GroupMessageItem item = new GroupMessageItem(
-                R.layout.list_item_group_conversation_msg,
-                (GroupMessageHeader) h, null);
+        GroupMessageItem item;
 
-        if (h.getMessageType() == IMAGES) {
+        if (h.getMessageType() == FILE_ATTACHMENT) {
+            item = new GroupMessageItem(
+                    R.layout.list_item_group_conversation_file_msg,
+                    (GroupMessageHeader) h,
+                    null);
+        } else {
+            item = new GroupMessageItem(
+                    R.layout.list_item_group_conversation_msg,
+                    (GroupMessageHeader) h, null);
+        }
+
+        if (h.getMessageType() == IMAGES || h.getMessageType() == FILE_ATTACHMENT) {
             List<AttachmentItem> attachments = attachmentCache.getAttachments(h.getMessageId());
             item.setAttachmentList(attachments);
         }
