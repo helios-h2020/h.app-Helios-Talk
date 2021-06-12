@@ -21,6 +21,7 @@ import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.Group;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
@@ -159,16 +160,22 @@ public class PrivateGroupConversationViewModel extends AndroidViewModel {
     }
 
     @UiThread
-    void sendMessage(String text, List<AttachmentItem> attachmentItems, long timestamp) {
+    void sendMessage(String text, List<AttachmentItem> attachmentItems, long timestamp, Message.Type messageType) {
         requireNonNull(groupId);
-        if (attachmentItems.isEmpty())
+        if (messageType == Message.Type.TEXT)
             createMessage(groupId, text, timestamp);
         else {
             List<Attachment> attachments = new ArrayList();
             for (AttachmentItem item : attachmentItems) {
-                attachments.add(new Attachment(item.getUri().toString(), item.getStorageURL(), item.getMimeType()));
+                attachments.add(
+                        new Attachment(
+                                item.getUri().toString(),
+                                item.getStorageURL(),
+                                item.getMimeType(),
+                                item.getUri().getPath().replaceAll(".*/", ""))
+                );
             }
-            createMessageWithAttachments(groupId, text, attachments, timestamp);
+            createMessageWithAttachments(groupId, text, attachments, messageType, timestamp);
         }
     }
 
@@ -193,13 +200,13 @@ public class PrivateGroupConversationViewModel extends AndroidViewModel {
     }
 
     private void createMessageWithAttachments(String groupId, String text, List<Attachment> attachments,
-                                              long timestamp) {
+                                              Message.Type messageType, long timestamp) {
         try {
             Pair<String, String> fakeIdentity =
                     groupManager.getFakeIdentity(groupId);
             GroupMessage pgm;
-            pgm = groupMessageFactory.createImageAttachmentMessage(
-                    groupId, attachments, text, timestamp,
+            pgm = groupMessageFactory.createAttachmentMessage(
+                    groupId, attachments, messageType, text, timestamp,
                     fakeIdentity.getFirst(), fakeIdentity.getSecond());
             GroupMessageHeader h = (GroupMessageHeader) messagingManager
                     .sendGroupMessage(

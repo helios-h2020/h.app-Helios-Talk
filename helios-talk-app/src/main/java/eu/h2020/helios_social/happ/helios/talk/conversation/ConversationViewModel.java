@@ -187,18 +187,24 @@ public class ConversationViewModel extends AndroidViewModel {
     }
 
     @UiThread
-    void sendMessage(@Nullable String text,
-                     List<AttachmentItem> attachmentItems, long timestamp) {
+    void sendMessage(@Nullable String text, List<AttachmentItem> attachmentItems,
+                     Message.Type messageType, long timestamp) {
         // messagingGroupId is loaded with the contact
         requireNonNull(messagingGroupId);
-        if (attachmentItems.size() == 0) {
+        if (messageType == Message.Type.TEXT) {
             createMessage(messagingGroupId, text, timestamp);
         } else {
             List<Attachment> attachments = new ArrayList();
             for (AttachmentItem item : attachmentItems) {
-                attachments.add(new Attachment(item.getUri().toString(), item.getStorageURL(), item.getMimeType()));
+                attachments.add(
+                        new Attachment(
+                                item.getUri().toString(),
+                                item.getStorageURL(),
+                                item.getMimeType(),
+                                item.getUri().getPath().replaceAll(".*/", ""))
+                );
             }
-            createMessageWithAttachments(messagingGroupId, text, attachments, timestamp);
+            createMessageWithAttachments(messagingGroupId, text, attachments, messageType, timestamp);
         }
     }
 
@@ -252,11 +258,12 @@ public class ConversationViewModel extends AndroidViewModel {
     }
 
     private void createMessageWithAttachments(String groupId, @Nullable String text,
-                                              List<Attachment> attachments, long timestamp) {
+                                              List<Attachment> attachments, Message.Type messageType,
+                                              long timestamp) {
         try {
             Message pm;
-            pm = privateMessageFactory.createImageAttachmentMessage(
-                    groupId, timestamp, text, attachments);
+            pm = privateMessageFactory.createAttachmentMessage(
+                    groupId, timestamp, text, attachments, messageType);
             MessageHeader h = messagingManager.sendPrivateMessage(
                     contactId,
                     contextId,
