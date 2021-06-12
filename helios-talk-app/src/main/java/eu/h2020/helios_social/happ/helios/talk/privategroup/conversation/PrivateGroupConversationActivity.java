@@ -2,6 +2,7 @@ package eu.h2020.helios_social.happ.helios.talk.privategroup.conversation;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,6 +33,7 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -46,18 +49,17 @@ import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
 import eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
-import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
-import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationListener;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
-import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
 import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
+import eu.h2020.helios_social.happ.helios.talk.view.FileAttachmentPreview;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
@@ -136,7 +138,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     private TextInputView textInput;
     private Toolbar toolbar;
     private TextView toolbarTitle;
-    private TextSendController sendController;
+    private TextAttachmentController sendController;
     private String groupId;
     private String groupName;
 
@@ -204,9 +206,10 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
 
         textInput = findViewById(R.id.text_input_container);
         ImagePreview imagePreview = findViewById(R.id.imagePreview);
-        sendController = new TextAttachmentController(this, textInput,
-                                                      imagePreview, this);
-        ((TextAttachmentController) sendController).setImagesSupported();
+        FileAttachmentPreview fileAttachmentPreview = findViewById(R.id.fileAttachmentPreview);
+        sendController = new TextAttachmentController(this, textInput, imagePreview,
+                                                      fileAttachmentPreview, this);
+        sendController.setImagesSupported();
 
         textInput.setSendController(sendController);
         textInput.setMaxTextLength(MAX_MESSAGE_TEXT_LENGTH);
@@ -403,7 +406,9 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
             displaySnackbar(R.string.forums_invitation_sent);
         } else if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
                 result == RESULT_OK) {
-            ((TextAttachmentController) sendController).onImageReceived(data);
+            sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
+        } else if (request == RequestCodes.REQUEST_ATTACH_FILE && result == RESULT_OK) {
+            sendController.onAttachmentsReceived(data, Message.Type.FILE_ATTACHMENT);
         } else super.onActivityResult(request, result, data);
     }
 
@@ -575,6 +580,20 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     }
 
     @Override
+    public void onFileClicked(View view, AttachmentItem attachmentItem) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri fileuri = FileProvider.getUriForFile(
+                this,
+                getApplicationContext().getPackageName() + ".provider",
+                new File(attachmentItem.getUri().getPath())
+        );
+        intent.setDataAndType(fileuri, attachmentItem.getMimeType());
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
+    }
+
+    @Override
     public void onGroupDissolved() {
         setGroupEnabled(false);
         AlertDialog.Builder builder =
@@ -682,12 +701,13 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onSendClick(String text, List<AttachmentItem> attachments) {
+    public void onSendClick(String text, List<AttachmentItem> attachments, Message.Type messageType) {
         if (isNullOrEmpty(text) && attachments.isEmpty())
             throw new AssertionError();
         long timestamp = System.currentTimeMillis();
         timestamp = Math.max(timestamp, getMinTimestampForNewMessage());
-        viewModel.sendMessage(text, attachments, timestamp);
+
+        viewModel.sendMessage(text, attachments, timestamp, messageType);
         textInput.clearText();
     }
 
@@ -713,7 +733,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onAttachmentClicked(View view, ConversationItem messageItem, AttachmentItem attachmentItem) {
+    public void onImageClicked(View view, ConversationItem messageItem, AttachmentItem attachmentItem) {
         GroupMessageItem item = (GroupMessageItem) messageItem;
         Intent intent = new Intent(this, ImageActivity.class);
         String peerName;
@@ -748,7 +768,12 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onTooManyAttachments() {
+    public void onAttachFile(Intent intent) {
+        startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_FILE);
+    }
+
+    @Override
+    public void onTooManyImageAttachments() {
         String format = getResources().getString(
                 R.string.messaging_too_many_attachments_toast);
         String warning = String.format(format, MAX_IMAGE_ATTACHMENTS_PER_MESSAGE);

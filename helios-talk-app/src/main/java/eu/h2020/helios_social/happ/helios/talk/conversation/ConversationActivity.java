@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.ActionMode;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -57,6 +60,7 @@ import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptio
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
 import eu.h2020.helios_social.happ.helios.talk.conversation.sharecontacts.ShareContactActivity;
 import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
+import eu.h2020.helios_social.happ.helios.talk.view.FileAttachmentPreview;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
@@ -161,7 +165,7 @@ public class ConversationActivity extends HeliosTalkActivity
     private HeliosTalkRecyclerView list;
     private LinearLayoutManager layoutManager;
     private TextInputView textInputView;
-    private TextSendController sendController;
+    private TextAttachmentController sendController;
     private SelectionTracker<String> tracker;
     @Nullable
     private Parcelable layoutManagerState;
@@ -232,9 +236,10 @@ public class ConversationActivity extends HeliosTalkActivity
         textInputView = findViewById(R.id.text_input_container);
 
         ImagePreview imagePreview = findViewById(R.id.imagePreview);
-        sendController = new TextAttachmentController(this, textInputView,
-                                                      imagePreview, this);
-        ((TextAttachmentController) sendController).setImagesSupported();
+        FileAttachmentPreview fileAttachmentPreview = findViewById(R.id.fileAttachmentPreview);
+        sendController = new TextAttachmentController(this, textInputView, imagePreview,
+                                                      fileAttachmentPreview, this);
+        sendController.setImagesSupported();
 
         textInputView.setSendController(sendController);
         textInputView.setMaxTextLength(MAX_MESSAGE_TEXT_LENGTH);
@@ -393,7 +398,9 @@ public class ConversationActivity extends HeliosTalkActivity
 
         if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
                 result == RESULT_OK) {
-            ((TextAttachmentController) sendController).onImageReceived(data);
+            sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
+        } else if (request == RequestCodes.REQUEST_ATTACH_FILE && result == RESULT_OK) {
+            sendController.onAttachmentsReceived(data, Message.Type.FILE_ATTACHMENT);
         }
     }
 
@@ -517,7 +524,7 @@ public class ConversationActivity extends HeliosTalkActivity
     private void eagerlyLoadMessageSize(MessageHeader h) {
         try {
 
-            if (h.getMessageType() != Message.Type.IMAGES) {
+            if (h.getMessageType() != Message.Type.IMAGES && h.getMessageType() != Message.Type.FILE_ATTACHMENT) {
                 String id = h.getMessageId();
                 String text = textCache.get(id);
                 if (text == null) {
@@ -692,14 +699,13 @@ public class ConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onSendClick(@Nullable String text,
-                            List<AttachmentItem> attachments) {
+    public void onSendClick(@Nullable String text, List<AttachmentItem> attachments, Message.Type messageType) {
         if (isNullOrEmpty(text) && attachments.isEmpty())
             throw new AssertionError();
         long timestamp = System.currentTimeMillis();
         timestamp = Math.max(timestamp, getMinTimestampForNewMessage());
 
-        viewModel.sendMessage(text, attachments, timestamp);
+        viewModel.sendMessage(text, attachments, messageType, timestamp);
         textInputView.clearText();
     }
 
@@ -793,7 +799,7 @@ public class ConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onAttachmentClicked(View view, ConversationItem messageItem, AttachmentItem attachmentItem) {
+    public void onImageClicked(View view, ConversationItem messageItem, AttachmentItem attachmentItem) {
         Intent intent = new Intent(this, ImageActivity.class);
         String contactName = viewModel.getContactDisplayName().getValue();
         String message = messageItem.getText();
@@ -833,6 +839,20 @@ public class ConversationActivity extends HeliosTalkActivity
         sendConnectionRequestDialog(item.getPeerInfo());
     }
 
+    @Override
+    public void onFileClicked(View view, AttachmentItem attachmentItem) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri fileuri = FileProvider.getUriForFile(
+                this,
+                getApplicationContext().getPackageName() + ".provider",
+                new File(attachmentItem.getUri().getPath())
+        );
+        intent.setDataAndType(fileuri, attachmentItem.getMimeType());
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
+    }
+
 
     @Nullable
     @Override
@@ -848,7 +868,12 @@ public class ConversationActivity extends HeliosTalkActivity
     }
 
     @Override
-    public void onTooManyAttachments() {
+    public void onAttachFile(Intent intent) {
+        startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_FILE);
+    }
+
+    @Override
+    public void onTooManyImageAttachments() {
         String format = getResources().getString(
                 R.string.messaging_too_many_attachments_toast);
         String warning = String.format(format, MAX_IMAGE_ATTACHMENTS_PER_MESSAGE);
