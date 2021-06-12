@@ -11,11 +11,13 @@ import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNu
 @NotNullByDefault
 public interface ConversationListener {
 
-	void onAttachmentClicked(View view, ConversationItem messageItem,
-			AttachmentItem attachmentItem);
+    void onImageClicked(View view, ConversationItem messageItem,
+                        AttachmentItem attachmentItem);
 
-	void onFavouriteClicked(View view, ConversationItem messageItem);
+    void onFavouriteClicked(View view, ConversationItem messageItem);
 
-	void onSharedContactClicked(View view, ConversationItem messageItem);
+    void onSharedContactClicked(View view, ConversationItem messageItem);
+
+    void onFileClicked(View view, AttachmentItem attachmentItem);
 
 }
