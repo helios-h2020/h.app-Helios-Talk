@@ -19,6 +19,7 @@ public class AttachmentItem {
 
     private final Uri uri;
     private final String mimeType;
+    private String attachmentName;
     private String storageURL;
     private long instanceId;
     private static final AtomicLong NEXT_INSTANCE_ID = new AtomicLong(0);
@@ -29,10 +30,11 @@ public class AttachmentItem {
         instanceId = NEXT_INSTANCE_ID.getAndIncrement();
     }
 
-    public AttachmentItem(Uri uri, String mimeType, String storageURL) {
+    public AttachmentItem(Uri uri, String mimeType, String storageURL, String attachmentName) {
         this.uri = uri;
         this.mimeType = mimeType;
         this.storageURL = storageURL;
+        this.attachmentName = attachmentName;
         instanceId = NEXT_INSTANCE_ID.getAndIncrement();
     }
 
@@ -48,13 +50,18 @@ public class AttachmentItem {
         return String.valueOf(instanceId);
     }
 
+    public String getAttachmentName() {
+        return attachmentName;
+    }
+
     public void setStorageURL(String url) {
         this.storageURL = url;
     }
 
-    public String getStorageURL(){
+    public String getStorageURL() {
         return storageURL;
     }
+
     @Override
     public boolean equals(@Nullable Object o) {
         return o instanceof AttachmentItem &&
