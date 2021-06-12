@@ -15,6 +15,7 @@ import java.util.List;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 
 @UiThread
@@ -48,7 +49,7 @@ public class TextSendController implements
     @Override
     public void onSendEvent() {
         if (canSend()) {
-            listener.onSendClick(textInput.getText(), Collections.emptyList());
+            listener.onSendClick(textInput.getText(), Collections.emptyList(), Message.Type.TEXT);
         }
     }
 
@@ -71,7 +72,7 @@ public class TextSendController implements
     protected final boolean canSend() {
         if (textInput.isTooLong()) {
             Snackbar.make(compositeSendButton, R.string.text_too_long,
-                    BaseTransientBottomBar.LENGTH_SHORT).show();
+                          BaseTransientBottomBar.LENGTH_SHORT).show();
             return false;
         }
         return ready && (canSendEmptyText() || !textIsEmpty);
@@ -93,7 +94,7 @@ public class TextSendController implements
 
     @UiThread
     public interface SendListener {
-        void onSendClick(@Nullable String text, List<AttachmentItem> attachments);
+        void onSendClick(@Nullable String text, List<AttachmentItem> attachments, Message.Type messageType);
     }
 
 }
