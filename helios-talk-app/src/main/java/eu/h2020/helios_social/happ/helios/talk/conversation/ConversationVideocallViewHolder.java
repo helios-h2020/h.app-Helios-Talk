@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.UiThread;
+
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.modules.videocall.VideoCallActivity;
@@ -18,34 +19,39 @@ import static eu.h2020.helios_social.modules.groupcommunications_utils.util.Stri
 @UiThread
 @NotNullByDefault
 public class ConversationVideocallViewHolder
-		extends ConversationItemViewHolder {
+        extends ConversationItemViewHolder {
 
-	private final Button joinButton;
+    private final Button joinButton;
 
-	ConversationVideocallViewHolder(View v, ConversationListener listener,
-			boolean isIncoming) {
-		super(v, listener, isIncoming);
-		this.joinButton = v.findViewById(R.id.joinButton);
-	}
+    ConversationVideocallViewHolder(View v, ConversationListener listener,
+                                    boolean isIncoming) {
+        super(v, listener, isIncoming);
+        this.joinButton = v.findViewById(R.id.joinButton);
+    }
 
-	@Override
-	@CallSuper
-	void bind(Context ctx, ConversationItem item, boolean selected) {
-		VideoCallConversationItem notice = (VideoCallConversationItem) item;
-		super.bind(ctx, notice, selected);
+    @Override
+    @CallSuper
+    void bind(Context ctx, ConversationItem item, boolean selected) {
+        VideoCallConversationItem notice = (VideoCallConversationItem) item;
+        super.bind(ctx, notice, selected);
 
-		String room_id = notice.getRoomId();
-		text.setText(((VideoCallConversationItem) item).getPromptText());
+        String room_id = notice.getRoomId();
+        text.setText(((VideoCallConversationItem) item).getPromptText());
 
-		if (!isNullOrEmpty(room_id)) {
-			joinButton.setOnClickListener(v -> startVideoCall(ctx, room_id));
-		}
-	}
+        if (!isNullOrEmpty(room_id)) {
+            joinButton.setOnClickListener(v -> startVideoCall(ctx, room_id));
+        }
+    }
 
-	private void startVideoCall(Context ctx, String room_id) {
-		Intent videoCallIntent =
-				new Intent(ctx, VideoCallActivity.class);
-		videoCallIntent.putExtra("room_name", room_id);
-		ctx.startActivity(videoCallIntent);
-	}
+    private void startVideoCall(Context ctx, String room_id) {
+        Intent videoCallIntent = new Intent(ctx, VideoCallActivity.class);
+        videoCallIntent.putExtra("room_name", room_id.replace("-", ""));
+        videoCallIntent.putExtra("TURN_URL", ctx.getString(R.string.TURN_URL));
+        videoCallIntent.putExtra("TURN_user", ctx.getString(R.string.TURN_user));
+        videoCallIntent.putExtra("TURN_credential", ctx.getString(R.string.TURN_credential));
+        videoCallIntent.putExtra("STUN_URL", ctx.getString(R.string.STUN_URL));
+        videoCallIntent.putExtra("API_endpoint", ctx.getString(R.string.API_endpoint));
+
+        ctx.startActivity(videoCallIntent);
+    }
 }
