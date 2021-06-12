@@ -59,6 +59,14 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <eu.h2020.helios_social.happ.helios.talk.view.FileAttachmentPreview
+        android:id="@+id/fileAttachmentPreview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <eu.h2020.helios_social.happ.helios.talk.view.TextInputView
         android:id="@+id/text_input_container"
         android:layout_width="match_parent"
