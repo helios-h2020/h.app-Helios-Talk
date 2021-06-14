@@ -2,4 +2,6 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path name="data"
         path="Android/data/eu.h2020.helios_social.helios.talk.debug/files/data" />
+    <external-path name="camera_captured_photos"
+        path="Android/data/eu.h2020.helios_social.helios.talk.debug/files/Pictures" />
 </paths>

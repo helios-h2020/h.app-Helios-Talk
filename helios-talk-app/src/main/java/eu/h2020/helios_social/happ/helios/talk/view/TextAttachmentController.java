@@ -7,20 +7,27 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.content.FileProvider;
 import androidx.customview.view.AbsSavedState;
 import androidx.lifecycle.LifecycleOwner;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import androidx.appcompat.app.AlertDialog.Builder;
@@ -60,6 +67,7 @@ public class TextAttachmentController extends TextSendController implements Imag
     private final CharSequence textHint;
     private boolean loadingUris = false;
     private Message.Type messageType = Message.Type.TEXT;
+    private Uri capturedPhotoUri;
 
     public TextAttachmentController(Context ctx, TextInputView v,
                                     ImagePreview imagePreview,
@@ -79,6 +87,7 @@ public class TextAttachmentController extends TextSendController implements Imag
         fileAttachmentButton = v.findViewById(R.id.attachFileButton);
         fileAttachmentButton.setOnClickListener(l -> onFileAttachmentButtonClicked());
         capturePhotoButton = v.findViewById(R.id.captureFromCameraButton);
+        capturePhotoButton.setOnClickListener(l -> onCapturePhotoClicked());
         sendButton.setOnImageClickListener(view -> onImageButtonClicked());
 
         textHint = textInput.getHint();
@@ -141,6 +150,13 @@ public class TextAttachmentController extends TextSendController implements Imag
         }
     }
 
+    private void onCapturePhotoClicked() {
+        Intent intent = getAttachCapturedPhotoIntent();
+        if (attachmentListener.getLifecycle().getCurrentState() != DESTROYED) {
+            attachmentListener.onAttachCapturedPhoto(intent);
+        }
+    }
+
     private Intent getAttachImagesIntent() {
         Intent intent = new Intent(SDK_INT >= 19 ?
                                            ACTION_OPEN_DOCUMENT : ACTION_GET_CONTENT);
@@ -150,6 +166,30 @@ public class TextAttachmentController extends TextSendController implements Imag
             intent.putExtra(EXTRA_MIME_TYPES, AndroidUtils.getSupportedImageContentTypes());
         if (SDK_INT >= 18) intent.putExtra(EXTRA_ALLOW_MULTIPLE, true);
         return intent;
+    }
+
+    private Intent getAttachCapturedPhotoIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(ctx.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            try {
+                File photoFile = createImageFile();
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    capturedPhotoUri = FileProvider
+                            .getUriForFile(
+                                    ctx,
+                                    ctx.getApplicationContext().getPackageName() + ".provider",
+                                    photoFile
+                            );
+                    takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, capturedPhotoUri);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return takePictureIntent;
     }
 
     private Intent getAttachFileIntent() {
@@ -164,12 +204,29 @@ public class TextAttachmentController extends TextSendController implements Imag
         return intent;
     }
 
+    /**
+     * @return A temp file. The captured image will be saved on it.
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        return image;
+    }
+
     public void onAttachmentsReceived(@Nullable Intent resultData, Message.Type messageType) {
         this.messageType = messageType;
         if (resultData == null) return;
         if (loadingUris || !uris.isEmpty()) throw new AssertionError();
         List<Uri> newUris = new ArrayList<>();
-        if (resultData.getData() != null) {
+        if (capturedPhotoUri != null) {
+            newUris.add(capturedPhotoUri);
+            onNewUris(false, newUris, messageType);
+        } else if (resultData.getData() != null) {
             newUris.add(resultData.getData());
             onNewUris(false, newUris, messageType);
         } else if (SDK_INT >= 18 && resultData.getClipData() != null) {
@@ -223,6 +280,8 @@ public class TextAttachmentController extends TextSendController implements Imag
         imagePreview.setVisibility(View.GONE);
         // hide file attachment layout
         fileAttachmentPreview.setVisibility(View.GONE);
+        //reset current captured photo uri to null
+        capturedPhotoUri = null;
         // reset attachment URIs
         uris.clear();
         //reset attachments
@@ -311,6 +370,8 @@ public class TextAttachmentController extends TextSendController implements Imag
     public interface AttachmentListener extends SendListener, LifecycleOwner {
 
         void onAttachImage(Intent intent);
+
+        void onAttachCapturedPhoto(Intent intent);
 
         void onAttachFile(Intent intent);
 

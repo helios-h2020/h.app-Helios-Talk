@@ -768,6 +768,11 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     }
 
     @Override
+    public void onAttachCapturedPhoto(Intent intent) {
+
+    }
+
+    @Override
     public void onAttachFile(Intent intent) {
         startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_FILE);
     }

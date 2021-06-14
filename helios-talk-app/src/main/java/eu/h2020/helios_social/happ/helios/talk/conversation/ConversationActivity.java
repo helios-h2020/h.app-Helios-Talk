@@ -1,7 +1,9 @@
 package eu.h2020.helios_social.happ.helios.talk.conversation;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -32,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.Observer;
@@ -125,6 +128,8 @@ public class ConversationActivity extends HeliosTalkActivity
     public static final String TEXT_MESSAGE = "helios.talk.TEXT_MESSAGE";
     public static final String TIMESTAMP = "helios.talk.TIMESTAMP";
 
+    private final int CAMERA_PERMISSIONS_CODE = 107;
+
     private static final Logger LOG =
             getLogger(ConversationActivity.class.getName());
 
@@ -146,6 +151,10 @@ public class ConversationActivity extends HeliosTalkActivity
     EventBus eventBus;
     @Inject
     ConnectionController connectionController;
+    private String[] CAPTURE_FROM_CAMERA_PERMISSIONS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+    };
 
     private final Map<String, String> textCache = new ConcurrentHashMap<>();
 
@@ -167,6 +176,7 @@ public class ConversationActivity extends HeliosTalkActivity
     private TextInputView textInputView;
     private TextAttachmentController sendController;
     private SelectionTracker<String> tracker;
+    private Intent photoCaptureIntent;
     @Nullable
     private Parcelable layoutManagerState;
     @Nullable
@@ -398,6 +408,8 @@ public class ConversationActivity extends HeliosTalkActivity
 
         if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
                 result == RESULT_OK) {
+            sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
+        } else if (request == RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
         } else if (request == RequestCodes.REQUEST_ATTACH_FILE && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.FILE_ATTACHMENT);
@@ -868,6 +880,24 @@ public class ConversationActivity extends HeliosTalkActivity
     }
 
     @Override
+    public void onAttachCapturedPhoto(Intent intent) {
+        if (cameraExists()) {
+            if (areCameraRelatedPermissionsGranted()) {
+                startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO);
+            } else {
+                photoCaptureIntent = intent;
+                ActivityCompat.requestPermissions(this, CAPTURE_FROM_CAMERA_PERMISSIONS, CAMERA_PERMISSIONS_CODE);
+            }
+        } else {
+            Toast.makeText(
+                    this,
+                    "No available cameras in your system",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
+
+    @Override
     public void onAttachFile(Intent intent) {
         startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_FILE);
     }
@@ -930,5 +960,45 @@ public class ConversationActivity extends HeliosTalkActivity
                 exception.printStackTrace();
             }
         });
+    }
+
+    /**
+     * Check if this device has a camera
+     */
+    private boolean cameraExists() {
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
+    private boolean areCameraRelatedPermissionsGranted() {
+        // Check if we have write permission
+        if (ContextCompat.checkSelfPermission(this, CAPTURE_FROM_CAMERA_PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, CAPTURE_FROM_CAMERA_PERMISSIONS[1]) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length == 2 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(photoCaptureIntent, RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO);
+                } else {
+                    //TODO
+                }
+                return;
+        }
     }
 }
