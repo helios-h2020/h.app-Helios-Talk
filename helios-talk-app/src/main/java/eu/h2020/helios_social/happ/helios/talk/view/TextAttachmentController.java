@@ -220,7 +220,6 @@ public class TextAttachmentController extends TextSendController implements Imag
 
     public void onAttachmentsReceived(@Nullable Intent resultData, Message.Type messageType) {
         this.messageType = messageType;
-        if (resultData == null) return;
         if (loadingUris || !uris.isEmpty()) throw new AssertionError();
         List<Uri> newUris = new ArrayList<>();
         if (capturedPhotoUri != null) {
@@ -258,7 +257,6 @@ public class TextAttachmentController extends TextSendController implements Imag
                 AttachmentItem imageAttachmentItem = new AttachmentItem(imageUri, ctx.getContentResolver().getType(imageUri));
                 attachments.add(imageAttachmentItem);
                 imagePreview.loadPreviewImage(imageAttachmentItem);
-
             }
         } else if (messageType == Message.Type.FILE_ATTACHMENT) {
             uris.addAll(newUris);
