@@ -243,7 +243,9 @@ public class HeliosTalkService extends Service {
 		} else if (level == TRIM_MEMORY_RUNNING_CRITICAL) {
 			LOG.warning("Trim memory: running critically low");
 			// If we're not in the foreground, clear the UI to save memory
-			if (app.isRunningInBackground()) hideUi();
+			//comment hideUi function to allow tasks that require large memory to run successfully
+			//such as capturing picture from the camera
+			//if (app.isRunningInBackground()) hideUi();
 		} else if (LOG.isLoggable(INFO)) {
 			LOG.info("Trim memory: unknown level " + level);
 		}
