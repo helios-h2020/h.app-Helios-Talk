@@ -6,6 +6,7 @@ import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExcept
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.Group;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 
 public interface ShareContentController {
 
@@ -14,10 +15,10 @@ public interface ShareContentController {
 
     void shareText(Group group, String text, UiResultExceptionHandler<Void, Exception> handler);
 
-    void shareImages(ContactId contactId, String groupId, String contextId,
-                     List<Attachment> attachments, String text, UiResultExceptionHandler<Void, Exception> handler);
+    void shareAttachments(ContactId contactId, String groupId, String contextId,
+                          List<Attachment> attachments, String text, Message.Type messageType, UiResultExceptionHandler<Void, Exception> handler);
 
-    void shareImages(Group group, List<Attachment> attachments, String text,
-                     UiResultExceptionHandler<Void, Exception> handler);
+    void shareAttachments(Group group, List<Attachment> attachments, String text, Message.Type messageType,
+                          UiResultExceptionHandler<Void, Exception> handler);
 
 }

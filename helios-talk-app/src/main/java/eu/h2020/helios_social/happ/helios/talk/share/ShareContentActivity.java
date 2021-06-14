@@ -45,6 +45,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Attachment;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.GroupCount;
+import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.ShareContentType;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroup;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
@@ -179,7 +180,14 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
         Uri videoUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (videoUri != null) {
-            shareContentItem = new ShareContentItem(ShareContentType.VIDEO, sharedText);
+            List<Attachment> attachments = new ArrayList<>();
+            attachments.add(new Attachment(
+                    videoUri.toString(),
+                    null,
+                    getContentResolver().getType(videoUri),
+                    videoUri.getPath().replaceAll(".*/", ""))
+            );
+            shareContentItem = new ShareContentItem(ShareContentType.VIDEO, attachments, sharedText);
         }
     }
 
@@ -302,12 +310,13 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
                     && shareContentItem != null
                     && shareContentItem.getAttachments().size() > 0) {
 
-                shareContentController.shareImages(
+                shareContentController.shareAttachments(
                         chatItem.getContact().getId(),
                         chatItem.getGroupId(),
                         chatItem.getContextId(),
                         shareContentItem.getAttachments(),
                         shareContentItem.getText(),
+                        Message.Type.IMAGES,
                         new UiResultExceptionHandler<Void, Exception>(this) {
 
                             @Override
@@ -332,19 +341,22 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
                                     LOG.warning(exception.getMessage());
                             }
                         });
-            } else if (shareContentItem != null && shareContentItem.getText() != null && validateURL(shareContentItem.getText())) {
-                shareContentController.shareText(
+            } else if (shareContentItem.getContentType() == ShareContentType.VIDEO
+                    && shareContentItem != null
+                    && shareContentItem.getAttachments().size() == 1) {
+                shareContentController.shareAttachments(
                         chatItem.getContact().getId(),
                         chatItem.getGroupId(),
                         chatItem.getContextId(),
+                        shareContentItem.getAttachments(),
                         shareContentItem.getText(),
+                        Message.Type.FILE_ATTACHMENT,
                         new UiResultExceptionHandler<Void, Exception>(this) {
 
                             @Override
                             public void onResultUi(Void v) {
                                 Toast.makeText(ShareContentActivity.this,
-                                               "Video attachments are not yet supported by helios. TALK!" +
-                                                       " Only the text accompanying the video was successfully shared!",
+                                               "Video Shared Successfully",
                                                Toast.LENGTH_LONG).show();
                             }
 
@@ -352,7 +364,14 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
                             public void onExceptionUi(Exception exception) {
                                 if (exception instanceof DbException)
                                     handleDbException((DbException) exception);
+                                else if (exception instanceof InvalidAttachmentException)
+                                    Toast.makeText(
+                                            ShareContentActivity.this,
+                                            exception.getMessage(),
+                                            Toast.LENGTH_LONG
+                                    ).show();
                                 else
+
                                     LOG.warning(exception.getMessage());
                             }
                         });
@@ -388,10 +407,11 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
                     && shareContentItem != null
                     && shareContentItem.getAttachments().size() > 0) {
 
-                shareContentController.shareImages(
+                shareContentController.shareAttachments(
                         chatItem.getGroup(),
                         shareContentItem.getAttachments(),
                         shareContentItem.getText(),
+                        Message.Type.IMAGES,
                         new UiResultExceptionHandler<Void, Exception>(this) {
 
                             @Override
@@ -415,17 +435,21 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
                                     LOG.warning(exception.getMessage());
                             }
                         });
-            } else if (shareContentItem != null && shareContentItem.getText() != null) {
-                shareContentController.shareText(
+            } else if (shareContentItem.getContentType() == ShareContentType.VIDEO
+                    && shareContentItem != null
+                    && shareContentItem.getAttachments().size() == 1) {
+
+                shareContentController.shareAttachments(
                         chatItem.getGroup(),
+                        shareContentItem.getAttachments(),
                         shareContentItem.getText(),
+                        Message.Type.FILE_ATTACHMENT,
                         new UiResultExceptionHandler<Void, Exception>(this) {
 
                             @Override
                             public void onResultUi(Void v) {
                                 Toast.makeText(ShareContentActivity.this,
-                                               "Video attachments are not yet supported by helios. TALK!" +
-                                                       " Only the text accompanying the video was successfully shared!",
+                                               "Video Shared Successfully",
                                                Toast.LENGTH_LONG).show();
                             }
 
@@ -433,6 +457,12 @@ public class ShareContentActivity extends HeliosTalkActivity implements ShareCon
                             public void onExceptionUi(Exception exception) {
                                 if (exception instanceof DbException)
                                     handleDbException((DbException) exception);
+                                else if (exception instanceof InvalidAttachmentException)
+                                    Toast.makeText(
+                                            ShareContentActivity.this,
+                                            exception.getMessage(),
+                                            Toast.LENGTH_LONG
+                                    ).show();
                                 else
                                     LOG.warning(exception.getMessage());
                             }

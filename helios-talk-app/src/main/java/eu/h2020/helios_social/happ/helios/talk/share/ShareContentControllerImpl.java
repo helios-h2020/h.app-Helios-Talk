@@ -106,8 +106,8 @@ public class ShareContentControllerImpl extends DbControllerImpl implements Shar
     }
 
     @Override
-    public void shareImages(ContactId contactId, String groupId, String contextId,
-                            List<Attachment> attachments, String text, UiResultExceptionHandler<Void, Exception> handler) {
+    public void shareAttachments(ContactId contactId, String groupId, String contextId,
+                                 List<Attachment> attachments, String text, Message.Type messageType, UiResultExceptionHandler<Void, Exception> handler) {
         runOnDbThread(() -> {
             try {
                 if (attachmentManager.validateAttachments(attachments)) {
@@ -118,7 +118,7 @@ public class ShareContentControllerImpl extends DbControllerImpl implements Shar
                             timestamp,
                             text,
                             attachments,
-                            Message.Type.IMAGES);
+                            messageType);
 
                     messagingManager.sendPrivateMessage(
                             contactId,
@@ -157,8 +157,8 @@ public class ShareContentControllerImpl extends DbControllerImpl implements Shar
     }
 
     @Override
-    public void shareImages(Group group, List<Attachment> attachments, String
-            text, UiResultExceptionHandler<Void, Exception> handler) {
+    public void shareAttachments(Group group, List<Attachment> attachments, String text,
+                                 Message.Type messageType, UiResultExceptionHandler<Void, Exception> handler) {
         runOnDbThread(() -> {
             try {
                 if (attachmentManager.validateAttachments(attachments)) {
@@ -169,7 +169,7 @@ public class ShareContentControllerImpl extends DbControllerImpl implements Shar
                     GroupMessage message = groupMessageFactory.createAttachmentMessage(
                             group.getId(),
                             attachments,
-                            Message.Type.IMAGES,
+                            messageType,
                             text,
                             timestamp,
                             fakeIdentity.getFirst(),
