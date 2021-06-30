@@ -63,7 +63,7 @@ public class ContextControllerImpl extends
                     sharingContextManager.sendContextInvitation(
                             contextInvitationFactory
                                     .createOutgoingContextInvitation(contact,
-                                            context)
+                                                                     context)
                     );
                 }
             } catch (DbException e) {
@@ -104,8 +104,8 @@ public class ContextControllerImpl extends
                 contextManager.addContext(locationContext);
                 logDuration(LOG, "Storing new location context", start);
                 egoNetwork.setCurrent(egoNetwork
-                        .getOrCreateContext(locationContext.getName() + "%" +
-                                locationContext.getId()));
+                                              .getOrCreateContext(locationContext.getName() + "%" +
+                                                                          locationContext.getId()));
             } catch (DbException e) {
                 logException(LOG, WARNING, e);
                 handler.onException(e);
@@ -121,9 +121,11 @@ public class ContextControllerImpl extends
                 long start = now();
                 contextManager.addContext(generalContext);
                 logDuration(LOG, "Storing new general context", start);
-                egoNetwork.setCurrent(egoNetwork
-                        .getOrCreateContext(generalContext.getName() + "%" +
-                                generalContext.getId()));
+                LOG.info("EGO NETWORK " + egoNetwork);
+                LOG.info("CNAME " + generalContext.getName());
+                LOG.info("CID " + generalContext.getId());
+                egoNetwork.setCurrent(egoNetwork.getOrCreateContext(generalContext.getName() + "%" +
+                                                                            generalContext.getId()));
             } catch (DbException e) {
                 logException(LOG, WARNING, e);
                 handler.onException(e);
@@ -133,13 +135,15 @@ public class ContextControllerImpl extends
 
     @Override
     public void deleteContext(String contextId,
-                              ResultExceptionHandler<String, DbException> handler) {
+                              ResultExceptionHandler<Void, DbException> handler) {
         runOnDbThread(() -> {
             try {
                 long start = now();
+                egoNetwork.removeContext(egoNetwork.getCurrentContext());
                 contextManager.removeContext(contextId);
 
                 logDuration(LOG, "Removing context", start);
+                handler.onResult(null);
             } catch (DbException e) {
                 logException(LOG, WARNING, e);
                 handler.onException(e);

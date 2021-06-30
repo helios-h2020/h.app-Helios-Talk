@@ -21,8 +21,6 @@ import org.acra.annotation.AcraDialog;
 import org.acra.annotation.AcraMailSender;
 import org.acra.data.StringFormat;
 
-//import eu.h2020.helios_social.helios.talk.middleware.HeliosTalkEagerSingletons;
-
 import eu.h2020.helios_social.happ.helios.talk.android.HeliosTalkAndroidEagerSingletons;
 import eu.h2020.helios_social.modules.groupcommunications.db.GroupCommunicationsDBEagerSingletons;
 import eu.h2020.helios_social.happ.helios.talk.logging.CachingLogHandler;
@@ -138,8 +136,6 @@ public class HeliosTalkApplicationImpl extends Application
                 .injectEagerSingletons(androidComponent);
         GroupCommunicationsEagerSingletons.Helper
                 .injectEagerSingletons(androidComponent);
-		/*HeliosTalkEagerSingletons.Helper
-				.injectEagerSingletons(androidComponent);*/
         AndroidEagerSingletons.Helper.injectEagerSingletons(androidComponent);
         return androidComponent;
     }

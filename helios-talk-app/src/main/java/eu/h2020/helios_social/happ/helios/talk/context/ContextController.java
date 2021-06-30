@@ -32,7 +32,7 @@ public interface ContextController {
 			ResultExceptionHandler<String, DbException> handler);
 
 	void deleteContext(String contextId,
-			ResultExceptionHandler<String, DbException> handler);
+			ResultExceptionHandler<Void, DbException> handler);
 
 	Integer getContextColor(String contextId) throws DbException;
 }

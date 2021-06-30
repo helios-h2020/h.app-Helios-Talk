@@ -1,7 +1,6 @@
 package eu.h2020.helios_social.happ.helios.talk.navdrawer;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -23,6 +23,9 @@ import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.CommunicationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedFromContextEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactRemovedFromContextEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
@@ -146,6 +149,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         super.onCreate(state);
         exitIfStartupFailed(getIntent());
         setContentView(R.layout.activity_nav_drawer);
+
         locationContexts = new ArrayList<>();
         mRequestingLocationUpdates = false;
 
@@ -154,17 +158,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         navigation = findViewById(R.id.navigation);
         MenuItem menuNav = navigation.getMenu().getItem(0);
         contextMenu = menuNav.getSubMenu();
-        // Init LocationSensor
-		/*mLocationSensor = new LocationSensor(this);
-		// Only for demo UI to obtain updates to location coordinates via ValueListener
-		mLocationSensor.registerValueListener(this);
-
-		mLocationSensor.startUpdates();*/
-
 
         eventBus.addListener(this);
-
-        //GridView transportsView = findViewById(R.id.transportsView);
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = requireNonNull(getSupportActionBar());
@@ -181,9 +176,6 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-        //initializeTransports(getLayoutInflater());
-        //transportsView.setAdapter(transportsAdapter);
-
         lockManager.isLockable().observe(this, this::setLockVisible);
 
         if (lifecycleManager.getLifecycleState().isAfter(RUNNING)) {
@@ -198,6 +190,17 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         }
 
         verifyStoragePermissions();
+
+        String message = getIntent().getExtras() != null ? getIntent().getExtras().getString("message") : null;
+        if (message != null) ToastMessage(message);
+    }
+
+    private void ToastMessage(String message) {
+        Toast.makeText(
+                this,
+                message,
+                Toast.LENGTH_LONG
+        ).show();
     }
 
     public void loadContexts(String id) {

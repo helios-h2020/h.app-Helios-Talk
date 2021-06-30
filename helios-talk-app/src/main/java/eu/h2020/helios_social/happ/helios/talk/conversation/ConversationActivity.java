@@ -75,6 +75,8 @@ import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.ContactExistsException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.InvalidActionException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.PendingContactExistsException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedFromContextEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactRemovedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchContactException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
@@ -100,6 +102,7 @@ import eu.h2020.helios_social.modules.videocall.VideoCallActivity;
 import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.core.view.ViewCompat.setTransitionName;
 import static androidx.lifecycle.Lifecycle.State.STARTED;
+import static eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes.REQUEST_SHARE_CONTACT;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessagingConstants.MAX_IMAGE_ATTACHMENTS_PER_MESSAGE;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
@@ -271,6 +274,7 @@ public class ConversationActivity extends HeliosTalkActivity
     public void onStart() {
         super.onStart();
         eventBus.addListener(this);
+        LOG.info("Start Conversation Activity with contact: " + contactId);
         notificationManager.blockContactNotification(contactId, groupId);
         notificationManager.clearContactNotification(contactId, groupId);
         displayContactOnlineStatus();
@@ -372,8 +376,7 @@ public class ConversationActivity extends HeliosTalkActivity
                 onBackPressed();
                 return true;
             case R.id.action_social_remove_person:
-                Toast.makeText(this, "Temporarily Unavailable Operation!", Toast.LENGTH_LONG).show();
-                //askToRemoveContact();
+                askToRemoveContact();
                 return true;
             case R.id.start_video_call:
                 startVideoCall();
@@ -382,7 +385,7 @@ public class ConversationActivity extends HeliosTalkActivity
                 Intent intent = new Intent(this, ShareContactActivity.class);
                 intent.putExtra(CONTACT_ID, contactId.getId());
                 intent.putExtra(CONTACT_NAME, viewModel.getContactDisplayName().getValue());
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_SHARE_CONTACT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -406,13 +409,18 @@ public class ConversationActivity extends HeliosTalkActivity
                                     @Nullable Intent data) {
         super.onActivityResult(request, result, data);
 
-        if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
-                result == RESULT_OK) {
+        LOG.info("REQUEST CODE: " + request + ": "
+                         + result);
+        if (request == RequestCodes.REQUEST_ATTACH_IMAGE && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
         } else if (request == RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
         } else if (request == RequestCodes.REQUEST_ATTACH_FILE && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.FILE_ATTACHMENT);
+        } else if (request == REQUEST_SHARE_CONTACT && result == RESULT_OK) {
+            Toast.makeText(this, "Contact has been successfully shared.", Toast.LENGTH_LONG).show();
+        } else if (request == REQUEST_SHARE_CONTACT && result == RESULT_CANCELED) {
+            Toast.makeText(this, "Internal Error. Sharing Contact failed.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -670,6 +678,17 @@ public class ConversationActivity extends HeliosTalkActivity
         } else if (e instanceof MessageSentEvent) {
             MessageSentEvent messageSentEvent = (MessageSentEvent) e;
             markMessage(messageSentEvent.getMessageId(), true, false);
+        } else if (e instanceof ConnectionRemovedEvent) {
+            LOG.info("ConnectionRemovedEvent received!");
+            if (((ConnectionRemovedEvent) e).getRemovedConnection().getId().equals(contactId.getId())) {
+                String connectionName = ((ConnectionRemovedEvent) e).getRemovedConnection().getAlias();
+                showInfoDialog("Contact has been removed!", connectionName + " has removed you from his/her contact list! All your conversations in all contexts will be deleted.");
+            }
+        } else if (e instanceof ConnectionRemovedFromContextEvent) {
+            if (((ConnectionRemovedFromContextEvent) e).getConnection().getId().getId().equals(contactId.getId())) {
+                String connectionName = ((ConnectionRemovedFromContextEvent) e).getConnection().getAlias();
+                showInfoDialog("Contact has left the context", connectionName + " has left context " + ((ConnectionRemovedFromContextEvent) e).getContextName() + ". Your discussion in this context will be deleted.");
+            }
         }
     }
 
@@ -793,12 +812,15 @@ public class ConversationActivity extends HeliosTalkActivity
         runOnDbThread(() -> {
             try {
                 contactManager.deleteContact(contactId);
+                egoNetwork.removeNodeIfExists(contactId.getId());
+                egoNetwork.save();
             } catch (DbException e) {
                 logException(LOG, WARNING, e);
             } finally {
                 finishAfterContactRemoved();
             }
         });
+        onBackPressed();
     }
 
     private void finishAfterContactRemoved() {
@@ -934,6 +956,7 @@ public class ConversationActivity extends HeliosTalkActivity
         connectionController.sendConnectionRequest(peerInfo, new UiResultExceptionHandler<Void, Exception>(this) {
             @Override
             public void onResultUi(Void v) {
+                LOG.info("IAM ON RESULT CONNECTION REQUEST");
                 Toast.makeText(ConversationActivity.this,
                                "Connection Request to " + peerInfo.getAlias() + " has been sent!",
                                Toast.LENGTH_LONG
@@ -1000,5 +1023,18 @@ public class ConversationActivity extends HeliosTalkActivity
                 }
                 return;
         }
+    }
+
+    private void showInfoDialog(String title, String info) {
+        DialogInterface.OnClickListener okListener =
+                (dialog, which) -> {
+                    onBackPressed();
+                };
+        androidx.appcompat.app.AlertDialog.Builder builder =
+                new androidx.appcompat.app.AlertDialog.Builder(this, R.style.HeliosDialogTheme);
+        builder.setTitle(title);
+        builder.setMessage(info);
+        builder.setPositiveButton(R.string.ok, okListener);
+        builder.show();
     }
 }

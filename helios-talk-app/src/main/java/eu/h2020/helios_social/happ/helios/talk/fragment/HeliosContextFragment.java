@@ -1,6 +1,8 @@
 package eu.h2020.helios_social.happ.helios.talk.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +10,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +33,12 @@ import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactsToContextActivity;
-import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
+import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
+import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
+import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
+import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
+import eu.h2020.helios_social.happ.helios.talk.share.ShareContentActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.attachment.InvalidAttachmentException;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity;
@@ -37,7 +47,12 @@ import eu.h2020.helios_social.happ.helios.talk.context.CreateContextActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.Themes;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
+import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.GROUP_ID;
 
 public abstract class HeliosContextFragment extends BaseFragment {
 
@@ -140,8 +155,7 @@ public abstract class HeliosContextFragment extends BaseFragment {
         } else {
             menu.getItem(2).setEnabled(true);
             menu.getItem(3).setEnabled(true);
-            //temporarily: TODO
-            menu.getItem(4).setEnabled(false);
+            menu.getItem(4).setEnabled(true);
 
         }
     }
@@ -166,8 +180,7 @@ public abstract class HeliosContextFragment extends BaseFragment {
                 startActivity(inviteContactsToContextActivity);
                 return true;
             case R.id.action_context_delete:
-                //showDeleteContextDialog();
-                //TODO
+                showDeleteContextDialog();
                 return true;
             case R.id.pending_contacts:
                 Intent pendingContactListActivity = new Intent(getActivity(),
@@ -200,30 +213,28 @@ public abstract class HeliosContextFragment extends BaseFragment {
     }
 
     private void deleteContext(String contextId) {
-		/*contextController.deleteContext(contextId,
-				new UiResultExceptionHandler<String, DbException>(
-						this) {
-					@Override
-					public void onResultUi(String name) {
-					}
+        contextController.deleteContext(contextId, new ResultExceptionHandler<Void, DbException>() {
+            @Override
+            public void onException(DbException exception) {
+                handleDbException((DbException) exception);
+                Toast.makeText(
+                        getActivity(),
+                        "something went wrong",
+                        Toast.LENGTH_LONG
+                ).show();
+            }
 
-					@Override
-					public void onExceptionUi(DbException exception) {
-						handleDbException(exception);
-					}
-				});
-		egoNetwork.removeContext(
-				egoNetwork.getOrCreateContext(contextId));
-		Toast.makeText(getContext(),
-				R.string.context_removed_toast,
-				LENGTH_LONG)
-				.show();
-		egoNetwork.setCurrent(egoNetwork.getOrCreateContext("All@All"));
-		Intent intent = new Intent(getActivity(), NavDrawerActivity.class);
-		intent.setFlags(
-				FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);*/
-
+            @Override
+            public void onResult(Void v) {
+                egoNetwork.setCurrent(egoNetwork.getOrCreateContext("All%All"));
+                Intent intent = new Intent(getActivity(), NavDrawerActivity.class);
+                Bundle extras = new Bundle();
+                extras.putString("message", "context removed successfully");
+                intent.putExtras(extras);
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
     }
 
     private Drawable buildCounterDrawable(int count, int backgroundImageId) {

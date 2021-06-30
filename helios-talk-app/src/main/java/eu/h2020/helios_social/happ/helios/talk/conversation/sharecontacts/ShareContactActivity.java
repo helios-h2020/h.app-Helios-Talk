@@ -77,14 +77,12 @@ public class ShareContactActivity extends ContactSelectorActivity {
                                     public void onResultUi(Void result) {
                                         setResult(RESULT_OK);
                                         supportFinishAfterTransition();
-                                        Toast.makeText(getApplicationContext(), "Contact has been successfully shared.", Toast.LENGTH_LONG);
                                     }
 
                                     @Override
                                     public void onExceptionUi(DbException exception) {
                                         setResult(RESULT_CANCELED);
                                         handleDbException(exception);
-                                        Toast.makeText(getApplicationContext(), "Internal Error. Sharing Contact failed.", Toast.LENGTH_LONG);
                                     }
                                 });
     }

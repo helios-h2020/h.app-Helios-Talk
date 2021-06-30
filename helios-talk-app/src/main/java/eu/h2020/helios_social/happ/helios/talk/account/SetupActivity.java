@@ -130,7 +130,8 @@ public class SetupActivity extends BaseActivity
         Intent i = new Intent(this, ProfileActivity.class);
         //Intent i = new Intent(this, HeliosTalkApplication.ENTRY_ACTIVITY);
         i.setFlags(FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_TASK_ON_HOME |
-                FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_CLEAR_TOP);
+                           FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_CLEAR_TOP);
+        i.putExtra("onSettingAccount", true);
         startActivity(i);
         supportFinishAfterTransition();
         overridePendingTransition(R.anim.screen_new_in, R.anim.screen_old_out);

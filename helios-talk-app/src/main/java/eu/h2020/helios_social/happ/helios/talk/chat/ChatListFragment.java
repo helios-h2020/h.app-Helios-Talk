@@ -1,6 +1,7 @@
 package eu.h2020.helios_social.happ.helios.talk.chat;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,6 +34,8 @@ import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedFromContextEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
@@ -202,6 +205,7 @@ public class ChatListFragment extends HeliosContextFragment
                     for (Map.Entry<Node, Double> fav : favourites.entrySet()) {
                         ContactId id = new ContactId(fav.getKey().getId());
                         Contact c = contactManager.getContact(id);
+                        if (c == null) continue;
                         Group group = conversationManager
                                 .getContactGroup(c.getId(), currentContext);
 
@@ -386,6 +390,12 @@ public class ChatListFragment extends HeliosContextFragment
         } else if (e instanceof PendingContactAddedEvent) {
             if (((PendingContactAddedEvent) e).getPendingContact().getPendingContactType().equals(PendingContactType.INCOMING))
                 actionBar.invalidateOptionsMenu();
+        } else if (e instanceof ConnectionRemovedEvent) {
+            String connectionName = ((ConnectionRemovedEvent) e).getRemovedConnection().getAlias();
+            showInfoDialog("Contact has been removed!", connectionName + " has removed you from his/her contact list! All your conversations in all contexts will be deleted.");
+        } else if (e instanceof ConnectionRemovedFromContextEvent) {
+            String connectionName = ((ConnectionRemovedFromContextEvent) e).getConnection().getAlias();
+            showInfoDialog("Contact has left the context", connectionName + " has left this context (" + ((ConnectionRemovedFromContextEvent) e).getContextName() + "). Your discussion in this context will be deleted.");
         }
     }
 
@@ -437,5 +447,18 @@ public class ChatListFragment extends HeliosContextFragment
             item.addMessage(h);
             adapter.updateItemAt(position, item);
         }
+    }
+
+    private void showInfoDialog(String title, String info) {
+        DialogInterface.OnClickListener okListener =
+                (dialog, which) -> {
+                    loadChats();
+                };
+        androidx.appcompat.app.AlertDialog.Builder builder =
+                new androidx.appcompat.app.AlertDialog.Builder(getActivity(), R.style.HeliosDialogTheme);
+        builder.setTitle(title);
+        builder.setMessage(info);
+        builder.setPositiveButton(R.string.ok, okListener);
+        builder.show();
     }
 }
