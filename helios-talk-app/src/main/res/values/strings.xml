@@ -471,7 +471,10 @@
     <string name="context_add_contacts_error">There was an error adding contacts to this context.</string>
     <string name="context_add_members">Invite Contacts</string>
     <string name="dialog_title_leave_context">Confirm Removing Context</string>
-    <string name="dialog_message_leave_context">Are you sure that you want to remove this context?\n\nAny contacts you\'ve added in this context will remain available in #all context.</string>
+    <string name="dialog_message_leave_context">Are you sure that you want to remove this
+        context?\nAny conversations you\'ve created in this context will be removed.
+        context
+        .</string>
     <string name="dialog_button_remove_context">Remove</string>
     <string name="context_removed_toast">Context Removed</string>
     <string name="no_contacts_in_context">No contacts yet!</string>
