@@ -35,6 +35,7 @@ import androidx.core.app.ActivityCompat;
 
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplication;
+import eu.h2020.helios_social.happ.helios.talk.HeliosTalkService;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
@@ -97,6 +98,7 @@ public class ProfileActivity extends HeliosTalkActivity {
     private FloatingActionButton button;
     private Uri uri;
     private Profile p;
+    private boolean onSettingAccount = false;
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -106,11 +108,11 @@ public class ProfileActivity extends HeliosTalkActivity {
     @Override
     public void onCreate(@Nullable Bundle state) {
         super.onCreate(state);
+        exitIfStartupFailed(getIntent());
         setContentView(R.layout.activity_profile);
 
         avatar = findViewById(R.id.avatarView);
         nickname = findViewById(R.id.user_nickaname);
-        nickname.setText(identityManager.getIdentity().getAlias());
         fullname = findViewById(R.id.user_fullname);
         gender = findViewById(R.id.gender);
         country = findViewById(R.id.country);
@@ -127,7 +129,7 @@ public class ProfileActivity extends HeliosTalkActivity {
                 selectImage(ProfileActivity.this);
             }
         });
-        loadProfile();
+        onSettingAccount = getIntent().getBooleanExtra("onSettingAccount", false);
     }
 
     @Override
@@ -159,22 +161,23 @@ public class ProfileActivity extends HeliosTalkActivity {
     @Override
     public void onStart() {
         super.onStart();
-        loadProfile();
+        loadProfile(onSettingAccount);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         LOG.info("ON RESUME " + uri);
-        loadProfile();
+        loadProfile(onSettingAccount);
     }
 
-    public void loadProfile() {
+    public void loadProfile(boolean onSettingAccount) {
         try {
             String contextId =
                     egoNetwork.getCurrentContext().getData().toString()
                             .split("%")[1];
-            if (profileManager.containsProfile(contextId)) {
+            nickname.setText(identityManager.getIdentity().getAlias());
+            if (!onSettingAccount && profileManager.containsProfile(contextId)) {
                 p = profileManager.getProfile(contextId);
                 fullname.setText(p.getFullname());
                 gender.setSelection(p.getGender());
@@ -223,7 +226,8 @@ public class ProfileActivity extends HeliosTalkActivity {
         } catch (DbException | FileNotFoundException e) {
             e.printStackTrace();
         }
-        loadContentAwareProfilingInterests();
+        if (!onSettingAccount)
+            loadContentAwareProfilingInterests();
     }
 
     @Override
@@ -363,6 +367,7 @@ public class ProfileActivity extends HeliosTalkActivity {
         try {
             Settings settings = settingsManager.getSettings(SETTINGS_NAMESPACE);
             ContentAwareProfilingType profilingType = ContentAwareProfilingType.fromValue(settings.getInt(PREF_CONTENT_PROFILING, 0));
+            LOG.info("Profiling Type: " + profilingType);
             if (profilingType.getValue() != 0) {
                 List<InterestCategories> interests = miningManager.getSmoothPersonalizedProfile(profilingType);
                 String profilerInterestText = "";
@@ -375,6 +380,15 @@ public class ProfileActivity extends HeliosTalkActivity {
             }
         } catch (DbException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void exitIfStartupFailed(Intent intent) {
+        if (intent.getBooleanExtra(HeliosTalkService.EXTRA_STARTUP_FAILED,
+                                   false)) {
+            finish();
+            LOG.info("Exiting... Startup_Failed");
+            System.exit(0);
         }
     }
 
