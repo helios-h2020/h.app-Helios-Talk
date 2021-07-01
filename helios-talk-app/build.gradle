@@ -23,6 +23,7 @@ android {
             shrinkResources false
             minifyEnabled true
             crunchPngs false
+            zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt', 'proguard-test.txt'
         }
@@ -30,6 +31,7 @@ android {
             shrinkResources false
             minifyEnabled true
             crunchPngs false
+            zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
