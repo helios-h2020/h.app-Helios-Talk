@@ -78,6 +78,8 @@ import static android.provider.Settings.System.DEFAULT_NOTIFICATION_URI;
 import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.core.view.ViewCompat.LAYOUT_DIRECTION_LTR;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_CONTENT_PROFILING;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_RECOMMENDATION_MINER;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_SHARE_PREFS;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
@@ -113,6 +115,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
     private SettingsActivity listener;
     private ListPreference language;
     private ListPreference enableProfiling;
+    private ListPreference minerPref;
+    private SwitchPreference enableSharePreferences;
     private SwitchPreference screenLock;
     private ListPreference screenLockTimeout;
     private SwitchPreference notifyPrivateMessages;
@@ -152,6 +156,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
         ListPreference theme =
                 (ListPreference) findPreference("pref_key_theme");
         enableProfiling = (ListPreference) findPreference("pref_key_profiling");
+        enableSharePreferences = (SwitchPreference) findPreference("pref_key_preferences");
+        minerPref = (ListPreference) findPreference("pref_key_miner");
         screenLock = (SwitchPreference) findPreference(PREF_SCREEN_LOCK);
         screenLockTimeout =
                 (ListPreference) findPreference(PREF_SCREEN_LOCK_TIMEOUT);
@@ -176,7 +182,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 // upstream bug: https://issuetracker.google.com/issues/38352704
                 Intent intent =
                         new Intent(getActivity(),
-                                HeliosTalkApplication.ENTRY_ACTIVITY);
+                                   HeliosTalkApplication.ENTRY_ACTIVITY);
                 intent.setFlags(
                         FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -188,6 +194,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
             return true;
         });
         enableProfiling.setOnPreferenceChangeListener(this);
+        enableSharePreferences.setOnPreferenceChangeListener(this);
+        minerPref.setOnPreferenceChangeListener(this);
         screenLock.setOnPreferenceChangeListener(this);
         screenLockTimeout.setOnPreferenceChangeListener(this);
 
@@ -208,7 +216,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
         findPreference("pref_key_change_password")
                 .setOnPreferenceClickListener(v -> {
                     startActivity(new Intent(getActivity(),
-                            ChangePasswordActivity.class));
+                                             ChangePasswordActivity.class));
                     return true;
                 });
 
@@ -268,7 +276,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
             }
             // Prefix with LRM marker to prevent any RTL direction
             entries.add("\u200E" + nativeName.substring(0, 1).toUpperCase()
-                    + nativeName.substring(1));
+                                + nativeName.substring(1));
             entryValues.add(tag);
         }
         language.setEntries(entries.toArray(new CharSequence[0]));
@@ -305,6 +313,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
             displayScreenLockSetting();
 
             enableProfiling.setValueIndex(settings.getInt(PREF_CONTENT_PROFILING, 0));
+            enableSharePreferences.setChecked(settings.getBoolean(PREF_SHARE_PREFS, true));
+            minerPref.setValueIndex(settings.getInt(PREF_RECOMMENDATION_MINER, 0));
 
             if (SDK_INT < 26) {
                 notifyPrivateMessages.setChecked(settings.getBoolean(
@@ -339,16 +349,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 notifySound.setSummary(text);
             } else {
                 setupNotificationPreference(notifyPrivateMessages,
-                        AndroidNotificationManager.CONTACT_CHANNEL_ID,
-                        R.string.notify_private_messages_setting_summary_26);
+                                            AndroidNotificationManager.CONTACT_CHANNEL_ID,
+                                            R.string.notify_private_messages_setting_summary_26);
                 setupNotificationPreference(notifyGroupMessages,
-                        AndroidNotificationManager.GROUP_CHANNEL_ID,
-                        R.string.notify_group_messages_setting_summary_26);
+                                            AndroidNotificationManager.GROUP_CHANNEL_ID,
+                                            R.string.notify_group_messages_setting_summary_26);
                 setupNotificationPreference(notifyForumPosts,
-                        AndroidNotificationManager.FORUM_CHANNEL_ID,
-                        R.string.notify_forum_posts_setting_summary_26);
-				/*setupNotificationPreference(notifyBlogPosts, BLOG_CHANNEL_ID,
-						R.string.notify_blog_posts_setting_summary_26);*/
+                                            AndroidNotificationManager.FORUM_CHANNEL_ID,
+                                            R.string.notify_forum_posts_setting_summary_26);
+
                 notifyVibration.setVisible(false);
                 notifySound.setVisible(false);
             }
@@ -382,8 +391,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
             }
             // timeout depends on screenLock and gets disabled automatically
             int timeout = settings.getInt(PREF_SCREEN_LOCK_TIMEOUT,
-                    Integer.valueOf(getString(
-                            R.string.pref_lock_timeout_value_default)));
+                                          Integer.valueOf(getString(
+                                                  R.string.pref_lock_timeout_value_default)));
             String newValue = String.valueOf(timeout);
             screenLockTimeout.setValue(newValue);
             setScreenLockTimeoutSummary(newValue);
@@ -428,10 +437,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
         i.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
         i.putExtra(EXTRA_RINGTONE_TITLE, title);
         i.putExtra(EXTRA_RINGTONE_DEFAULT_URI,
-                DEFAULT_NOTIFICATION_URI);
+                   DEFAULT_NOTIFICATION_URI);
         i.putExtra(EXTRA_RINGTONE_SHOW_SILENT, true);
         if (settings.getBoolean(AndroidNotificationManager.PREF_NOTIFY_SOUND,
-                true)) {
+                                true)) {
             Uri uri;
             String ringtoneUri =
                     settings.get(
@@ -445,7 +454,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
             startActivityForResult(i, RequestCodes.REQUEST_RINGTONE);
         } else {
             Toast.makeText(getContext(), R.string.cannot_load_ringtone,
-                    LENGTH_SHORT).show();
+                           LENGTH_SHORT).show();
         }
         return true;
     }
@@ -463,6 +472,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
             Settings s = new Settings();
             s.putInt(PREF_CONTENT_PROFILING, profilingSetting);
             storeSettings(s);
+        } else if (preference == enableSharePreferences) {
+            Settings s = new Settings();
+            s.putBoolean(PREF_SHARE_PREFS, (Boolean) newValue);
+            storeSettings(s);
+        } else if (preference == minerPref) {
+            Settings s = new Settings();
+            String value = (String) newValue;
+            s.putInt(PREF_RECOMMENDATION_MINER, Integer.valueOf(value));
+            storeSettings(s);
         } else if (preference == screenLock) {
             Settings s = new Settings();
             s.putBoolean(PREF_SCREEN_LOCK, (Boolean) newValue);
@@ -476,22 +494,22 @@ public class SettingsFragment extends PreferenceFragmentCompat
         } else if (preference == notifyPrivateMessages) {
             Settings s = new Settings();
             s.putBoolean(AndroidNotificationManager.PREF_NOTIFY_PRIVATE,
-                    (Boolean) newValue);
+                         (Boolean) newValue);
             storeSettings(s);
         } else if (preference == notifyGroupMessages) {
             Settings s = new Settings();
             s.putBoolean(AndroidNotificationManager.PREF_NOTIFY_GROUP,
-                    (Boolean) newValue);
+                         (Boolean) newValue);
             storeSettings(s);
         } else if (preference == notifyForumPosts) {
             Settings s = new Settings();
             s.putBoolean(AndroidNotificationManager.PREF_NOTIFY_FORUM,
-                    (Boolean) newValue);
+                         (Boolean) newValue);
             storeSettings(s);
         } else if (preference == notifyVibration) {
             Settings s = new Settings();
             s.putBoolean(AndroidNotificationManager.PREF_NOTIFY_VIBRATION,
-                    (Boolean) newValue);
+                         (Boolean) newValue);
             storeSettings(s);
         }
         return true;
@@ -503,15 +521,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
         builder.setTitle(R.string.pref_language_title);
         builder.setMessage(R.string.pref_language_changed);
         builder.setPositiveButton(R.string.sign_out_button,
-                (dialogInterface, i) -> {
-                    language.setValue(newValue);
-                    Intent intent = new Intent(getContext(),
-                            HeliosTalkApplication.ENTRY_ACTIVITY);
-                    intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                    //intent.setData(SIGN_OUT_URI);
-                    requireActivity().startActivity(intent);
-                    requireActivity().finish();
-                });
+                                  (dialogInterface, i) -> {
+                                      language.setValue(newValue);
+                                      Intent intent = new Intent(getContext(),
+                                                                 HeliosTalkApplication.ENTRY_ACTIVITY);
+                                      intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                                      //intent.setData(SIGN_OUT_URI);
+                                      requireActivity().startActivity(intent);
+                                      requireActivity().finish();
+                                  });
         builder.setNegativeButton(R.string.cancel, null);
         builder.setCancelable(false);
         builder.show();
@@ -548,13 +566,13 @@ public class SettingsFragment extends PreferenceFragmentCompat
             if (uri == null) {
                 // The user chose silence
                 s.putBoolean(AndroidNotificationManager.PREF_NOTIFY_SOUND,
-                        false);
+                             false);
                 s.put(AndroidNotificationManager.PREF_NOTIFY_RINGTONE_NAME, "");
                 s.put(AndroidNotificationManager.PREF_NOTIFY_RINGTONE_URI, "");
             } else if (RingtoneManager.isDefault(uri)) {
                 // The user chose the default
                 s.putBoolean(AndroidNotificationManager.PREF_NOTIFY_SOUND,
-                        true);
+                             true);
                 s.put(AndroidNotificationManager.PREF_NOTIFY_RINGTONE_NAME, "");
                 s.put(AndroidNotificationManager.PREF_NOTIFY_RINGTONE_URI, "");
             } else {
@@ -562,15 +580,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 Ringtone r = RingtoneManager.getRingtone(getContext(), uri);
                 if (r == null || "file".equals(uri.getScheme())) {
                     Toast.makeText(getContext(), R.string.cannot_load_ringtone,
-                            LENGTH_SHORT).show();
+                                   LENGTH_SHORT).show();
                 } else {
                     String name = r.getTitle(getContext());
                     s.putBoolean(AndroidNotificationManager.PREF_NOTIFY_SOUND,
-                            true);
+                                 true);
                     s.put(AndroidNotificationManager.PREF_NOTIFY_RINGTONE_NAME,
-                            name);
+                          name);
                     s.put(AndroidNotificationManager.PREF_NOTIFY_RINGTONE_URI,
-                            uri.toString());
+                          uri.toString());
                 }
             }
             storeSettings(s);
@@ -596,15 +614,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void verifyStoragePermissions() {
         // Check if we have write permission
         if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                                              Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                                                  Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             verifyMetadataPermissions();
             return;
         }
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Access Storage Permission!")
                     .setMessage(R.string.profiling_storage_permissions)
@@ -635,12 +653,12 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void verifyMetadataPermissions() {
         //check if access to metadata has been granted.
         if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                              Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Access to Media Metadata!")
                     .setMessage(R.string.profiling_metadata_permissions)

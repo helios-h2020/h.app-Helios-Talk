@@ -696,6 +696,15 @@
     <string name="profiling_settings_fine">Fine Interest Profiling (recommended)</string>
     <string name="profiling_settings_coarse">Coarse Interest Profiling</string>
 
+    <!--Settings Recommendation-->
+    <string name="recommendations_setting_title">Recommendations</string>
+    <string name="pref_send_pref_recommendations_title">Allow sharing preferences</string>
+    <string name="pref_send_pref_recommendations_sum">To provide recommendations and enhance
+        your content profile, we share with your friends some minimal preferences. </string>
+    <string name="miners_setting">Select miner for Recommendations</string>
+    <string name="graph_mining_setting_gnn">Graph Neural Network Miner (recommended)</string>
+    <string name="graph_mining_settings_repeat_n_reply">Repeat and Reply Miner</string>
+
     <!-- Settings Notifications -->
     <string name="notification_settings_title">Notifications</string>
     <string name="notify_sign_in_title">Remind me to sign in</string>
