@@ -274,7 +274,7 @@ public class ProfileActivity extends HeliosTalkActivity {
                             .setQuote(quote.getText().toString())
                             .setProfilePicture(profilePic)
                             .build();
-
+                    identityManager.setProfilePicture(profilePic);
                     if (profileManager.containsProfile(p.getContextId())) {
                         profileManager.updateProfile(p);
                     } else {
