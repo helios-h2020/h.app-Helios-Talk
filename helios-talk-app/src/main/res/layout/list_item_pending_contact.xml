@@ -68,16 +68,27 @@
 		app:layout_constraintVertical_bias="0.0"
 		tools:text="Dec 24" />
 
+	<ImageButton
+		android:id="@+id/deleteOutgoingButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@drawable/action_delete_white"
+		app:layout_constraintBottom_toTopOf="@+id/time"
+		app:layout_constraintEnd_toEndOf="@+id/time"
+		app:layout_constraintVertical_bias="0.0"
+		android:layout_marginBottom="5dp"
+		android:layout_marginTop="10dp"></ImageButton>
+
 	<TextView
 		android:id="@+id/outgoingPrompt"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_margin="@dimen/margin_medium"
+		android:layout_margin="@dimen/margin_small"
 		android:text="@string/waiting_pending_contact"
 		app:layout_constraintEnd_toStartOf="@+id/time"
 		app:layout_constraintStart_toStartOf="@+id/name"
 		app:layout_constraintTop_toBottomOf="@+id/message"
-		android:visibility="gone"
+		android:visibility="visible"
 		/>
 
 	<Button
@@ -106,6 +117,7 @@
 		app:layout_constraintTop_toTopOf="@+id/confirmButton"
 		app:layout_constraintVertical_bias="0.0"
 		/>
+
 
 	<View
 		android:id="@+id/divider"

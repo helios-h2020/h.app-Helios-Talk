@@ -3,6 +3,7 @@ package eu.h2020.helios_social.happ.helios.talk.contact.connection;
 import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
@@ -24,7 +25,8 @@ class PendingContactViewHolder extends ViewHolder {
     private final TextView message;
     private final Button confirmButton;
     private final Button deleteButton;
-    private final TextView outgoingRequet;
+    private final ImageButton deleteOutgoingButton;
+    private final TextView outgoingRequest;
 
     PendingContactViewHolder(View v, PendingContactListener listener) {
         super(v);
@@ -34,7 +36,8 @@ class PendingContactViewHolder extends ViewHolder {
         message = v.findViewById(R.id.message);
         confirmButton = v.findViewById(R.id.confirmButton);
         deleteButton = v.findViewById(R.id.deleteButton);
-        outgoingRequet = v.findViewById(R.id.outgoingPrompt);
+        deleteOutgoingButton = v.findViewById(R.id.deleteOutgoingButton);
+        outgoingRequest = v.findViewById(R.id.outgoingPrompt);
         this.listener = listener;
     }
 
@@ -49,21 +52,23 @@ class PendingContactViewHolder extends ViewHolder {
         name.setText(p.getAlias());
         time.setText(UiUtils.formatDate(time.getContext(), p.getTimestamp()));
         message.setText(p.getMessage());
-        deleteButton.setOnClickListener(v -> {
-            listener.onPendingContactItemDelete(item);
-        });
+        deleteButton.setOnClickListener(v -> listener.onPendingContactItemDelete(item));
+        // delete outgoing pending invitation
+        deleteOutgoingButton.setOnClickListener(v -> listener.onPendingContactItemDelete(item));
 
-        confirmButton.setOnClickListener(v -> {
-            listener.onPendingContactItemConfirm(item);
-        });
+        confirmButton.setOnClickListener(v -> listener.onPendingContactItemConfirm(item));
 
+        // set buttons visibilities
         if (item.getPendingContact().getPendingContactType().equals(
                 PendingContactType.OUTGOING)) {
             deleteButton.setVisibility(View.GONE);
             confirmButton.setVisibility(View.GONE);
-            outgoingRequet.setVisibility(View.VISIBLE);
+            outgoingRequest.setVisibility(View.VISIBLE);
+            deleteOutgoingButton.setVisibility(View.VISIBLE);
         } else {
-            outgoingRequet.setVisibility(View.GONE);
+            outgoingRequest.setVisibility(View.GONE);
+            deleteOutgoingButton.setVisibility(View.GONE);
+
         }
 
     }
