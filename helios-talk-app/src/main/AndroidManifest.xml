@@ -24,8 +24,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!--suppress DeprecatedClassUsageInspection -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- suppress DeprecatedClassUsageInspection -->
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -35,7 +34,7 @@
 
 
     <application
-        android:name="eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplicationImpl"
+        android:name=".HeliosTalkApplicationImpl"
         android:allowBackup="false"
         android:banner="@mipmap/tv_banner_helio_talk"
         android:icon="@mipmap/ic_helios_talk_launcher_round"
@@ -48,7 +47,7 @@
         tools:targetApi="29">
 
         <receiver
-            android:name="eu.h2020.helios_social.happ.helios.talk.login.SignInReminderReceiver"
+            android:name=".login.SignInReminderReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -57,23 +56,21 @@
         </receiver>
 
         <service
-            android:name="eu.h2020.helios_social.happ.helios.talk.HeliosTalkService"
+            android:name=".HeliosTalkService"
             android:exported="false">
             <intent-filter>
                 <action android:name="eu.h2020.helios_social.happ.helios.talk.HeliosTalkService" />
             </intent-filter>
         </service>
-
         <service
-            android:name="eu.h2020.helios_social.happ.helios.talk.NotificationCleanupService"
-            android:exported="false"></service>
+            android:name=".NotificationCleanupService"
+            android:exported="false" />
 
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
             android:enabled="false"
             android:exported="false" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="eu.h2020.helios_social.helios.talk.debug.provider"
@@ -85,17 +82,18 @@
         </provider>
 
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.login.StartupActivity"
-            android:label="@string/app_name"></activity>
-
-        <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.account.SetupActivity"
-            android:label="@string/setup_title"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"></activity>
-
-        <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.splash.SplashScreenActivity"
+            android:name=".login.StartupActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".account.SetupActivity"
+            android:label="@string/setup_title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
+        <activity
+            android:name=".splash.SplashScreenActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -104,17 +102,16 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:name=".navdrawer.NavDrawerActivity"
             android:launchMode="singleTask"
-            android:theme="@style/HeliosTheme.NoActionBar"></activity>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/HeliosTheme.NoActionBar" />
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity"
+            android:name=".conversation.ConversationActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -122,214 +119,233 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.share.ShareContentActivity"
+            android:name=".share.ShareContentActivity"
             android:label="@string/share_content_to_helios_talk_hint"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity"
+            android:name=".conversation.ImageActivity"
             android:label="@string/app_name"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity"
+            android:parentActivityName=".conversation.ConversationActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroupActivity"
+            android:name=".privategroup.creation.CreateGroupActivity"
             android:label="@string/groups_create_group_title"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity"
+            android:name=".privategroup.conversation.PrivateGroupConversationActivity"
             android:label="@string/app_name"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteActivity"
+            android:name=".privategroup.creation.GroupInviteActivity"
             android:label="@string/groups_invite_members"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity"
+            android:parentActivityName=".privategroup.conversation.PrivateGroupConversationActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.forum.creation.CreateForumActivity"
+            android:name=".forum.creation.CreateForumActivity"
             android:label="@string/groups_create_forum_title"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.search.SearchActivity"
+            android:name=".search.SearchActivity"
             android:label="@string/app_name"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.forum.creation.ForumInviteActivity"
+            android:name=".forum.creation.ForumInviteActivity"
             android:label="@string/groups_invite_members"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity"
+            android:parentActivityName=".forum.conversation.ForumConversationActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity" />
         </activity>
-
         <activity
             android:name=".conversation.sharecontacts.ShareContactActivity"
             android:label="@string/share_contact"
             android:parentActivityName=".conversation.ConversationActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".conversation.ConversationActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.forum.membership.ForumMembershipListActivity"
+            android:name=".forum.membership.ForumMembershipListActivity"
             android:label="@string/forum_members"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity"
+            android:parentActivityName=".forum.conversation.ForumConversationActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity"
+            android:name=".privategroup.membership.GroupMembershipListActivity"
+            android:label="@string/group_members"
+            android:parentActivityName=".privategroup.conversation.PrivateGroupConversationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity" />
+        </activity>
+        <activity
+            android:name=".forum.conversation.ForumConversationActivity"
             android:label="@string/app_name"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
             android:name=".profile.ProfileActivity"
             android:label="Profile"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.profile.ContactProfileActivity"
+            android:name=".profile.ContactProfileActivity"
             android:label="Profile"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.context.CreateContextActivity"
+            android:name=".context.CreateContextActivity"
             android:label="@string/create_context_title"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.StartupFailureActivity"
-            android:label="@string/startup_failed_activity_title"></activity>
-
+            android:name=".StartupFailureActivity"
+            android:label="@string/startup_failed_activity_title"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:label="@string/settings_button"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
-            android:permission="android.permission.READ_NETWORK_USAGE_HISTORY">
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:permission="android.permission.READ_NETWORK_USAGE_HISTORY"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.login.ChangePasswordActivity"
+            android:name=".login.ChangePasswordActivity"
             android:label="@string/change_password"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity"
+            android:parentActivityName=".settings.SettingsActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.logout.ExitActivity"
-            android:theme="@android:style/Theme.NoDisplay"></activity>
-
+            android:name=".logout.ExitActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoDisplay" />
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.logout.HideUiActivity"
-            android:theme="@android:style/Theme.NoDisplay"></activity>
-
+            android:name=".logout.HideUiActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoDisplay" />
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.account.UnlockActivity"
+            android:name=".account.UnlockActivity"
             android:label="@string/lock_unlock"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme.NoActionBar" />
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.contact.connection.AddContactActivity"
+            android:name=".contact.connection.AddContactActivity"
             android:label="@string/add_contact_remotely_title"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
@@ -343,26 +359,27 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity"
+            android:name=".contact.connection.PendingContactListActivity"
             android:label="@string/connection_requests"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme" />
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactsToContextActivity"
+            android:name=".context.sharing.InviteContactsToContextActivity"
             android:label="@string/invite_contacts_context"
-            android:parentActivityName="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity"
+            android:parentActivityName=".navdrawer.NavDrawerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity" />
         </activity>
-
         <activity
-            android:name="eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListActivity"
+            android:name=".context.invites.InvitationListActivity"
             android:label="@string/invitations"
+            android:screenOrientation="portrait"
             android:theme="@style/HeliosTheme" />
     </application>
+
 </manifest>

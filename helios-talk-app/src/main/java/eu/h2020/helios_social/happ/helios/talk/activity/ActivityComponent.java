@@ -51,6 +51,8 @@ import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroup
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroupModule;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteFragment;
+import eu.h2020.helios_social.happ.helios.talk.privategroup.membership.GroupMembershipListActivity;
+import eu.h2020.helios_social.happ.helios.talk.privategroup.membership.GroupMembershipModule;
 import eu.h2020.helios_social.happ.helios.talk.profile.ContactProfileActivity;
 import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
 import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
@@ -75,7 +77,8 @@ import dagger.Component;
                 ConversationModule.class,
                 SharedModule.class,
                 ForumMembershipModule.class,
-                ShareContentModule.class
+                ShareContentModule.class,
+                GroupMembershipModule.class
         },
         dependencies = AndroidComponent.class)
 public interface ActivityComponent {
@@ -183,4 +186,6 @@ public interface ActivityComponent {
     void inject(ProfileActivity profileActivity);
 
     void inject(ContactProfileActivity contactProfileActivity);
+
+    void inject(GroupMembershipListActivity groupMembershipListActivity);
 }

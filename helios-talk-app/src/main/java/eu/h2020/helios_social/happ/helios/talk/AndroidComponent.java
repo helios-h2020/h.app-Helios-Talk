@@ -5,6 +5,7 @@ import eu.h2020.helios_social.happ.account.HeliosTalkAccountModule;
 
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentModule;
 import eu.h2020.helios_social.modules.groupcommunications.api.attachment.AttachmentManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.db.GroupCommunicationsDBEagerSingletons;
 import eu.h2020.helios_social.modules.groupcommunications.db.GroupCommunicationsDBModule;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
@@ -111,6 +112,8 @@ public interface AndroidComponent
     PrivateMessageFactory privateMessageFactory();
 
     GroupManager groupManager();
+
+    PrivateGroupManager privateGroupManager();
 
     ForumMembershipManager forumMembershipManager();
 
