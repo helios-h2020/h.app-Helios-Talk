@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,12 +19,15 @@ import javax.inject.Inject;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import org.jetbrains.annotations.NotNull;
+
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactsToContextActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationRemovedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAddedEvent;
@@ -36,16 +38,15 @@ import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbExcept
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
-import eu.h2020.helios_social.happ.helios.talk.contact.connection.AddContactActivity;
 import eu.h2020.helios_social.happ.helios.talk.fragment.HeliosContextFragment;
 import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
-import io.github.kobakei.materialfabspeeddial.FabSpeedDial;
 
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
+import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_NAME;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.now;
@@ -54,7 +55,7 @@ import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationA
 import static java.util.logging.Level.WARNING;
 
 public class ContactListFragment extends HeliosContextFragment
-        implements EventListener, FabSpeedDial.OnMenuItemClickListener {
+        implements EventListener {
 
     public static final String TAG = ContactListFragment.class.getName();
     private static final Logger LOG = Logger.getLogger(TAG);
@@ -82,7 +83,7 @@ public class ContactListFragment extends HeliosContextFragment
     }
 
     @Override
-    public String getUniqueTag() {
+    public @NotNull String getUniqueTag() {
         return TAG;
     }
 
@@ -102,13 +103,40 @@ public class ContactListFragment extends HeliosContextFragment
         View contentView = inflater.inflate(R.layout.contact_list_view,
                                             container, false);
 
-        FabSpeedDial speedDial = contentView.findViewById(R.id.speedDial);
+/*        FabSpeedDial speedDial = contentView.findViewById(R.id.speedDial);
         if (egoNetwork.getCurrentContext().getData().toString().split("%")[1].equals("All"))
-            speedDial.inflateMenu(R.menu.contact_list_actions);
-        else
+            speedDial.hide();
+            //speedDial.inflateMenu(R.menu.contact_list_actions);
+        else {
             speedDial.inflateMenu(R.menu.contact_list_actions_in_context);
+            speedDial.show();
+        }
+        speedDial.addOnMenuItemClickListener(this);*/
 
-        speedDial.addOnMenuItemClickListener(this);
+        // replace speedDial with a button, there is no need of menu when we have only one option.
+        FloatingActionButton imageButton = contentView.findViewById(R.id.addImageBtn);
+        if (egoNetwork.getCurrentContext().getData().toString().split("%")[1].equals("All"))
+            imageButton.setVisibility(View.GONE);
+        else {
+            imageButton.setVisibility(View.VISIBLE);
+        }
+        imageButton.setOnClickListener(v -> {
+            Intent inviteContactsToContextActivity = new Intent(
+                    getContext(),
+                    InviteContactsToContextActivity.class
+            );
+            inviteContactsToContextActivity.putExtra(CONTEXT_ID,
+                    egoNetwork.getCurrentContext().getData().toString()
+                            .split("%")[1]);
+            try {
+                inviteContactsToContextActivity.putExtra(CONTEXT_NAME,
+                        contextController.getContextName(egoNetwork.getCurrentContext().getData().toString()
+                                .split("%")[1]));
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+            startActivity(inviteContactsToContextActivity);
+        });
 
         BaseContactListAdapter.OnContactClickListener<ContactListItem>
                 onContactClickListener =
@@ -141,7 +169,7 @@ public class ContactListFragment extends HeliosContextFragment
         return contentView;
     }
 
-    @Override
+/*    @Override
     public void onMenuItemClick(FloatingActionButton fab, @Nullable TextView v,
                                 int itemId) {
         LOG.info("Selected Item Id: " + itemId);
@@ -158,10 +186,17 @@ public class ContactListFragment extends HeliosContextFragment
                 inviteContactsToContextActivity.putExtra(CONTEXT_ID,
                                                          egoNetwork.getCurrentContext().getData().toString()
                                                                  .split("%")[1]);
+                try {
+                    inviteContactsToContextActivity.putExtra(CONTEXT_NAME,
+                                                            contextController.getContextName(egoNetwork.getCurrentContext().getData().toString()
+                                                                    .split("%")[1]));
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
                 startActivity(inviteContactsToContextActivity);
                 return;
         }
-    }
+    }*/
 
     @Override
     public void onStart() {
@@ -226,7 +261,9 @@ public class ContactListFragment extends HeliosContextFragment
 
     @SuppressLint("RestrictedApi")
     @Override
-    public void eventOccurred(Event e) {
+    public void eventOccurred(@NotNull Event e) {
+        LOG.info("Event occurred");
+        LOG.info(String.valueOf(e));
         if (e instanceof ContactAddedEvent) {
             LOG.info("Contact added, reloading");
             loadContacts();
@@ -239,6 +276,10 @@ public class ContactListFragment extends HeliosContextFragment
         } else if (e instanceof PendingContactAddedEvent) {
             if (((PendingContactAddedEvent) e).getPendingContact().getPendingContactType().equals(PendingContactType.INCOMING))
                 actionBar.invalidateOptionsMenu();
+        }
+        // if contacts have possibly changed, reload contacts.
+        else if (e instanceof ContextInvitationRemovedEvent){
+            loadContacts();
         }
     }
 
