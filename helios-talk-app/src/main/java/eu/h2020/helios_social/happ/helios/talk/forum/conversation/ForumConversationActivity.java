@@ -55,6 +55,7 @@ import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
+import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteActivity;
 import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.happ.helios.talk.view.FileAttachmentPreview;
@@ -91,6 +92,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.forum.LocationForu
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.SeasonalForum;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupMessageHeader;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.lifecycle.Lifecycle.State.STARTED;
@@ -150,6 +152,7 @@ public class ForumConversationActivity extends HeliosTalkActivity
     private String groupName;
     private String info;
     private boolean isEditor = false;
+    private String IS_NEW="isNew";
 
     private final Map<String, String> textCache = new ConcurrentHashMap<>();
     @Nullable
@@ -164,6 +167,7 @@ public class ForumConversationActivity extends HeliosTalkActivity
     private boolean isSelfRevealed = false;
     private MenuItem inviteMenuItem, memberListMenuItem, leaveMenuItem,
             revealSelfMenuItem, hideSelfMenuItem, infoMenuItem;
+    private boolean isNewGroup;
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -180,6 +184,7 @@ public class ForumConversationActivity extends HeliosTalkActivity
             throw new IllegalStateException("No GroupId in intent.");
         groupName = i.getStringExtra(GROUP_NAME);
         LOG.info("group id: " + groupId + " group name:" + groupName);
+        isNewGroup = i.getBooleanExtra(IS_NEW,false);
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(ForumConversationViewModel.class);
@@ -207,6 +212,8 @@ public class ForumConversationActivity extends HeliosTalkActivity
             }
             stringTags = stringTags.replaceAll(", $", "");
             tags.setText(stringTags);
+            // center vertical title
+            if (stringTags.equals("")) tags.setVisibility(View.GONE);
         });
 
         viewModel.getForumMemberRole().observe(this, role -> {
@@ -229,6 +236,8 @@ public class ForumConversationActivity extends HeliosTalkActivity
         ForumConversationScrollListener scrollListener =
                 new ForumConversationScrollListener(adapter, viewModel);
         list.getRecyclerView().addOnScrollListener(scrollListener);
+        // show messages smoothly
+        list.getRecyclerView().setItemAnimator(new SlideInUpAnimator());
 
         textInput = findViewById(R.id.text_input_container);
         ImagePreview imagePreview = findViewById(R.id.imagePreview);
@@ -243,6 +252,12 @@ public class ForumConversationActivity extends HeliosTalkActivity
         textInput.setOnKeyboardShownListener(this::scrollToBottom);
 
         registerForContextMenu(list);
+        // if the forum is new, show invite contacts activity
+        if (isNewGroup){
+            Intent i3 = new Intent(this, ForumInviteActivity.class);
+            i3.putExtra(GROUP_ID, groupId);
+            startActivityForResult(i3, RequestCodes.REQUEST_SHARE_FORUM);
+        }
     }
 
     @Override
@@ -318,6 +333,11 @@ public class ForumConversationActivity extends HeliosTalkActivity
     private void scrollToBottom() {
         int items = adapter.getItemCount();
         if (items > 0) list.scrollToPosition(items - 1);
+    }
+
+    // custom scroll to position y
+    private void customScrollToBottom(int y){
+        list.getRecyclerView().smoothScrollBy(0, Math.abs(y));
     }
 
     @Override
@@ -551,6 +571,10 @@ public class ForumConversationActivity extends HeliosTalkActivity
                 pair.getSecond().setAttachmentList(items);
                 adapter.notifyItemChanged(pair.getFirst());
                 if (scroll) scrollToBottom();
+                // if there is more space to scroll down, scroll.
+                int overallXScroldl = list.getRecyclerView().computeVerticalScrollOffset();
+                if (overallXScroldl >0)
+                    customScrollToBottom(overallXScroldl);
             }
         });
     }
@@ -707,6 +731,10 @@ public class ForumConversationActivity extends HeliosTalkActivity
 
                 adapter.notifyItemChanged(pair.getFirst());
                 if (scroll) scrollToBottom();
+                // if there is more space to scroll down, scroll.
+                int overallXScroldl = list.getRecyclerView().computeVerticalScrollOffset();
+                if (overallXScroldl >0)
+                    customScrollToBottom(overallXScroldl);
             }
         });
     }
@@ -863,6 +891,8 @@ public class ForumConversationActivity extends HeliosTalkActivity
                                                LOG.warning(exception.getMessage());
                                        }
                                    });
+        // go back
+        onBackPressed();
     }
 
     @Override

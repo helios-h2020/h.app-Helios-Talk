@@ -231,8 +231,8 @@
 
     <!-- Adding Contacts Remotely -->
 
-    <string name="add_new_conversation">New Conversation</string>
-    <string name="add_new_group_conversation">New Group</string>
+    <string name="add_new_conversation">New Chat</string>
+    <string name="add_new_group_conversation">New Group Chat</string>
     <string name="add_new_forum">New Forum</string>
     <string name="add_contact_remotely_title_case">Add Contact at a Distance</string>
     <string name="add_contact_nearby_title">Add contact nearby</string>
@@ -269,7 +269,7 @@
     <string name="adding_contact_failed">Adding contact has failed</string>
     <string name="adding_contact_message">I would like to add you to my connections</string>
     <string name="dialog_title_remove_pending_contact">Confirm Removal</string>
-    <string name="dialog_message_remove_pending_contact">Are you sure you want to reject the connection request?</string>
+    <string name="dialog_message_remove_pending_contact">Are you sure you want to remove this connection request?</string>
     <string name="own_link_error">Enter your contact\'s link, not your own</string>
     <string name="nickname_missing">Please enter a nickname</string>
     <string name="invalid_link">Invalid link</string>
@@ -471,11 +471,14 @@
     <string name="context_add_contacts_error">There was an error adding contacts to this context.</string>
     <string name="context_add_members">Invite Contacts</string>
     <string name="dialog_title_leave_context">Confirm Removing Context</string>
+    <string name="dialog_title_rename_context">Rename Context. This name is not visible to your contacts. </string>
+
     <string name="dialog_message_leave_context">Are you sure that you want to remove this
         context?\nAny conversations you\'ve created in this context will be removed.
         context
         .</string>
     <string name="dialog_button_remove_context">Remove</string>
+    <string name="dialog_button_rename_context">Rename</string>
     <string name="context_removed_toast">Context Removed</string>
     <string name="no_contacts_in_context">No contacts yet!</string>
     <string name="no_contacts_in_context_details">Add a contact to start a new chat or invite contacts to current context. </string>
@@ -796,6 +799,16 @@
     <string name="TURN_credential">user1</string>
     <string name="STUN_URL">stun:77.231.202.135:3478</string>
     <string name="API_endpoint">https://77.231.202.135:11794</string>
+    <string name="connect">Connect</string>
+    <string name="invitations_nav_btn">Invitations</string>
+    <string name="create_context">Create Context</string>
+    <string name="rename_context">Rename Context</string>
+    <string name="the_public_name_of_this_context_is">The public name of this Context is \t</string>
+    <string name="dialog_title_set_context_public_name">Give a public name to this Context. This name will be visible to anyone.</string>
+    <string name="group_members">Group Members</string>
 
-
+    <string-array name="relay_addresses">
+        <item>/ip4/160.40.51.18/tcp/5556/ws/p2p/QmVnujWxKE6DMBJgKHyTwjyUp4yaXu6bRuo8qrxGHoTqk8</item>
+        <!--        <item>/ip4/130.188.225.47/tcp/28123/ws/p2p/QmXXH3QY72GaFfgRDkftFZgLnrPXrktr2UUjmpvJtVzDHq</item>-->
+    </string-array>
 </resources>

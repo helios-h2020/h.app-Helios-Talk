@@ -1,13 +1,9 @@
 package eu.h2020.helios_social.happ.helios.talk.contact.connection;
 
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -15,14 +11,21 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Collection;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
-import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.PendingContact;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 
 
 @MethodsNotNullByDefault
@@ -48,7 +51,7 @@ public class PendingContactListActivity extends HeliosTalkActivity
     public void onCreate(@Nullable Bundle state) {
         super.onCreate(state);
 
-        setContentView(R.layout.list);
+        setContentView(R.layout.activity_pending_condact_list);
 
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -68,7 +71,28 @@ public class PendingContactListActivity extends HeliosTalkActivity
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(adapter);
         list.showProgressBar();
+
+
+/*        FabSpeedDial speedDial = findViewById(R.id.speedDial);
+        speedDial.inflateMenu(R.menu.contact_list_actions);
+        speedDial.addOnMenuItemClickListener(this);*/
+
+        // replace speedDial with a button, there is no need of menu when we have only one option.
+        FloatingActionButton imageButton = findViewById(R.id.addImageBtn);
+        imageButton.setOnClickListener(v -> startActivity(new Intent(PendingContactListActivity.this, AddContactActivity.class)));
+
     }
+
+/*    @Override
+    public void onMenuItemClick(FloatingActionButton fab, @Nullable TextView v,
+                                int itemId) {
+        switch (itemId) {
+            case R.id.action_add_contact_remotely:
+                startActivity(
+                        new Intent(this, AddContactActivity.class));
+                return;
+        }
+    }*/
 
     @Override
     public void onStart() {

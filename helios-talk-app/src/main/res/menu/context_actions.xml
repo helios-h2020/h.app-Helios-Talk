@@ -2,34 +2,40 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/pending_contexts"
-        android:icon="@drawable/ic_notifications"
-        android:title="@string/invitations"
-        app:showAsAction="ifRoom" />
+<!--    <item-->
+<!--        android:id="@+id/pending_contexts"-->
+<!--        android:icon="@drawable/ic_notifications"-->
+<!--        android:title="@string/invitations"-->
+<!--        app:showAsAction="ifRoom" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/pending_contacts"-->
+<!--        android:icon="@drawable/ic_person_white"-->
+<!--        android:title="@string/connection_requests"-->
+<!--        app:showAsAction="ifRoom" />-->
+
+
+<!--    <item-->
+<!--        android:id="@+id/action_add_contacts_to_context"-->
+<!--        android:icon="@drawable/action_delete_white"-->
+<!--        android:title="@string/add_contacts_to_context"-->
+<!--        app:showAsAction="never" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/action_create_context"-->
+<!--        android:title="@string/create_context_button"-->
+<!--        app:showAsAction="never" />-->
 
     <item
-        android:id="@+id/pending_contacts"
-        android:icon="@drawable/ic_person_white"
-        android:title="@string/connection_requests"
-        app:showAsAction="ifRoom" />
-
-
-    <item
-        android:id="@+id/action_add_contacts_to_context"
-        android:icon="@drawable/action_delete_white"
-        android:title="@string/add_contacts_to_context"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_create_context"
-        android:title="@string/create_context_button"
-        app:showAsAction="never" />
+        android:id="@+id/action_context_rename"
+        android:icon="@drawable/ic_edit"
+        app:showAsAction="ifRoom"
+        android:title="@string/rename_context" />
 
     <item
         android:id="@+id/action_context_delete"
-        android:icon="@drawable/action_delete_white"
+        android:icon="@drawable/ic_signout"
         android:title="@string/remove_context"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
 </menu>

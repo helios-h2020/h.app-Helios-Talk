@@ -28,6 +28,7 @@ public class CreateForumActivity extends HeliosTalkActivity
 
     @Inject
     CreateForumController controller;
+    private final String IS_NEW="isNew";
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -48,6 +49,7 @@ public class CreateForumActivity extends HeliosTalkActivity
     private void openNewGroup(String groupId) {
         Intent i = new Intent(this, ForumConversationActivity.class);
         i.putExtra(GROUP_ID, groupId);
+        i.putExtra(IS_NEW,true);
         startActivity(i);
         finish();
     }

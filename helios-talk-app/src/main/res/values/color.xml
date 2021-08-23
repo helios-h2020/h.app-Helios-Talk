@@ -59,6 +59,7 @@
     <color name="private_message_date_inverse">@color/m_grey_300</color>
     <color name="forum_avatar_shadow">#99000000</color>
 
+    <color name="border_primary">#dd000000</color>
     <color name="color_primary">#dd000000</color>
     <color name="msg_in">@color/white</color>
     <color name="msg_out">@color/blue_elio_light</color>

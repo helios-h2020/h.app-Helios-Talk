@@ -4,14 +4,13 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/contexts"
-            android:title="Contexts">
-            <menu>
-
-            </menu>
-        </item>
-    </group>
-    <group android:checkableBehavior="single">
+            android:id="@+id/nav_btn_connect"
+            android:icon="@drawable/ic_connect_with_peers"
+            android:title="@string/connect" />
+        <item
+            android:id="@+id/nav_btn_invitations"
+            android:icon="@drawable/ic_notifications"
+            android:title="@string/invitations_nav_btn" />
         <item
             android:id="@+id/nav_btn_profile"
             android:icon="@drawable/ic_profile"
@@ -33,6 +32,20 @@
             android:id="@+id/nav_btn_signout"
             android:icon="@drawable/ic_signout"
             android:title="@string/sign_out_button" />
+    </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/contexts"
+            android:title="Contexts">
+            <menu>
+
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/nav_btn_create_context"
+            android:icon="@drawable/ic_create_context"
+            android:title="@string/create_context" />
     </group>
 
 </menu>

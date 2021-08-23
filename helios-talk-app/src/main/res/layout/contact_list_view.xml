@@ -11,17 +11,27 @@
         app:layout_behavior="eu.h2020.helios_social.happ.helios.talk.view.SnackbarAwareBehavior"
         app:scrollToEnd="false" />
 
-    <io.github.kobakei.materialfabspeeddial.FabSpeedDial
-        android:id="@+id/speedDial"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:fab_fabBackgroundColor="?attr/helios_accent"
-        app:fab_fabDrawable="@drawable/ic_action_add"
-        app:fab_fabRippleColor="@android:color/transparent"
-        app:fab_miniFabBackgroundColor="?attr/helios_accent"
-        app:fab_miniFabTextBackground="?attr/helios_accent"
-        app:fab_miniFabTextColor="@android:color/white"
-        app:layout_anchorGravity="bottom|right|end"
-        app:layout_behavior="eu.h2020.helios_social.happ.helios.talk.view.SnackbarAwareBehavior" />
+<!--    <io.github.kobakei.materialfabspeeddial.FabSpeedDial-->
+<!--        android:visibility="gone"-->
+<!--        android:id="@+id/speedDial"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:fab_fabBackgroundColor="?attr/helios_accent"-->
+<!--        app:fab_fabDrawable="@drawable/ic_action_add"-->
+<!--        app:fab_fabRippleColor="@android:color/transparent"-->
+<!--        app:fab_miniFabBackgroundColor="?attr/helios_accent"-->
+<!--        app:fab_miniFabTextBackground="?attr/helios_accent"-->
+<!--        app:fab_miniFabTextColor="@android:color/white"-->
+<!--        app:layout_anchorGravity="bottom|right|end"-->
+<!--        app:layout_behavior="eu.h2020.helios_social.happ.helios.talk.view.SnackbarAwareBehavior" />-->
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addImageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right|end"
+        app:layout_behavior="eu.h2020.helios_social.happ.helios.talk.view.SnackbarAwareBehavior"
+        android:src="@drawable/ic_action_add"
+        app:fabSize="normal"
+        app:useCompatPadding="true" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

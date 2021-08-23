@@ -24,6 +24,7 @@ public class CreateGroupActivity extends HeliosTalkActivity
 
     @Inject
     CreateGroupController controller;
+    private String IS_NEW="isNew";
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -60,6 +61,7 @@ public class CreateGroupActivity extends HeliosTalkActivity
     private void openNewGroup(String groupId) {
         Intent i = new Intent(this, PrivateGroupConversationActivity.class);
         i.putExtra(GROUP_ID, groupId);
+        i.putExtra(IS_NEW,true);
         startActivity(i);
         finish();
     }
