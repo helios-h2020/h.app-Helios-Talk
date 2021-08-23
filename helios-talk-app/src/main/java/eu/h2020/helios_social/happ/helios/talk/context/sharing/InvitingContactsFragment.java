@@ -14,6 +14,7 @@ import eu.h2020.helios_social.happ.helios.talk.contactselection.SelectableContac
 import eu.h2020.helios_social.happ.helios.talk.context.ContextControllerImpl;
 
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
+import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_NAME;
 
 public class InvitingContactsFragment extends ContextContactSelectorFragment {
 
@@ -22,9 +23,11 @@ public class InvitingContactsFragment extends ContextContactSelectorFragment {
 	@Inject
 	ContextControllerImpl controller;
 
-	public static InvitingContactsFragment newInstance(String contextId) {
+	public static InvitingContactsFragment newInstance(String contextId, String contextName) {
 		Bundle args = new Bundle();
 		args.putString(CONTEXT_ID, contextId);
+		// put context public name into extras
+		args.putString(CONTEXT_NAME, contextName);
 		InvitingContactsFragment fragment = new InvitingContactsFragment();
 		fragment.setArguments(args);
 		return fragment;

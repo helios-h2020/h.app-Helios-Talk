@@ -3,11 +3,10 @@ package eu.h2020.helios_social.happ.helios.talk.context;
 import java.util.Collection;
 
 import eu.h2020.helios_social.core.context.Context;
-import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ExceptionHandler;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.ResultExceptionHandler;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
-import eu.h2020.helios_social.modules.groupcommunications.api.context.DBContext;
+import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
@@ -34,5 +33,15 @@ public interface ContextController {
 	void deleteContext(String contextId,
 			ResultExceptionHandler<Void, DbException> handler);
 
+	void setContextPrivateName(String contextId, String name,
+							   ResultExceptionHandler<Void, DbException> handler);
+
 	Integer getContextColor(String contextId) throws DbException;
+
+	String getContextPrivateName(String contextId) throws DbException;
+
+	String getContextName(String contextId) throws DbException;
+
+	void setContextName(String contextId, String name,
+						  ResultExceptionHandler<Void, DbException> handler) throws DbException;
 }

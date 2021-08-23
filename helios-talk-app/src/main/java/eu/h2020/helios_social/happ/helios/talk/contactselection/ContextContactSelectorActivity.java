@@ -24,9 +24,11 @@ public abstract class ContextContactSelectorActivity extends HeliosTalkActivity
 		implements BaseFragment.BaseFragmentListener, ContactSelectorListener {
 	protected final static String CONTACTS = "contacts";
 	public static final String CONTEXT_ID = "contextId";
+	public static final String CONTEXT_NAME = "contextName";
 
 	// Subclasses may initialise the group ID in different places
 	protected String contextId;
+	protected String contextName;
 	protected Collection<ContactId> contacts;
 
 	@Override
@@ -39,6 +41,9 @@ public abstract class ContextContactSelectorActivity extends HeliosTalkActivity
 			// restore context ID if it was saved
 			if (bundle.getString(CONTEXT_ID) != null)
 				contextId = bundle.getString(CONTEXT_ID);
+			// restore context name if it was saved
+			if (bundle.getString(CONTEXT_NAME) != null)
+				contextName = bundle.getString(CONTEXT_NAME);
 			// restore selected contacts if a selection was saved
 			ArrayList<String> stringContacts =
 					bundle.getStringArrayList(CONTACTS);

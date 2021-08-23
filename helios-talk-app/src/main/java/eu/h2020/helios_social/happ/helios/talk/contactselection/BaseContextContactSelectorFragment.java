@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,7 @@ import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContactSe
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContactSelectorActivity.getContactsFromIds;
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContactSelectorActivity.getContactsFromStrings;
 import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
-import static java.util.Objects.requireNonNull;
+import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_NAME;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
@@ -37,11 +38,13 @@ public abstract class BaseContextContactSelectorFragment<I extends SelectableCon
 		implements BaseContactListAdapter.OnContactClickListener<I> {
 
 	protected HeliosTalkRecyclerView list;
+	protected TextView contextPublicNameTv;
 	protected A adapter;
 	protected Collection<ContactId> selectedContacts = new ArrayList<>();
 	protected ContactSelectorListener listener;
 
 	private String contextId;
+	private String contextName;
 
 	@Override
 	public void onAttach(Context context) {
@@ -57,6 +60,11 @@ public abstract class BaseContextContactSelectorFragment<I extends SelectableCon
 		if (args.getString(CONTEXT_ID) == null)
 			throw new IllegalStateException("No Context");
 		contextId = args.getString(CONTEXT_ID);
+		// get context public name
+		if (args.getString(CONTEXT_NAME) == null)
+			throw new IllegalStateException("No Context Public Name");
+		else
+			contextName = args.getString(CONTEXT_NAME);
 	}
 
 	@Override
@@ -65,7 +73,16 @@ public abstract class BaseContextContactSelectorFragment<I extends SelectableCon
 			@Nullable ViewGroup container,
 			@Nullable Bundle savedInstanceState) {
 
-		View contentView = inflater.inflate(R.layout.list, container, false);
+		View contentView = inflater.inflate(R.layout.invite_contacts_list_plus_context_name, container, false);
+
+		// if the public name exists, show it to user
+		contextPublicNameTv = contentView.findViewById(R.id.public_name_tv);
+		String BasicDes =  contextPublicNameTv.getText().toString();
+		if (contextName.isEmpty()) contextPublicNameTv.setVisibility(View.GONE);
+		else {
+			String tvText = BasicDes + contextName;
+			contextPublicNameTv.setText(tvText);
+		}
 
 		list = contentView.findViewById(R.id.list);
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));

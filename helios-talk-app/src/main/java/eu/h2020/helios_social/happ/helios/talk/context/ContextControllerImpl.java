@@ -58,7 +58,8 @@ public class ContextControllerImpl extends
                        ExceptionHandler<DbException> handler) {
         runOnDbThread(() -> {
             try {
-                Context context = contextManager.getContext(contextId);
+                Context context = contextManager.getContext(contextId, true);
+
                 for (ContactId contact : contacts) {
                     sharingContextManager.sendContextInvitation(
                             contextInvitationFactory
@@ -153,12 +154,57 @@ public class ContextControllerImpl extends
     }
 
     @Override
+    public void setContextPrivateName(String contextId, String name, ResultExceptionHandler<Void, DbException> handler) {
+        runOnDbThread(()-> {
+            try {
+                long start = now();
+                contextManager.setContextPrivateName(contextId,name);
+
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+                handler.onException(e);
+            }
+        });
+    }
+
+    @Override
     public Integer getContextColor(String contextId) throws DbException {
         Integer color = contextManager.getContextColor(
                 contextId
         );
         return color;
 
+    }
+
+    @Override
+    public String getContextPrivateName(String contextId) throws DbException {
+        String privateName = contextManager.getContextPrivateName(
+                contextId
+        );
+        return privateName;
+
+    }
+
+    @Override
+    public String getContextName(String contextId) throws DbException {
+        String name = contextManager.getContextName(
+                contextId
+        );
+        return name;
+    }
+
+    @Override
+    public void setContextName(String contextId, String name, ResultExceptionHandler<Void, DbException> handler) throws DbException {
+        runOnDbThread(()-> {
+            try {
+                long start = now();
+                contextManager.setContextName(contextId,name);
+
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+                handler.onException(e);
+            }
+        });
     }
 
     @Override

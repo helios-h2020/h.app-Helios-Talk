@@ -26,6 +26,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -325,8 +326,8 @@ public class CreateContextActivity extends HeliosTalkActivity
 
 		if (lat != null && lng != null) {
 			LocationContextProxy locationContextProxy =
-					contextFactory.createLocationContext(name, color, lat, lng,
-							radius);
+					contextFactory.createLocationContext("", color, lat, lng,
+							radius, name);
 			controller.storeLocationContext(locationContextProxy,
 					new UiResultExceptionHandler<String, DbException>(
 							this) {
@@ -340,8 +341,9 @@ public class CreateContextActivity extends HeliosTalkActivity
 						}
 					});
 		} else {
+			// leave public name empty
 			GeneralContextProxy generalContextProxy =
-					contextFactory.createContext(name, color);
+					contextFactory.createContext("", color, name);
 			controller.storeGeneralContext(generalContextProxy,
 					new UiResultExceptionHandler<String, DbException>(
 							this) {
@@ -374,7 +376,7 @@ public class CreateContextActivity extends HeliosTalkActivity
 		this.color = color;
 		Drawable unwrappedDrawable =
 				AppCompatResources.getDrawable(this, R.drawable.color_picker);
-		Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+		Drawable wrappedDrawable = DrawableCompat.wrap(Objects.requireNonNull(unwrappedDrawable));
 		wrappedDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
 		colorPickerButton.setBackground(wrappedDrawable);
 	}
@@ -414,17 +416,14 @@ public class CreateContextActivity extends HeliosTalkActivity
 
 		if (shouldProvideRationale) {
 			showSnackbar(R.string.location_permission_prompt,
-					android.R.string.ok, new View.OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							// Request permission
-							ActivityCompat
-									.requestPermissions(
-											CreateContextActivity.this,
-											new String[] {
-													Manifest.permission.ACCESS_FINE_LOCATION},
-											REQUEST_PERMISSIONS_REQUEST_CODE);
-						}
+					android.R.string.ok, view -> {
+						// Request permission
+						ActivityCompat
+								.requestPermissions(
+										CreateContextActivity.this,
+										new String[] {
+												Manifest.permission.ACCESS_FINE_LOCATION},
+										REQUEST_PERMISSIONS_REQUEST_CODE);
 					});
 		} else {
 			ActivityCompat.requestPermissions(CreateContextActivity.this,
@@ -440,6 +439,7 @@ public class CreateContextActivity extends HeliosTalkActivity
 	public void onRequestPermissionsResult(int requestCode,
 			@NonNull String[] permissions,
 			@NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		LOG.info("onRequestPermissionResult");
 		if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
 			if (grantResults.length <= 0) {
@@ -450,8 +450,6 @@ public class CreateContextActivity extends HeliosTalkActivity
 							"Permission granted, updates requested, starting location updates");
 					mLocationSensor.startUpdates();
 				}
-			} else {
-
 			}
 		}
 	}

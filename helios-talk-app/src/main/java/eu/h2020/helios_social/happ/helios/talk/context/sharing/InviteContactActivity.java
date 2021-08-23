@@ -10,10 +10,14 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import androidx.annotation.UiThread;
+
+import org.jetbrains.annotations.NotNull;
+
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity;
 import eu.h2020.helios_social.happ.helios.talk.context.ContextController;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
+import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 
 public abstract class InviteContactActivity extends
 		ContextContactSelectorActivity {
@@ -34,11 +38,22 @@ public abstract class InviteContactActivity extends
 		if (c == null) c = egoNetwork.getCurrentContext().getData().toString()
 				.split("%")[1];
 		this.contextId = c;
+		// retrieve context public name
+		String cn = i.getStringExtra(CONTEXT_NAME);
+		if (cn == null) {
+			try {
+				cn = controller.getContextName(egoNetwork.getCurrentContext().getData().toString()
+						.split("%")[1]);
+			} catch (DbException e) {
+				e.printStackTrace();
+			}
+		}
+		this.contextName = cn;
 	}
 
 	@UiThread
 	@Override
-	public void contactsSelected(Collection<ContactId> contacts) {
+	public void contactsSelected(@NotNull Collection<ContactId> contacts) {
 		super.contactsSelected(contacts);
 		invite(contacts);
 	}
