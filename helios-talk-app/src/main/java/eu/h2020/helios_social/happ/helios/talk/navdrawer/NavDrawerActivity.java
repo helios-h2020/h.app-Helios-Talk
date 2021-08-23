@@ -1,58 +1,30 @@
 package eu.h2020.helios_social.happ.helios.talk.navdrawer;
 
 import android.Manifest;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Location;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
-
-import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
-import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
-import eu.h2020.helios_social.modules.groupcommunications.api.CommunicationManager;
-import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedFromContextEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactRemovedFromContextEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
-import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
-import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
-import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
-import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
-
-import eu.h2020.helios_social.happ.helios.talk.R;
-import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
-import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextAddedEvent;
-import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextRemovedEvent;
-import eu.h2020.helios_social.happ.helios.talk.chat.ChatListFragment;
-import eu.h2020.helios_social.happ.helios.talk.contact.ContactListFragment;
-import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultHandler;
-import eu.h2020.helios_social.happ.helios.talk.favourites.FavouritesFragment;
-import eu.h2020.helios_social.happ.helios.talk.fragment.BaseFragment;
-import eu.h2020.helios_social.happ.helios.talk.logout.SignOutFragment;
-import eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity;
-
-import static androidx.core.view.GravityCompat.START;
-
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,19 +37,57 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.work.WorkManager;
 
-import eu.h2020.helios_social.core.context.ext.LocationContext;
-import eu.h2020.helios_social.core.sensor.ext.LocationSensor;
-import eu.h2020.helios_social.happ.helios.talk.HeliosTalkService;
-import eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes;
-import eu.h2020.helios_social.modules.groupcommunications.api.context.DBContext;
-import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+
+import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
+import eu.h2020.helios_social.happ.helios.talk.HeliosTalkService;
+import eu.h2020.helios_social.happ.helios.talk.R;
+import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
+import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
+import eu.h2020.helios_social.happ.helios.talk.activity.RequestCodes;
+import eu.h2020.helios_social.happ.helios.talk.chat.ChatListFragment;
+import eu.h2020.helios_social.happ.helios.talk.contact.ContactListFragment;
+import eu.h2020.helios_social.happ.helios.talk.contact.connection.PendingContactListActivity;
+import eu.h2020.helios_social.happ.helios.talk.context.ContextController;
+import eu.h2020.helios_social.happ.helios.talk.context.CreateContextActivity;
+import eu.h2020.helios_social.happ.helios.talk.context.invites.InvitationListActivity;
+import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultHandler;
+import eu.h2020.helios_social.happ.helios.talk.favourites.FavouritesFragment;
+import eu.h2020.helios_social.happ.helios.talk.fragment.BaseFragment;
+import eu.h2020.helios_social.happ.helios.talk.logout.SignOutFragment;
+import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
+import eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.CommunicationManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.context.DBContext;
+import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
+import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextRenamedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+
+import static androidx.core.view.GravityCompat.START;
 import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
 import static androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+import static eu.h2020.helios_social.happ.helios.talk.navdrawer.IntentRouter.handleExternalIntent;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.RUNNING;
 import static java.util.Objects.requireNonNull;
 import static java.util.logging.Logger.getLogger;
-import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.RUNNING;
-import static eu.h2020.helios_social.happ.helios.talk.navdrawer.IntentRouter.handleExternalIntent;
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
@@ -90,32 +100,37 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
     private static final int REQUEST_ACCESS_MEDIA_METADATA = 0;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
+    private static final String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    private static String[] MEDIA_LOCATION_PERMISSION = {
+    private static final String[] MEDIA_LOCATION_PERMISSION = {
             Manifest.permission.ACCESS_MEDIA_LOCATION
     };
 
     // Constant used in the location settings dialog
-    private static final int REQUEST_CHECK_SETTINGS = 0x1;
+    // private static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     // Tracks the status of the location updates request
-    private Boolean mRequestingLocationUpdates;
+    // private Boolean mRequestingLocationUpdates;
     // Access the location sensor
-    private LocationSensor mLocationSensor;
-    private ArrayList<LocationContext> locationContexts;
+    // private LocationSensor mLocationSensor;
+    // private ArrayList<LocationContext> locationContexts;
 
     // Represents a geographical location
-    private Location currentLocation;
+    // private Location currentLocation;
 
     private static final Logger LOG =
             getLogger(NavDrawerActivity.class.getName());
 
     private ActionBarDrawerToggle drawerToggle;
-
+    @Inject
+    protected ContactManager contactManager;
+    @Inject
+    protected GroupManager groupManager;
+    @Inject
+    protected ContextController contextController;
     @Inject
     NavDrawerController controller;
     @Inject
@@ -138,6 +153,11 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
     private BottomNavigationView bottomNav;
     private ArrayList<DBContext> contexts;
+    private LayoutInflater layoutInflater;
+    private PopupWindow popupWindow;
+    private ListView lst;
+    private ArrayList<DBContext> contexts_list;
+    private ArrayList<String> list_items;
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -150,13 +170,13 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         exitIfStartupFailed(getIntent());
         setContentView(R.layout.activity_nav_drawer);
 
-        locationContexts = new ArrayList<>();
-        mRequestingLocationUpdates = false;
+        // locationContexts = new ArrayList<>();
+        // mRequestingLocationUpdates = false;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigation = findViewById(R.id.navigation);
-        MenuItem menuNav = navigation.getMenu().getItem(0);
+        MenuItem menuNav = navigation.getMenu().findItem(R.id.contexts);
         contextMenu = menuNav.getSubMenu();
 
         eventBus.addListener(this);
@@ -166,6 +186,70 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int windowPosition = displayMetrics.widthPixels/5;
+        // when a user clicks on the toolbar title, a window that consists of the contexts appears
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("UseCompatLoadingForDrawables")
+            @Override
+            public void onClick(View v) {
+                layoutInflater = (LayoutInflater) getApplication().getSystemService(LAYOUT_INFLATER_SERVICE);
+                @SuppressLint("InflateParams") LinearLayout contextsLinearLayout  = (LinearLayout) layoutInflater.inflate(R.layout.context_list,null);
+                // set window background color and shape
+                contextsLinearLayout.setBackground(getResources().getDrawable(R.drawable.popup_shape,NavDrawerActivity.this.getTheme()));
+                // set text color
+                TextView tvTitle = contextsLinearLayout.findViewById(R.id.contexts);
+                tvTitle.setTextColor(getResources().getColor(R.color.color_primary,NavDrawerActivity.this.getTheme()));
+                lst = contextsLinearLayout.findViewById(R.id.listView1);
+
+                // get context list
+                contexts_list = new ArrayList<>();
+                list_items = new ArrayList<>();
+                try {
+                    contexts_list = (ArrayList<DBContext>) contextManager.getContexts();
+                    for (int i = 0; i < contexts_list.size(); i++) {
+                        DBContext c = contexts_list.get(i);
+
+                        String cname = c.getPrivateName();
+                        if (cname.equals("All")) cname = "No Context";
+                        list_items.add(cname);
+                    }
+                } catch (
+                        DbException e) {
+                    e.printStackTrace();
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(NavDrawerActivity.this,R.layout.list_item_simple,list_items);
+                lst.setAdapter(adapter);
+                popupWindow = new PopupWindow(contextsLinearLayout,ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,true);
+
+                // alter context when a click occurred
+                lst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        DBContext current = contexts_list.get(i);
+                        egoNetwork.setCurrent(egoNetwork.getOrCreateContext(
+                                current.getName() + "%" + current.getId()));
+
+                        styleBasedOnContext(current.getId());
+                        bottomNav.setSelectedItemId(R.id.nav_conversations);
+                        loadContexts(current.getId());
+                        popupWindow.dismiss();
+                    }
+                });
+                // set the position of popup window
+                popupWindow.showAsDropDown(toolbar,Math.round(windowPosition),0);
+
+                // warning is for visually impaired people
+                contextsLinearLayout.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        popupWindow.dismiss();
+                        return false;
+                    }
+                });
+            }
+        });
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                                                  R.string.nav_drawer_open_description,
                                                  R.string.nav_drawer_close_description);
@@ -193,6 +277,40 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
         String message = getIntent().getExtras() != null ? getIntent().getExtras().getString("message") : null;
         if (message != null) ToastMessage(message);
+
+        //check if contexts have private names ( to be compatible with older versions of app )
+        checkContexts();
+    }
+
+    // if table contexts has not the column privateName, we have to add it and set the value of
+    // publicNames to privateNames as a default value.
+    private void checkContexts(){
+        ArrayList<DBContext> contextList = new ArrayList<>();
+        try {
+            contextList = (ArrayList<DBContext>) contextManager.getContexts();
+        } catch (DbException e) {
+            e.printStackTrace();
+            try {
+                LOG.info("adding privateName column to table contexts in database");
+                contextManager.addContextPrivateNameFeature();
+                contextList = (ArrayList<DBContext>) contextManager.getContexts();
+            } catch (DbException dbException) {
+                dbException.printStackTrace();
+            }
+        }
+        try {
+            for (int i = 0; i < contextList.size(); i++) {
+                DBContext c = contextList.get(i);
+
+                String publicName = c.getName();
+                String privateName = c.getPrivateName();
+                if (privateName.equals("")){
+                    contextManager.setContextPrivateName(c.getId(),publicName);
+                }
+            }
+        } catch (DbException dbException) {
+            dbException.printStackTrace();
+        }
     }
 
     private void ToastMessage(String message) {
@@ -205,17 +323,17 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
     public void loadContexts(String id) {
         contextMenu.clear();
-        contexts = new ArrayList();
+        contexts = new ArrayList<>();
         try {
-            contexts = (ArrayList) contextManager.getContexts();
+            contexts = (ArrayList<DBContext>) contextManager.getContexts();
             LOG.info("Updating contexts menu: " + contexts.size());
             int activeItem = 0;
             for (int i = 0; i < contexts.size(); i++) {
                 DBContext c = contexts.get(i);
-
-                String cname = c.getName();
+                // display the private name of the context
+                String cname = c.getPrivateName();
                 if (c.getId().equals(id)) activeItem = i;
-                if (cname.equals("All")) cname = "General";
+                if (cname.equals("All")) cname = "No Context";
                 contextMenu.add(0, i,
                                 Menu.CATEGORY_SECONDARY,
                                 cname)
@@ -231,8 +349,11 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         navigation.invalidate();
     }
 
+
+
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @SuppressLint("NonConstantResourceId")
                 @Override
                 public boolean onNavigationItemSelected(
                         @NonNull MenuItem item) {
@@ -250,7 +371,9 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                                     ContactListFragment.newInstance();
                             break;
                     }
-
+                    if (selectedFragment==null){
+                        selectedFragment = ChatListFragment.newInstance();
+                    }
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragmentContainer,
                                      selectedFragment).commit();
@@ -263,13 +386,77 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         super.onStart();
         if (signedIn()) {
             String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
+            //check if contexts have private names ( to be compatible with older versions of app )
+            checkContexts();
+
             loadContexts(cid);
+
         }
+    }
+
+
+
+    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.counter_menu_item_layout, null);
+        view.setBackgroundResource(backgroundImageId);
+
+        if (count == 0) {
+            View counterTextPanel = view.findViewById(R.id.counterValuePanel);
+            counterTextPanel.setVisibility(View.GONE);
+        } else {
+            TextView textView = (TextView) view.findViewById(R.id.count);
+
+            if (count > 9) textView.setText("9+");
+
+            else {
+                String countString = String.valueOf(count);
+                textView.setText(countString);
+            }
+        }
+
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        return new BitmapDrawable(getResources(), bitmap);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+/*        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
+        Menu menu = navigationView.getMenu();
+        MenuItem friendRequests = menu.findItem(R.id.nav_btn_connect);
+        int incomingConnectionRequests = 0;
+        try {
+            incomingConnectionRequests = contactManager.pendingIncomingConnectionRequests();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        int inviteCounter = 0;
+        try {
+            inviteCounter += contextController.getPendingIncomingContextInvitations();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        try {
+            inviteCounter += groupManager.pendingIncomingGroupInvitations();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        friendRequests.setIcon(buildCounterDrawable(incomingConnectionRequests,
+                R.drawable.ic_connect_with_peers));
+        MenuItem invites = menu.findItem(R.id.nav_btn_invitations);
+        invites.setIcon(buildCounterDrawable(inviteCounter, R.drawable.ic_notifications));*/
+
     }
 
     @Override
@@ -289,17 +476,15 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                                                     });
         }
 
-        switch (request) {
-            case REQUEST_CHECK_SETTINGS:
-                switch (request) {
-                    case Activity.RESULT_OK:
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        mRequestingLocationUpdates = false;
-                        break;
-                }
-                break;
-        }
+/*        if (request == REQUEST_CHECK_SETTINGS) {
+            switch (request) {
+                case Activity.RESULT_OK:
+                    break;
+                case Activity.RESULT_CANCELED:
+                    mRequestingLocationUpdates = false;
+                    break;
+            }
+        }*/
     }
 
     @Override
@@ -333,6 +518,16 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             startActivity(new Intent(this, SettingsActivity.class));
         /*} else if (R.id.nav_btn_stats == fragmentId) {
             //startActivity(new Intent(this, StatsActivity.class));*/
+        }
+        else if (R.id.nav_btn_connect == fragmentId){
+                startActivity(new Intent(this, PendingContactListActivity.class));
+        }
+        else if (R.id.nav_btn_invitations == fragmentId){
+            startActivity(new Intent(this, InvitationListActivity.class));
+
+        }
+        else if (R.id.nav_btn_create_context == fragmentId) {
+            startActivity(new Intent(this, CreateContextActivity.class));
         } else if (R.id.nav_btn_signout == fragmentId) {
             signOut();
         } else {
@@ -361,6 +556,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             return item.getItemId() != R.id.nav_btn_settings;
         }
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -418,9 +615,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     }
 
     private void startFragment(BaseFragment fragment) {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0)
-            startFragment(fragment, false);
-        else startFragment(fragment, true);
+        startFragment(fragment, getSupportFragmentManager().getBackStackEntryCount() != 0);
     }
 
     private void startFragment(BaseFragment fragment,
@@ -457,10 +652,13 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     public void eventOccurred(Event e) {
         if (e instanceof ContextAddedEvent) {
             LOG.info("CONTEXT ADDED: " +
-                             ((ContextAddedEvent) e).getContext().getName());
-            loadContexts(((ContextAddedEvent) e).getContext().getId());
+                             requireNonNull(((ContextAddedEvent) e).getContext()).getName());
+            loadContexts(requireNonNull(((ContextAddedEvent) e).getContext()).getId());
         } else if (e instanceof ContextRemovedEvent) {
             loadContexts("All");
+        } else if (e instanceof ContextRenamedEvent){
+            String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
+            loadContexts(cid);
         }
     }
 
@@ -564,21 +762,11 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             new AlertDialog.Builder(this)
                     .setTitle("Access Storage Permission!")
                     .setMessage(R.string.profiling_storage_permissions)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(
-                                    NavDrawerActivity.this,
-                                    PERMISSIONS_STORAGE,
-                                    REQUEST_EXTERNAL_STORAGE);
-                        }
-                    })
-                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int i) {
-                            dialog.dismiss();
-                        }
-                    }).create().show();
+                    .setPositiveButton("ok", (dialogInterface, i) -> ActivityCompat.requestPermissions(
+                            NavDrawerActivity.this,
+                            PERMISSIONS_STORAGE,
+                            REQUEST_EXTERNAL_STORAGE))
+                    .setNegativeButton("cancel", (dialog, i) -> dialog.dismiss()).create().show();
 
         } else {
             ActivityCompat.requestPermissions(
@@ -600,21 +788,11 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             new AlertDialog.Builder(this)
                     .setTitle("Access to Media Metadata!")
                     .setMessage(R.string.profiling_metadata_permissions)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(
-                                    NavDrawerActivity.this,
-                                    MEDIA_LOCATION_PERMISSION,
-                                    REQUEST_ACCESS_MEDIA_METADATA);
-                        }
-                    })
-                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int i) {
-                            dialog.dismiss();
-                        }
-                    }).create().show();
+                    .setPositiveButton("ok", (dialogInterface, i) -> ActivityCompat.requestPermissions(
+                            NavDrawerActivity.this,
+                            MEDIA_LOCATION_PERMISSION,
+                            REQUEST_ACCESS_MEDIA_METADATA))
+                    .setNegativeButton("cancel", (dialog, i) -> dialog.dismiss()).create().show();
 
         } else {
             ActivityCompat.requestPermissions(
@@ -634,17 +812,14 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
         if (shouldProvideRationale) {
             showSnackbar(R.string.location_permission_prompt,
-                         android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                            ActivityCompat
-                                    .requestPermissions(NavDrawerActivity.this,
-                                                        new String[]{
-                                                                Manifest.permission.ACCESS_FINE_LOCATION},
-                                                        REQUEST_PERMISSIONS_REQUEST_CODE);
-                        }
-                    });
+                         android.R.string.ok, view -> {
+                             // Request permission
+                             ActivityCompat
+                                     .requestPermissions(NavDrawerActivity.this,
+                                                         new String[]{
+                                                                 Manifest.permission.ACCESS_FINE_LOCATION},
+                                                         REQUEST_PERMISSIONS_REQUEST_CODE);
+                         });
         } else {
             ActivityCompat.requestPermissions(NavDrawerActivity.this,
                                               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -659,19 +834,22 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         LOG.info("onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
                 LOG.info("User interaction was cancelled.");
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            }
+            /*else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (mRequestingLocationUpdates) {
                     LOG.info(
                             "Permission granted, updates requested, starting location updates");
                     mLocationSensor.startUpdates();
                 }
-            } else {
+            }
+            else {
                 // Permission denied.
-				/*showSnackbar(R.string.permission_denied_explanation,
+				showSnackbar(R.string.permission_denied_explanation,
 						R.string.settings, new View.OnClickListener() {
 							@Override
 							public void onClick(View view) {
@@ -685,8 +863,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 								intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 								startActivity(intent);
 							}
-						});*/
-            }
+						});
+            }*/
         }
     }
 }
