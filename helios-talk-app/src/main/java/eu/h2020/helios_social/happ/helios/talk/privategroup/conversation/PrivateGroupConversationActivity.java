@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,6 +55,7 @@ import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
+import eu.h2020.helios_social.happ.helios.talk.privategroup.membership.GroupMembershipListActivity;
 import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.happ.helios.talk.view.FileAttachmentPreview;
@@ -85,6 +87,8 @@ import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupMessage
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroup;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
+import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -141,6 +145,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     private TextAttachmentController sendController;
     private String groupId;
     private String groupName;
+    private String IS_NEW="isNew";
 
     private final Map<String, String> textCache = new ConcurrentHashMap<>();
     @Nullable
@@ -156,6 +161,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     private boolean isDissolved = false;
     private MenuItem inviteMenuItem, leaveMenuItem,
             dissolveMenuItem;
+    private Boolean isNewGroup;
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -170,6 +176,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         groupId = i.getStringExtra(GROUP_ID);
         if (groupId == null)
             throw new IllegalStateException("No GroupId in intent.");
+        isNewGroup = i.getBooleanExtra(IS_NEW,false);
         groupName = i.getStringExtra(GROUP_NAME);
         LOG.info("group id: " + groupId + " group name:" + groupName);
 
@@ -203,6 +210,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         PrivateGroupConversationScrollListener scrollListener =
                 new PrivateGroupConversationScrollListener(adapter, viewModel);
         list.getRecyclerView().addOnScrollListener(scrollListener);
+        list.getRecyclerView().setItemAnimator(new SlideInUpAnimator());
 
         textInput = findViewById(R.id.text_input_container);
         ImagePreview imagePreview = findViewById(R.id.imagePreview);
@@ -217,6 +225,12 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         textInput.setOnKeyboardShownListener(this::scrollToBottom);
 
         registerForContextMenu(list);
+
+        if (isNewGroup){
+            Intent i3 = new Intent(this, GroupInviteActivity.class);
+            i3.putExtra(GROUP_ID, groupId);
+            startActivityForResult(i3, RequestCodes.REQUEST_GROUP_INVITE);
+        }
     }
 
     @Override
@@ -294,6 +308,10 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         if (items > 0) list.scrollToPosition(items - 1);
     }
 
+    private void customScrollToBottom(int y){
+            list.getRecyclerView().smoothScrollBy(0, Math.abs(y));
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -367,8 +385,8 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_group_member_list:
-				/*Intent i1 = new Intent(this, GroupMemberListActivity.class);
-				i1.putExtra(GROUP_ID, groupId.getBytes());
+				Intent i1 = new Intent(this, GroupMembershipListActivity.class);
+				i1.putExtra(GROUP_ID, groupId);
 				startActivity(i1);
 				return true;
 			/*case R.id.action_group_reveal:
@@ -505,6 +523,9 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
                 pair.getSecond().setAttachmentList(items);
                 adapter.notifyItemChanged(pair.getFirst());
                 if (scroll) scrollToBottom();
+                int overallXScroldl = list.getRecyclerView().computeVerticalScrollOffset();
+                if (overallXScroldl >0)
+                    customScrollToBottom(overallXScroldl);
             }
         });
     }
@@ -643,7 +664,12 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
                 pair.getSecond().setText(text);
 
                 adapter.notifyItemChanged(pair.getFirst());
-                if (scroll) scrollToBottom();
+                if (scroll)
+                    scrollToBottom();
+                int overallXScroldl = list.getRecyclerView().computeVerticalScrollOffset();
+                if (overallXScroldl >0)
+                    customScrollToBottom(overallXScroldl);
+
             }
         });
     }
