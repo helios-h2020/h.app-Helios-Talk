@@ -1,7 +1,9 @@
 package eu.h2020.helios_social.happ.helios.talk.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
@@ -19,6 +21,9 @@ import javax.inject.Inject;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
@@ -49,6 +54,19 @@ public class StartupActivity extends BaseActivity implements
 		super.onCreate(state);
 		setContentView(R.layout.activity_fragment_container);
 
+		// set relay addresses and pass them to shared preferences. Messaging libp2p gets those
+		// addresses and establishes the connection.
+		String[] relayAddresses = getResources().getStringArray(R.array.relay_addresses);
+		SharedPreferences nodePrefs = getSharedPreferences("helios-node-libp2p-prefs", MODE_PRIVATE);
+		SharedPreferences.Editor editor = nodePrefs.edit();
+		if(relayAddresses != null) {
+			Log.d("TAG", "set relay addresses: " + relayAddresses);
+			HashSet<String> addresses = new HashSet<String>(Arrays.asList(relayAddresses));
+			editor.putStringSet("relayAddresses", addresses);
+			editor.commit();
+		} else {
+			Log.d("TAG", "No relay addresses");
+		}
 		viewModel = ViewModelProviders.of(this, viewModelFactory)
 				.get(StartupViewModel.class);
 		if (!viewModel.accountExists()) {
