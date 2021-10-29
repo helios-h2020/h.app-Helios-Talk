@@ -16,6 +16,9 @@ import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Multiset;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupAccessRequestAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupAccessRequestAutoAcceptInvitation;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAutoAcceptEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
@@ -99,6 +102,8 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             Uri.parse("helios-content://eu.h2020.helios.talk/contact/added");
     public static Uri INVITATION_URI =
             Uri.parse("helios-content://eu.h2020.helios.talk/invitation");
+    public static Uri GROUP_ADDED_URI =
+            Uri.parse("helios-content://eu.h2020.helios.talk/group/added");
 
     private static final long SOUND_DELAY = TimeUnit.SECONDS.toMillis(2);
 
@@ -116,6 +121,8 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
     private final Multiset<String> pendingContactsCounts = new Multiset<>();
     private final Multiset<String> forumCounts = new Multiset<>();
     private final Multiset<String> invitationsCounts = new Multiset<>();
+    private final Multiset<String> newGroupsCounts = new Multiset<>();
+
     private int contactAddedTotal = 0;
     private int nextRequestId = 0;
     @Nullable
@@ -195,6 +202,7 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             clearConnectionRequestsNotification();
             clearInvitationNotifications();
             clearContactAddedNotification();
+            clearNewGroupNotification();
             return null;
         });
         try {
@@ -257,6 +265,10 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
             showInvitationNotification(((GroupInvitationAddedEvent) e).getInvite().getGroupId());
         } else if (e instanceof ContextInvitationAddedEvent && ((ContextInvitationAddedEvent) e).getInvite().isIncoming()) {
             showInvitationNotification(((ContextInvitationAddedEvent) e).getInvite().getContextId());
+        } else if (e instanceof GroupAccessRequestAddedEvent && ((GroupAccessRequestAddedEvent) e).getInvite().isIncoming()) {
+            showInvitationNotification(((GroupAccessRequestAddedEvent) e).getInvite().getGroupId());
+        } else if (e instanceof GroupAccessRequestAutoAcceptInvitation){
+		    showNewGroupNotification(((GroupAccessRequestAutoAcceptInvitation) e).getGroupInvitation().getGroupId());
         }
     }
 
@@ -363,6 +375,55 @@ class AndroidNotificationManagerImpl implements AndroidNotificationManager,
                                        b.build());
         }
     }
+
+    @UiThread
+    private void showNewGroupNotification(String id) {
+        newGroupsCounts.add(id);
+        updateNewGroupNotification(true);
+    }
+
+    @Override
+    public void clearNewGroupNotification() {
+        androidExecutor.runOnUiThread(() -> {
+            if (newGroupsCounts.keySet().size() > 0) {
+                newGroupsCounts.clear();
+                updateNewGroupNotification(false);
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNewGroupNotification(boolean mayAlertAgain) {
+        int newGroupsCountsTotal = newGroupsCounts.getTotal();
+        if (newGroupsCountsTotal == 0) {
+            clearContactNotification();
+        } else if (settings.getBoolean(PREF_NOTIFY_CONNECTIONS, true)) {
+            HeliosTalkNotificationBuilder b = new HeliosTalkNotificationBuilder(
+                    appContext, FORUM_CHANNEL_ID);
+            b.setSmallIcon(R.drawable.ic_nearby);
+            b.setColorRes(R.color.helios_primary);
+            b.setContentTitle(appContext.getText(R.string.app_name));
+            b.setContentText(appContext.getResources().getQuantityString(
+                    R.plurals.context_group_join_notification_text, newGroupsCountsTotal,
+                    newGroupsCountsTotal));
+            b.setNumber(newGroupsCountsTotal);
+            b.setNotificationCategory(CATEGORY_SOCIAL);
+            if (mayAlertAgain) setAlertProperties(b);
+            setDeleteIntent(b, GROUP_URI);
+            // Touching the notification shows the group list
+            Intent i = new Intent(appContext, NavDrawerActivity.class);
+            i.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+            i.setData(GROUP_URI);
+            TaskStackBuilder t = TaskStackBuilder.create(appContext);
+            t.addParentStack(NavDrawerActivity.class);
+            t.addNextIntent(i);
+            b.setContentIntent(t.getPendingIntent(nextRequestId++, 0));
+
+            notificationManager.notify(FORUM_ADDED_NOTIFICATION_ID,
+                    b.build());
+        }
+    }
+
 
     @UiThread
     private void showInvitationNotification(String id) {

@@ -22,6 +22,7 @@ import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.sharing.ForumAccessRequest;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
@@ -75,7 +76,8 @@ public class InvitationListActivity extends HeliosTalkActivity
         adapter = new InvitationListAdapter(this, this,
                                             InvitationItem.class);
         list = findViewById(R.id.list);
-        list.setEmptyText(R.string.no_pending_invitations);
+        list.setEmptyText("");
+        list.setEmptyTitle(R.string.no_pending_invitations);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(adapter);
         list.showProgressBar();
@@ -85,6 +87,7 @@ public class InvitationListActivity extends HeliosTalkActivity
     public void onStart() {
         super.onStart();
         notificationManager.clearInvitationNotifications();
+        notificationManager.clearNewGroupNotification();
     }
 
     @Override
@@ -185,6 +188,33 @@ public class InvitationListActivity extends HeliosTalkActivity
         startActivity(intent);
     }
 
+    @Override
+    public void onAcceptGroupAccessRequest(InvitationItem item) {
+        viewModel.acceptPendingGroupAccessRequest(item.getRequest());
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRejectGroupAccessRequest(InvitationItem item) {
+        OnClickListener removeListener = (dialog, which) ->
+                removePendingGroupAccessRequest(
+                        item.getRequest());
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                InvitationListActivity.this, R.style.HeliosDialogTheme);
+        builder.setTitle(
+                getString(R.string.dialog_title_remove_pending_group_invite));
+        builder.setMessage(
+                getString(
+                        R.string.dialog_message_remove_pending_group_request));
+        builder.setNegativeButton(R.string.delete_group_invite,
+                removeListener);
+        builder.setPositiveButton(R.string.cancel, null);
+        // re-enable remove button when dialog is dismissed/canceled
+        builder.setOnDismissListener(dialog -> adapter.notifyDataSetChanged());
+        builder.show();
+
+    }
+
     private void removePendingContextInvitation(
             ContextInvitation contextInvite) {
         viewModel.rejectPendingContextInvitation(contextInvite);
@@ -193,6 +223,11 @@ public class InvitationListActivity extends HeliosTalkActivity
     private void removePendingGroupInvitation(
             GroupInvitation groupInvitation) {
         viewModel.rejectPendingGroupInvitation(groupInvitation);
+    }
+
+    private void removePendingGroupAccessRequest(
+            ForumAccessRequest forumAccessRequest) {
+        viewModel.rejectPendingGroupAccessRequest(forumAccessRequest);
     }
 
     private void onContextInvitationsChanged(

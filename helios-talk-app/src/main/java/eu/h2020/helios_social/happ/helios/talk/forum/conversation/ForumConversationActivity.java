@@ -1,7 +1,9 @@
 package eu.h2020.helios_social.happ.helios.talk.forum.conversation;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +21,8 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -55,20 +59,26 @@ import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
+import eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.GroupInviteActivity;
 import eu.h2020.helios_social.happ.helios.talk.shared.controllers.ConnectionController;
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.happ.helios.talk.view.FileAttachmentPreview;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.CustomButtonListener;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.SpatioTemporalContext;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.ContactExistsException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.InvalidActionException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.PendingContactExistsException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
@@ -117,10 +127,12 @@ import static java.util.logging.Level.WARNING;
 public class ForumConversationActivity extends HeliosTalkActivity
         implements EventListener, ConversationListener,
         GroupConversationVisitor.TextCache, TextSendController.SendListener,
-        GroupConversationVisitor.AttachmentCache, TextAttachmentController.AttachmentListener {
+        GroupConversationVisitor.AttachmentCache, TextAttachmentController.AttachmentListener, CustomButtonListener {
     private static final Logger LOG =
             Logger.getLogger(ForumConversationActivity.class.getName());
     public static final String GROUP_NAME = "helios.talk.GROUP_NAME";
+    private final int CAMERA_PERMISSIONS_CODE = 107;
+    private Intent photoCaptureIntent;
 
     @Inject
     AndroidNotificationManager notificationManager;
@@ -136,6 +148,10 @@ public class ForumConversationActivity extends HeliosTalkActivity
     ForumController forumController;
     @Inject
     ConnectionController connectionController;
+    @Inject
+    ContactManager contactManager;
+    @Inject
+    IdentityManager identityManager;
 
     private ForumConversationViewModel viewModel;
     private AttachmentRetriever attachmentRetriever;
@@ -168,6 +184,11 @@ public class ForumConversationActivity extends HeliosTalkActivity
     private MenuItem inviteMenuItem, memberListMenuItem, leaveMenuItem,
             revealSelfMenuItem, hideSelfMenuItem, infoMenuItem;
     private boolean isNewGroup;
+
+    private String[] CAPTURE_FROM_CAMERA_PERMISSIONS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+    };
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -228,6 +249,7 @@ public class ForumConversationActivity extends HeliosTalkActivity
 
         visitor = new GroupConversationVisitor(this, this, this);
         adapter = new GroupConversationAdapter(this, this);
+        adapter.setCustomButtonListener(ForumConversationActivity.this);
         list = findViewById(R.id.conversationView);
         layoutManager = new LinearLayoutManager(this);
         list.setLayoutManager(layoutManager);
@@ -258,6 +280,78 @@ public class ForumConversationActivity extends HeliosTalkActivity
             i3.putExtra(GROUP_ID, groupId);
             startActivityForResult(i3, RequestCodes.REQUEST_SHARE_FORUM);
         }
+    }
+
+    @Override
+    public void onButtonClickListener(int position) {
+
+        GroupMessageItem messageItem = adapter.getItemAt(position);
+        if (messageItem==null) return;
+        if (!canSendRequest(messageItem.getPeerInfo().getPeerId().getId())) return;
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(R.string.send_connection_request)
+                .setMessage(getResources().getString(R.string.send_connection_request_message,  messageItem.getPeerInfo().getAlias()))
+                .setPositiveButton("ok", (dialogInterface, i) -> connectionController.sendConnectionRequest(messageItem.getPeerInfo(), new UiResultExceptionHandler<Void, Exception>(this) {
+                    @Override
+                    public void onResultUi(Void v) {
+                        Toast.makeText(ForumConversationActivity.this,
+                                "Connection Request to " + messageItem.getPeerInfo().getAlias() + " has been sent!",
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+
+                    @Override
+                    public void onExceptionUi(Exception exception) {
+                        if (exception instanceof ContactExistsException)
+                            Toast.makeText(ForumConversationActivity.this,
+                                    "You are already Connected with " + messageItem.getPeerInfo().getAlias(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof PendingContactExistsException)
+                            Toast.makeText(ForumConversationActivity.this,
+                                    "You have already sent connection request to " + messageItem.getPeerInfo().getAlias(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof InvalidActionException)
+                            Toast.makeText(ForumConversationActivity.this,
+                                    ((InvalidActionException) exception).getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        exception.printStackTrace();
+                    }
+                }))
+                .setNegativeButton("cancel", (dialog, i) -> dialog.dismiss()).create().show();
+    }
+
+    private boolean canSendRequest(String id) {
+        if (id==null) {
+            Toast.makeText(ForumConversationActivity.this,
+                    "This user has not revealed his/her identity. You can not send him/her connection request!",
+                    Toast.LENGTH_LONG
+            ).show();
+            return false;
+        }
+        try {
+            if (contactManager.contactExists(new ContactId(id))) {
+                Toast.makeText(ForumConversationActivity.this,
+                        "You are already Connected with this user!",
+                        Toast.LENGTH_LONG
+                ).show();
+                return false;
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+            return false;
+        }
+        if (identityManager.getIdentity().getNetworkId().equals(id)) {
+            Toast.makeText(ForumConversationActivity.this,
+                    "You can not send connection request to yourself. Try to click on one other user!",
+                    Toast.LENGTH_LONG
+            ).show();
+            return false;
+        }
+        return true;
+
     }
 
     @Override
@@ -372,6 +466,11 @@ public class ForumConversationActivity extends HeliosTalkActivity
                         styleBasedOnContext(context.getId(), generalContext.getColor());
                         toolbar.setBackground(
                                 new ColorDrawable(generalContext.getColor()));
+                    } else if (context instanceof SpatioTemporalContext) {
+                        SpatioTemporalContext generalContext = (SpatioTemporalContext) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
                     }
                 }
             });
@@ -461,6 +560,8 @@ public class ForumConversationActivity extends HeliosTalkActivity
             ((TextAttachmentController) sendController).onAttachmentsReceived(data, Message.Type.IMAGES);
         } else if (request == RequestCodes.REQUEST_ATTACH_FILE && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.FILE_ATTACHMENT);
+        } else if (request == RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO && result == RESULT_OK) {
+            sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
         } else {
             super.onActivityResult(request, result, data);
         }
@@ -902,7 +1003,61 @@ public class ForumConversationActivity extends HeliosTalkActivity
 
     @Override
     public void onAttachCapturedPhoto(Intent intent) {
+        if (cameraExists()) {
+            if (areCameraRelatedPermissionsGranted()) {
+                startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO);
+            } else {
+                photoCaptureIntent = intent;
+                ActivityCompat.requestPermissions(this, CAPTURE_FROM_CAMERA_PERMISSIONS, CAMERA_PERMISSIONS_CODE);
+            }
+        } else {
+            Toast.makeText(
+                    this,
+                    "No available cameras in your system",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
 
+    /**
+     * Check if this device has a camera
+     */
+    private boolean cameraExists() {
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
+    private boolean areCameraRelatedPermissionsGranted() {
+        // Check if we have write permission
+        if (ContextCompat.checkSelfPermission(this, CAPTURE_FROM_CAMERA_PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, CAPTURE_FROM_CAMERA_PERMISSIONS[1]) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length == 2 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(photoCaptureIntent, RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO);
+                } else {
+                    //TODO
+                }
+                return;
+        }
     }
 
     @Override

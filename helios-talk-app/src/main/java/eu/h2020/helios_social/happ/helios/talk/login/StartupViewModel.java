@@ -36,6 +36,7 @@ import static eu.h2020.helios_social.happ.helios.talk.login.StartupViewModel.Sta
 import static eu.h2020.helios_social.happ.helios.talk.login.StartupViewModel.State.SIGNED_OUT;
 import static eu.h2020.helios_social.happ.helios.talk.login.StartupViewModel.State.STARTED;
 import static eu.h2020.helios_social.happ.helios.talk.login.StartupViewModel.State.STARTING;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.STOPPING;
 
 @NotNullByDefault
 public class StartupViewModel extends AndroidViewModel
@@ -88,7 +89,8 @@ public class StartupViewModel extends AndroidViewModel
 	@UiThread
 	private void updateState(LifecycleState s) {
 		if (accountManager.hasDatabaseKey()) {
-			if (s.isAfter(STARTING_SERVICES)) state.setValue(STARTED);
+			if (s == STOPPING) state.setValue(SIGNED_OUT);
+			else if (s.isAfter(STARTING_SERVICES)) state.setValue(STARTED);
 			else if (s == MIGRATING_DATABASE) state.setValue(MIGRATING);
 			else if (s == COMPACTING_DATABASE) state.setValue(COMPACTING);
 			else state.setValue(STARTING);

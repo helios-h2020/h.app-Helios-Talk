@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,9 @@ import eu.h2020.helios_social.core.contextualegonetwork.Node;
 import eu.h2020.helios_social.happ.android.AndroidNotificationManager;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
+import eu.h2020.helios_social.happ.helios.talk.context.sharing.InviteContactsToContextActivity;
+import eu.h2020.helios_social.happ.helios.talk.group.GroupTypeSelectionActivity;
+import eu.h2020.helios_social.happ.helios.talk.group.GroupTypeSelectionAdapter;
 import eu.h2020.helios_social.happ.helios.talk.search.SearchActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.connection.ConnectionRegistry;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ConnectionRemovedEvent;
@@ -70,6 +74,8 @@ import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.Priva
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PrivateMessageReceivedEvent;
 import io.github.kobakei.materialfabspeeddial.FabSpeedDial;
 
+import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_ID;
+import static eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorActivity.CONTEXT_NAME;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logDuration;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.now;
@@ -77,7 +83,7 @@ import static java.util.Collections.sort;
 import static java.util.logging.Level.WARNING;
 
 public class ChatListFragment extends HeliosContextFragment
-        implements FabSpeedDial.OnMenuItemClickListener, EventListener {
+        implements EventListener {
     public static final String TAG = ChatListFragment.class.getName();
     private static final Logger LOG = Logger.getLogger(TAG);
 
@@ -122,8 +128,8 @@ public class ChatListFragment extends HeliosContextFragment
 
         View contentView = inflater.inflate(R.layout.fragment_chat_list,
                                             container, false);
-        speedDial = contentView.findViewById(R.id.speedDial);
-        speedDial.addOnMenuItemClickListener(this);
+//        speedDial = contentView.findViewById(R.id.speedDial);
+//        speedDial.addOnMenuItemClickListener(this);
 
         adapter = new ChatListAdapter(requireContext());
         list = contentView.findViewById(R.id.list);
@@ -138,7 +144,7 @@ public class ChatListFragment extends HeliosContextFragment
         if (currentContext.equals("All"))
             list.setEmptyText(R.string.no_conversations_details);
         else
-            list.setEmptyText(R.string.no_conversations_in_context_details);
+            list.setEmptyText("");
         list.setEmptyAction(R.string.no_conversation_action);
 
         ImageView searchIcon = contentView.findViewById(R.id.searchIcon);
@@ -154,6 +160,15 @@ public class ChatListFragment extends HeliosContextFragment
             Intent searchActivity = new Intent(getContext(),
                                                SearchActivity.class);
             startActivity(searchActivity);
+        });
+
+
+        // replace speedDial with a button, there is no need of menu when we have only one option.
+        FloatingActionButton imageButton = contentView.findViewById(R.id.addImageBtn);
+        imageButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(),
+                    GroupTypeSelectionActivity.class);
+            startActivity(intent);
         });
 
         return contentView;
@@ -191,7 +206,7 @@ public class ChatListFragment extends HeliosContextFragment
                 String currentContext =
                         egoNetwork.getCurrentContext().getData().toString()
                                 .split("%")[1];
-
+                Log.d("activeContext", egoNetwork.getCurrentContext().getData().toString());
                 HashMap<Node, Double> favourites = miningManager.getNextInteractionRecommendations(
                         egoNetwork.getCurrentContext().getData().toString());
 
@@ -346,25 +361,28 @@ public class ChatListFragment extends HeliosContextFragment
         return lastMessage;
     }
 
-    @Override
-    public void onMenuItemClick(FloatingActionButton floatingActionButton,
-                                @androidx.annotation.Nullable TextView textView, int i) {
-        switch (i) {
-            case R.id.action_new_conversation:
-                showNextFragment(ContactListFragment.newInstance());
-                return;
-            case R.id.action_new_group:
-                Intent intent = new Intent(getActivity(),
-                                           CreateGroupActivity.class);
-                startActivity(intent);
-                return;
-            case R.id.action_new_forum:
-                Intent createForumIntent = new Intent(getActivity(),
-                                                      CreateForumActivity.class);
-                startActivity(createForumIntent);
-                return;
-        }
-    }
+//    @Override
+//    public void onMenuItemClick(FloatingActionButton floatingActionButton,
+//                                @androidx.annotation.Nullable TextView textView, int i) {
+//        switch (i) {
+//            case R.id.action_new_conversation:
+//                showNextFragment(ContactListFragment.newInstance());
+////                Intent intent = new Intent(getActivity(),
+////                        GroupTypeSelectionActivity.class);
+////                startActivity(intent);
+//                return;
+//            case R.id.action_new_group:
+//                intent = new Intent(getActivity(),
+//                                           CreateGroupActivity.class);
+//                startActivity(intent);
+//                return;
+//            case R.id.action_new_forum:
+//                Intent createForumIntent = new Intent(getActivity(),
+//                                                      CreateForumActivity.class);
+//                startActivity(createForumIntent);
+//                return;
+//        }
+//    }
 
     @SuppressLint("RestrictedApi")
     @Override

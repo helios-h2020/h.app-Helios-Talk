@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationListener;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ImageItemDecoration;
+import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.CustomButton;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.CustomButtonListener;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationItem;
@@ -35,7 +38,7 @@ public class GroupConversationAdapter extends
     private final RecyclerView.RecycledViewPool imageViewPool;
     private final ImageItemDecoration imageItemDecoration;
     private int position;
-
+    private CustomButtonListener customButtonListener;
     @Nullable
     private SelectionTracker<String> tracker = null;
 
@@ -94,6 +97,19 @@ public class GroupConversationAdapter extends
                 return false;
             }
         });
+        ui.author.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (customButtonListener != null) {
+                    customButtonListener.onButtonClickListener(ui.getAdapterPosition());
+                }
+
+            }
+        });
+    }
+
+    public void setCustomButtonListener(CustomButtonListener listener) {
+        this.customButtonListener = listener;
     }
 
     @Override
@@ -166,4 +182,7 @@ public class GroupConversationAdapter extends
         holder.author.setOnLongClickListener(null);
         super.onViewRecycled(holder);
     }
+
+
+
 }

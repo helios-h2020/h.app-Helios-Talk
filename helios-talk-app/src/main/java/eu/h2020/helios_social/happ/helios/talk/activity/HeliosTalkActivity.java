@@ -1,13 +1,24 @@
 package eu.h2020.helios_social.happ.helios.talk.activity;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.transition.Transition;
 import android.view.Window;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
+import eu.h2020.helios_social.happ.helios.talk.AndroidComponent;
+import eu.h2020.helios_social.happ.helios.talk.HeliosTalkApplicationImpl;
+import eu.h2020.helios_social.happ.helios.talk.splash.SplashScreenActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.account.AccountManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
 
@@ -31,6 +42,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
@@ -59,7 +72,10 @@ public abstract class HeliosTalkActivity extends BaseActivity {
     volatile ContextManager contextManager;
     @Inject
     volatile ContextualEgoNetwork egoNetwork;
-
+    @Inject
+    LifecycleManager lifecycleManager;
+    @Inject
+    AccountManager accountManager;
     @Override
     public void onStart() {
         super.onStart();
@@ -95,6 +111,7 @@ public abstract class HeliosTalkActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        LOG.info("launching HeliosTalkActivity accountSignedIn: "+ heliosTalkController.accountSignedIn());
         if (!heliosTalkController.accountSignedIn() && !isFinishing()) {
             // Also check that the activity isn't finishing already.
             // This is possible if we finished in onActivityResult().
@@ -216,6 +233,27 @@ public abstract class HeliosTalkActivity extends BaseActivity {
             if (deleteAccount) heliosTalkController.deleteAccount();
             exit(removeFromRecentApps);
         }
+    }
+
+    protected void reconnect() {
+        if (heliosTalkController.accountSignedIn()) {
+            // Don't use UiResultHandler because we want the result even if
+            // this activity has been destroyed
+            heliosTalkController.signOut(result -> runOnUiThread(
+                    () -> {
+                        //startActivity(new Intent(this,SplashScreenActivity.class));
+                        triggerRestart();
+                    }), false);
+        }
+    }
+
+    private void triggerRestart() {
+        Intent intent = new Intent(this, SplashScreenActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("PASSWORD", accountManager.getUserPassword());
+        this.startActivity(intent);
+        this.finish();
+        Runtime.getRuntime().exit(0);
     }
 
     private void exit(boolean removeFromRecentApps) {

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,6 +52,11 @@ import eu.h2020.helios_social.modules.groupcommunications.api.mining.ContentAwar
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.Profile;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.ProfileBuilder;
 import eu.h2020.helios_social.modules.groupcommunications.api.profile.ProfileManager;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ProfilingStateEvent;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
@@ -58,11 +64,12 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_TASK_ON_HOME;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_CONTENT_PROFILING;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
+import static java.util.Objects.requireNonNull;
 
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
-public class ProfileActivity extends HeliosTalkActivity {
+public class ProfileActivity extends HeliosTalkActivity /*implements EventListener*/ {
 
     private static final Logger LOG =
             Logger.getLogger(ProfileActivity.class.getName());
@@ -99,7 +106,9 @@ public class ProfileActivity extends HeliosTalkActivity {
     private Uri uri;
     private Profile p;
     private boolean onSettingAccount = false;
-
+    private TextView profilingStateTv;
+/*    @Inject
+    EventBus eventBus;*/
     @Override
     public void injectActivity(ActivityComponent component) {
         component.inject(this);
@@ -111,6 +120,8 @@ public class ProfileActivity extends HeliosTalkActivity {
         exitIfStartupFailed(getIntent());
         setContentView(R.layout.activity_profile);
 
+        // eventBus.addListener(this);
+        //profilingStateTv = findViewById(R.id.profiling_state_tv);
         avatar = findViewById(R.id.avatarView);
         nickname = findViewById(R.id.user_nickaname);
         fullname = findViewById(R.id.user_fullname);
@@ -208,6 +219,7 @@ public class ProfileActivity extends HeliosTalkActivity {
                         avatar.setImageBitmap(bitmap);
                     }
                 }
+                //profilingStateTv.setText(profileManager.getProfilingState());
             } else if (uri != null) {
                 Bitmap bitmap = null;
                 if (android.os.Build.VERSION.SDK_INT >=
@@ -392,4 +404,11 @@ public class ProfileActivity extends HeliosTalkActivity {
         }
     }
 
+/*    @Override
+    public void eventOccurred(Event e) {
+        if (e instanceof ProfilingStateEvent) {
+            LOG.info("ProfilingStateEvent");
+            profilingStateTv.setText(profileManager.getProfilingState());
+        }
+    }*/
 }

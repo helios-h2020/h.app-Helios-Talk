@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.logging.Logger;
 
@@ -53,7 +54,8 @@ public class ContactProfileActivity extends HeliosTalkActivity implements EventL
     private TextView uni;
     private TagEditText interests;
     private TextView quote;
-
+    private TextView genderTV;
+    private TextView countryTV;
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -75,7 +77,9 @@ public class ContactProfileActivity extends HeliosTalkActivity implements EventL
         nickname = findViewById(R.id.user_nickaname);
         fullname = findViewById(R.id.user_fullname);
         gender = findViewById(R.id.gender);
+        genderTV = findViewById(R.id.gender_tv);
         country = findViewById(R.id.country);
+        countryTV = findViewById(R.id.country_tv);
         work = findViewById(R.id.work);
         uni = findViewById(R.id.university);
         interests = findViewById(R.id.interests);
@@ -101,13 +105,15 @@ public class ContactProfileActivity extends HeliosTalkActivity implements EventL
     public void displayProfile(Profile p) {
         avatar.setImageResource(R.drawable.ic_person_big);
         if (p.getAlias() == null) return;
-        nickname.setText(p.getAlias().replace("[", "").replace("]", "")
-                .replaceAll("\"", ""));
-        setTitle(p.getAlias().replace("[", "").replace("]", "")
-                .replaceAll("\"", "") + "'s Profile");
+        String name = p.getAlias().replace("[", "").replace("]", "")
+                .replaceAll("\"", "");
+        nickname.setText(name);
+        setTitle( name + "'s Profile");
         fullname.setText(p.getFullname());
         gender.setSelection(p.getGender());
+        genderTV.setText(gender.getSelectedItem().toString());
         country.setSelection(p.getCountry());
+        countryTV.setText(country.getSelectedItem().toString());
         uni.setText(p.getUniversity());
         work.setText(p.getWork());
         interests.setText(p.getInterests());

@@ -60,4 +60,25 @@ public class ConnectionControllerImpl extends DbControllerImpl implements Connec
             }
         });
     }
+
+    @Override
+    public void sendConnectionRequest(String peerId, String alias, UiResultExceptionHandler<Void, Exception> handler) {
+        runOnDbThread(() -> {
+            try {
+                long start = now();
+                if (identityManager.getIdentity().getNetworkId().equals(peerId))
+                    throw new InvalidActionException("Invalid Action! You try to send connection request to yourself!");
+                connectionManager.sendConnectionRequest(pendingContactFactory
+                        .createOutgoingPendingContact(
+                                peerId,
+                                alias,
+                                DEFAULT_MESSAGE));
+                logDuration(LOG, "Send connection request...", start);
+                handler.onResult(null);
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+                handler.onException(e);
+            }
+        });
+    }
 }

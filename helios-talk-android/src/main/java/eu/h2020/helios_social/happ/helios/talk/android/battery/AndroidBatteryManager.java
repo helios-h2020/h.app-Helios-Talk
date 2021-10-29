@@ -64,6 +64,7 @@ class AndroidBatteryManager implements BatteryManager, Service {
 	public void stopService() {
 		if (batteryReceiver != null)
 			appContext.unregisterReceiver(batteryReceiver);
+			used.set(false);
 	}
 
 	private class BatteryReceiver extends BroadcastReceiver {

@@ -14,8 +14,10 @@ import com.vanniktech.emoji.EmojiTextView;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
+import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.Forum;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.LocationForum;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 
 import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.GROUP_ID;
 
@@ -50,16 +52,26 @@ public class ResultItemViewHolder extends RecyclerView.ViewHolder {
 
         tagsText = tagsText.replaceAll(", $", "");
         tags.setText(tagsText);
-
+        Forum forum = (Forum) item.getItem();
         if (item.isLocal()) {
             joinButton.setText("OPEN");
             joinButton.setOnClickListener(l -> {
-                resultsActionListener.onOpenPublicForum((Forum) item.getItem());
+                resultsActionListener.onOpenPublicForum(forum);
             });
-        } else {
+        } else if (forum.getGroupType().equals(GroupType.PublicForum)){
             joinButton.setText("JOIN");
             joinButton.setOnClickListener(l -> {
-                resultsActionListener.onJoinPublicForum((Forum) item.getItem());
+                resultsActionListener.onJoinPublicForum(forum);
+            });
+
+        } else if (forum.getGroupType().equals(GroupType.ProtectedForum)){
+            joinButton.setText("REQUEST JOIN");
+            joinButton.setOnClickListener(l -> {
+                try {
+                    resultsActionListener.onRequestJoinProtectedForum(forum);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             });
 
         }

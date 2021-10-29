@@ -16,9 +16,9 @@ import eu.h2020.helios_social.happ.helios.talk.util.HeliosTalkAdapter;
 public class GroupMemberListAdapter extends
         HeliosTalkAdapter<GroupMemberListItem, GroupMemberListItemViewHolder> {
 
-    private OnGroupMemberItemSelectedListener<GroupMemberListItem> listener;
+    private GroupMembershipListActivity.OnGroupMemberItemSelectedListener<GroupMemberListItem> listener;
 
-    GroupMemberListAdapter(Context context, OnGroupMemberItemSelectedListener listener) {
+    GroupMemberListAdapter(Context context, GroupMembershipListActivity.OnGroupMemberItemSelectedListener listener) {
         super(context, GroupMemberListItem.class);
         this.listener = listener;
     }
@@ -35,7 +35,13 @@ public class GroupMemberListAdapter extends
     @Override
     public void onBindViewHolder(@NonNull GroupMemberListItemViewHolder ui,
                                  int position) {
-        ui.bind(items.get(position), listener);
+        ui.bind(items.get(position));
+        ui.contactItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemSelected(ui.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -55,8 +61,6 @@ public class GroupMemberListAdapter extends
         return m1.getPeerId().getId().equals(m2.getPeerId().getId());
     }
 
-    public interface OnGroupMemberItemSelectedListener<I> {
-        void onItemSelected(int selected, I item);
-    }
+
 }
 

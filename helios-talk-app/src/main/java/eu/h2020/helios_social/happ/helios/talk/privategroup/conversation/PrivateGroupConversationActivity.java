@@ -1,6 +1,8 @@
 package eu.h2020.helios_social.happ.helios.talk.privategroup.conversation;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +39,8 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,6 +59,7 @@ import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentRetriever;
 import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultExceptionHandler;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ImageActivity;
+import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationAdapter;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupConversationVisitor;
 import eu.h2020.helios_social.happ.helios.talk.group.GroupMessageItem;
@@ -61,14 +69,24 @@ import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 import eu.h2020.helios_social.happ.helios.talk.view.FileAttachmentPreview;
 import eu.h2020.helios_social.happ.helios.talk.view.ImagePreview;
 import eu.h2020.helios_social.happ.helios.talk.view.TextAttachmentController;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.CustomButton;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.CustomButtonListener;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
+import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.SpatioTemporalContext;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.ContactExistsException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.InvalidActionException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.NoSuchGroupException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.PendingContactExistsException;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.Identity;
+import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
@@ -87,6 +105,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupMessage
 import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroup;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.LeaveGroupEvent;
 import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
@@ -115,11 +134,12 @@ import static java.util.logging.Level.WARNING;
 public class PrivateGroupConversationActivity extends HeliosTalkActivity
         implements EventListener, PrivateGroupListener,
         GroupConversationVisitor.TextCache, GroupConversationVisitor.AttachmentCache,
-        TextSendController.SendListener, TextAttachmentController.AttachmentListener {
+        TextSendController.SendListener, TextAttachmentController.AttachmentListener, CustomButtonListener {
     private static final Logger LOG =
             Logger.getLogger(PrivateGroupConversationActivity.class.getName());
     public static final String GROUP_NAME = "helios.talk.GROUP_NAME";
-
+    private final int CAMERA_PERMISSIONS_CODE = 107;
+    private Intent photoCaptureIntent;
     @Inject
     AndroidNotificationManager notificationManager;
     @Inject
@@ -132,6 +152,12 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     ConversationManager conversationManager;
     @Inject
     ConnectionController connectionController;
+    @Inject
+    PrivateGroupManager privateGroupManager;
+    @Inject
+    IdentityManager identityManager;
+    @Inject
+    ContactManager contactManager;
 
     private PrivateGroupConversationViewModel viewModel;
     private AttachmentRetriever attachmentRetriever;
@@ -162,7 +188,10 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
     private MenuItem inviteMenuItem, leaveMenuItem,
             dissolveMenuItem;
     private Boolean isNewGroup;
-
+    private String[] CAPTURE_FROM_CAMERA_PERMISSIONS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+    };
     @Override
     public void injectActivity(ActivityComponent component) {
         component.inject(this);
@@ -179,6 +208,21 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         isNewGroup = i.getBooleanExtra(IS_NEW,false);
         groupName = i.getStringExtra(GROUP_NAME);
         LOG.info("group id: " + groupId + " group name:" + groupName);
+
+
+        try {
+            PrivateGroup privateGroup = privateGroupManager.getPrivateGroup(groupId);
+            isOwner = privateGroup.getOwner()
+                    .equals(identityManager.getIdentity().getNetworkId());
+            LOG.info("isOwner: " + isOwner);
+        } catch (FormatException e) {
+            e.printStackTrace();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+
+
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(PrivateGroupConversationViewModel.class);
@@ -202,9 +246,11 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
 
         visitor = new GroupConversationVisitor(this, this, this);
         adapter = new GroupConversationAdapter(this, this);
+        adapter.setCustomButtonListener(PrivateGroupConversationActivity.this);
         layoutManager = new LinearLayoutManager(this);
         list = findViewById(R.id.conversationView);
         list.setLayoutManager(layoutManager);
+
         list.setAdapter(adapter);
         list.setEmptyText(getString(R.string.no_private_messages));
         PrivateGroupConversationScrollListener scrollListener =
@@ -231,6 +277,72 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
             i3.putExtra(GROUP_ID, groupId);
             startActivityForResult(i3, RequestCodes.REQUEST_GROUP_INVITE);
         }
+
+
+    }
+
+    @Override
+    public void onButtonClickListener(int position) {
+
+        GroupMessageItem messageItem = adapter.getItemAt(position);
+        if (messageItem==null) return;
+        if (!canSendRequest(messageItem.getPeerInfo().getPeerId().getId())) return;
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(R.string.send_connection_request)
+                .setMessage(getResources().getString(R.string.send_connection_request_message,  messageItem.getPeerInfo().getAlias()))
+                .setPositiveButton("ok", (dialogInterface, i) -> connectionController.sendConnectionRequest(messageItem.getPeerInfo(), new UiResultExceptionHandler<Void, Exception>(this) {
+                    @Override
+                    public void onResultUi(Void v) {
+                        Toast.makeText(PrivateGroupConversationActivity.this,
+                                "Connection Request to " + messageItem.getPeerInfo().getAlias() + " has been sent!",
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+
+                    @Override
+                    public void onExceptionUi(Exception exception) {
+                        if (exception instanceof ContactExistsException)
+                            Toast.makeText(PrivateGroupConversationActivity.this,
+                                    "You are already Connected with " + messageItem.getPeerInfo().getAlias(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof PendingContactExistsException)
+                            Toast.makeText(PrivateGroupConversationActivity.this,
+                                    "You have already sent connection request to " + messageItem.getPeerInfo().getAlias(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        else if (exception instanceof InvalidActionException)
+                            Toast.makeText(PrivateGroupConversationActivity.this,
+                                    ((InvalidActionException) exception).getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        exception.printStackTrace();
+                    }
+                }))
+                .setNegativeButton("cancel", (dialog, i) -> dialog.dismiss()).create().show();
+    }
+
+    private boolean canSendRequest(String id) {
+        try {
+            if (contactManager.contactExists(new ContactId(id))) {
+                Toast.makeText(PrivateGroupConversationActivity.this,
+                        "You are already Connected with this user!",
+                        Toast.LENGTH_LONG
+                ).show();
+                return false;
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+            return false;
+        }
+        if (identityManager.getIdentity().getNetworkId().equals(id)) {
+            Toast.makeText(PrivateGroupConversationActivity.this,
+                    "You can not send connection request to yourself. Try to click on one other user!",
+                    Toast.LENGTH_LONG
+            ).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -344,6 +456,11 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
                         styleBasedOnContext(context.getId(), generalContext.getColor());
                         toolbar.setBackground(
                                 new ColorDrawable(generalContext.getColor()));
+                    } else if (context instanceof SpatioTemporalContext) {
+                        SpatioTemporalContext generalContext = (SpatioTemporalContext) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
                     }
                 }
             });
@@ -372,7 +489,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         // all role-dependent items are invisible until we know our role
         //revealMenuItem.setVisible(false);
         inviteMenuItem.setEnabled(true);
-        leaveMenuItem.setVisible(false);
+        leaveMenuItem.setVisible(true);
         dissolveMenuItem.setVisible(false);
 
         // show items based on role
@@ -424,6 +541,8 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
             displaySnackbar(R.string.forums_invitation_sent);
         } else if (request == RequestCodes.REQUEST_ATTACH_IMAGE &&
                 result == RESULT_OK) {
+            sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
+        }  else if (request == RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.IMAGES);
         } else if (request == RequestCodes.REQUEST_ATTACH_FILE && result == RESULT_OK) {
             sendController.onAttachmentsReceived(data, Message.Type.FILE_ATTACHMENT);
@@ -549,7 +668,7 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         //revealMenuItem.setVisible(!isOwner);
         inviteMenuItem.setVisible(isOwner);
         leaveMenuItem.setVisible(!isOwner);
-        dissolveMenuItem.setVisible(isOwner);
+        //dissolveMenuItem.setVisible(isOwner);
     }
 
     private void showLeaveGroupDialog() {
@@ -558,7 +677,10 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
         builder.setTitle(getString(R.string.groups_leave_dialog_title));
         builder.setMessage(getString(R.string.groups_leave_dialog_message));
         //TODO functionality
-        builder.setNegativeButton(R.string.dialog_button_leave, null);
+        builder.setNegativeButton(R.string.dialog_button_leave,  (dialogInterface, i) -> {
+            eventBus.broadcast(new LeaveGroupEvent(groupId, GroupType.PrivateGroup));
+            finish();
+        });
         builder.setPositiveButton(R.string.cancel, null);
         builder.show();
     }
@@ -795,8 +917,63 @@ public class PrivateGroupConversationActivity extends HeliosTalkActivity
 
     @Override
     public void onAttachCapturedPhoto(Intent intent) {
-
+        if (cameraExists()) {
+            if (areCameraRelatedPermissionsGranted()) {
+                startActivityForResult(intent, RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO);
+            } else {
+                photoCaptureIntent = intent;
+                ActivityCompat.requestPermissions(this, CAPTURE_FROM_CAMERA_PERMISSIONS, CAMERA_PERMISSIONS_CODE);
+            }
+        } else {
+            Toast.makeText(
+                    this,
+                    "No available cameras in your system",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
     }
+
+    /**
+     * Check if this device has a camera
+     */
+    private boolean cameraExists() {
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
+    private boolean areCameraRelatedPermissionsGranted() {
+        // Check if we have write permission
+        if (ContextCompat.checkSelfPermission(this, CAPTURE_FROM_CAMERA_PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, CAPTURE_FROM_CAMERA_PERMISSIONS[1]) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length == 2 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(photoCaptureIntent, RequestCodes.REQUEST_ATTACH_CAPTURED_PHOTO);
+                } else {
+                    //TODO
+                }
+                return;
+        }
+    }
+
 
     @Override
     public void onAttachFile(Intent intent) {

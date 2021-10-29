@@ -71,6 +71,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications.api.peer.PeerInfo;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.SpatioTemporalContext;
 import eu.h2020.helios_social.modules.groupcommunications_utils.Pair;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.ContactExistsException;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.InvalidActionException;
@@ -215,6 +216,12 @@ public class ConversationActivity extends HeliosTalkActivity
             contactProfileActivity.putExtra(CONTACT_ID, contactId.getId());
             startActivity(contactProfileActivity);
         });
+        toolbarTitle.setOnClickListener(v -> {
+            Intent contactProfileActivity =
+                    new Intent(this, ContactProfileActivity.class);
+            contactProfileActivity.putExtra(CONTACT_ID, contactId.getId());
+            startActivity(contactProfileActivity);
+        });
 
         toolbarAvatar.setImageDrawable(getDrawable(R.drawable.ic_person));
         viewModel.getContactDisplayName().observe(this, contactName -> {
@@ -305,6 +312,11 @@ public class ConversationActivity extends HeliosTalkActivity
 
                     } else if (context instanceof LocationContextProxy) {
                         LocationContextProxy generalContext = (LocationContextProxy) context;
+                        styleBasedOnContext(context.getId(), generalContext.getColor());
+                        toolbar.setBackground(
+                                new ColorDrawable(generalContext.getColor()));
+                    } else if (context instanceof SpatioTemporalContext) {
+                        SpatioTemporalContext generalContext = (SpatioTemporalContext) context;
                         styleBasedOnContext(context.getId(), generalContext.getColor());
                         toolbar.setBackground(
                                 new ColorDrawable(generalContext.getColor()));
@@ -420,7 +432,7 @@ public class ConversationActivity extends HeliosTalkActivity
         } else if (request == REQUEST_SHARE_CONTACT && result == RESULT_OK) {
             Toast.makeText(this, "Contact has been successfully shared.", Toast.LENGTH_LONG).show();
         } else if (request == REQUEST_SHARE_CONTACT && result == RESULT_CANCELED) {
-            Toast.makeText(this, "Internal Error. Sharing Contact failed.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Internal Error. Sharing Contact failed.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -775,7 +787,13 @@ public class ConversationActivity extends HeliosTalkActivity
         onSendVideoCallRequest(room_id);
         Intent videoCallIntent =
                 new Intent(this, VideoCallActivity.class);
-        videoCallIntent.putExtra("room_name", room_id);
+        //videoCallIntent.putExtra("room_name", room_id);
+        videoCallIntent.putExtra("room_name", room_id.replace("-", ""));
+        videoCallIntent.putExtra("TURN_URL", this.getString(R.string.TURN_URL));
+        videoCallIntent.putExtra("TURN_user", this.getString(R.string.TURN_user));
+        videoCallIntent.putExtra("TURN_credential", this.getString(R.string.TURN_credential));
+        videoCallIntent.putExtra("STUN_URL", this.getString(R.string.STUN_URL));
+        videoCallIntent.putExtra("API_endpoint", this.getString(R.string.API_endpoint));
         startActivity(videoCallIntent);
     }
 
@@ -1011,6 +1029,7 @@ public class ConversationActivity extends HeliosTalkActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case CAMERA_PERMISSIONS_CODE:
                 // If request is cancelled, the result arrays are empty.

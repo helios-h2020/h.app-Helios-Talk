@@ -56,7 +56,7 @@
     <string name="create_new_account">You will need to create a new account, but you can use the same nickname.</string>
     <string name="download_helios_button">Download Latest Release</string>
     <string name="startup_open_database">Decrypting Database…</string>
-    <string name="welcome">Welcome to helios.</string>
+    <string name="welcome">Connecting to helios. TALK...</string>
     <string name="welcome_to_talk">Welcome to helios. TALK</string>
     <string name="enjoy">Enjoy the helios. TALK experience!</string>
     <string name="context_social_network">A context aware distributed social networking framework</string>
@@ -111,14 +111,18 @@
         <item quantity="other">%d new blog posts.</item>
     </plurals>
     <string name="connections">Connections Requests</string>
-    <string name="context_group_invitations">Context/Group Invitations</string>
+    <string name="context_group_invitations">Connection Notifications</string>
     <plurals name="connections_message_notification_text">
         <item quantity="one">New Connection Request from "%s".</item>
         <item quantity="other">%d new Connection Requests.</item>
     </plurals>
     <plurals name="context_group_invitations_notification_text">
-        <item quantity="one">New Context/Group Invitations.</item>
-        <item quantity="other">%d new Context/Group Invitations.</item>
+        <item quantity="one">New Context/Group Connection Notification.</item>
+        <item quantity="other">%d new Context/Group Connection Notifications.</item>
+    </plurals>
+    <plurals name="context_group_join_notification_text">
+        <item quantity="one">A new Forum added.</item>
+        <item quantity="other">%d new Forums added.</item>
     </plurals>
 
     <!-- Misc -->
@@ -148,7 +152,7 @@
     <string name="sorry">Sorry</string>
     <string name="error_start_activity">Unavailable on your system</string>
     <string name="no_favourites">No favourites yet!</string>
-    <string name="no_favourites_details">You need to star messages to your conversations to access them here.</string>
+    <string name="no_favourites_details">Star conversation messages to access them here.</string>
 
     <!--Share Content-->
     <string name="share_content_to_helios_talk_hint">helios. Talk Chats</string>
@@ -160,7 +164,9 @@
     <string name="no_conversations">No chats yet!</string>
     <string name="no_conversations_details">No conversations available to show.</string>
     <string name="no_conversations_in_context_details">No conversations available to show in this context.</string>
-    <string name="no_contacts_action">Tap the + icon to add a contact</string>
+    <!--    <string name="no_contacts_action">Tap the + icon to add a contact</string>-->
+    <string name="no_contacts_action"></string>
+
     <string name="no_conversation_action">Tap the + icon to start a conversation</string>
     <string name="date_no_private_messages">No messages.</string>
     <string name="no_private_messages">No messages to show</string>
@@ -238,6 +244,8 @@
     <string name="add_contact_nearby_title">Add contact nearby</string>
     <string name="add_contact_remotely_title">Add contact to helios. TALK</string>
     <string name="send_connection_request">Send Connection Request</string>
+    <string name="send_connection_request_message">Click OK to send a connection request to %s</string>
+
     <string name="invite_contact_to_context">Invite contacts to context</string>
     <string name="contact_name_hint">Give contact a nickname</string>
     <string name="contact_link_intro">Enter friend\'s link you want to add to your connections</string>
@@ -261,7 +269,7 @@
     <string name="adding_contact_error">There was an error adding the contact.</string>
     <string name="pending_contact_requests_snackbar">There are pending contact requests</string>
     <string name="connection_requests">Connection Requests</string>
-    <string name="no_pending_connections">No pending Connections…</string>
+    <string name="no_pending_connections">Tap the + icon to add a contact.</string>
     <string name="add_contact_remote_connecting">Connecting…</string>
     <string name="waiting_for_contact_to_come_online">Waiting for contact to come online…</string>
     <string name="connecting">Connecting…</string>
@@ -445,9 +453,10 @@
     <string name="location_forum">Location</string>
 
     <!--Contexts-->
-    <string name="intro_context">You can view contexts as a way to organize your contacts.
-        In different contexts you can initiate different threads of one-on-one or
-        group conversations with your contacts by inviting them to join the context. </string>
+    <string name="intro_context">Create a context in which many people can communicate.
+<!--        In different contexts you can initiate different threads of one-on-one or-->
+<!--        group conversations with your contacts by inviting them to join the context. -->
+    </string>
     <string name="context_type">Select Context Type:</string>
     <string name="choose_context_hint">Choose a name for your context</string>
     <string name="choose_radius_hint">Radius</string>
@@ -456,7 +465,26 @@
     <string name="choose_context_location_lng">Longitude</string>
     <string name="get_current_location_button">Get Current Location</string>
 
-    <string name="location_permission_prompt">Location permission is needed for core functionality</string>
+    <string name="choose_context_start_time">Start time</string>
+    <string name="choose_context_end_time">End Time</string>
+
+    <!--Context Type Options-->
+    <string name="name_context">Name</string>
+    <string name="location_context">Location</string>
+    <string name="spatiotemporal_context">Spatiotemporal</string>
+
+    <!--Repeat Type Options-->
+    <string name="none_repeat">No Repeat</string>
+    <string name="daily_repeat">Daily</string>
+    <string name="weekly_repeat">Weekly</string>
+    <string name="weekdays_repeat">Weekdays</string>
+    <string name="weekends_repeat">Weekends</string>
+
+    <string name="no_internet_connection">helios. TALK needs internet to run. Please connect to the Internet and press OK.</string>
+
+    <string name="location_permission_prompt">Location permission is needed for core functionality. Press OK to change your settings manually.</string>
+    <string name="background_location_permission_prompt">Choose "All the time" to keep your contexts\' states updated when the app runs in background.</string>
+
     <string name="location_permission_search_prompt">Location permission is needed for searching
         based on location</string>
     <string name="create_context_button">Create Context</string>
@@ -488,10 +516,11 @@
 
     <string name="invite_contacts_context">Invite Contacts to Context</string>
     <string name="join_context">Join</string>
-    <string name="delete_context_invite">Reject</string>
+    <string name="delete_context_invite">Delete</string>
+
     <string name="waiting_context_response">Waiting for connection response in context...</string>
     <string name="context_message">%1$s invited you to join %2$s context %3$s.</string>
-    <string name="dialog_message_remove_pending_context_invite">Are you sure you want to reject context invite?</string>
+    <string name="dialog_message_remove_pending_context_invite">Are you sure you want to delete context invite?</string>
     <string name="dialog_title_remove_pending_context_invite">Confirm Removal</string>
 
     <!-- Private Groups -->
@@ -499,17 +528,23 @@
         by the owner/creator. If you want your contacts to share the conversation, you can
         create a Forum instead.</string>
     <string name="dialog_title_remove_pending_group_invite">Confirm Removal</string>
-    <string name="waiting_group_response">Waiting for connection response in private group...</string>
-    <string name="dialog_message_remove_pending_group_invite">Are you sure you want to reject private group invite?</string>
-    <string name="delete_group_invite">Reject</string>
+    <string name="waiting_group_response">Waiting for connection response...</string>
+    <string name="waiting_forum_response">Waiting for connection response in forum...</string>
+
+    <string name="dialog_message_remove_pending_group_invite">Are you sure you want to delete the invite?</string>
+    <string name="dialog_message_remove_pending_group_request">Are you sure you want to reject the request?</string>
+
+    <string name="delete_group_invite">Delete</string>
 
     <string name="no_pending_invitations">No pending Invitations…</string>
 
     <!-- Communities -->
-    <string name="intro_forums">Forums are sharable conversations and can be public (searchable
+    <!--    <string name="intro_forums">Forums are sharable conversations and can be public (searchable
         and can be joined by anyone), protected (searchable but administrators and moderators
         need to approve your participation) or private (not searchable, can be joined only if
         directly invited from a member). Forums can also be linked with a specific location.
+    </string>-->
+    <string name="intro_forums">Forums are sharable conversations and can be linked with a specific location.
     </string>
     <string name="create_forum_title">Create Forum</string>
     <string name="choose_forum_hint">Choose a name for your forum</string>
@@ -702,11 +737,23 @@
     <!--Settings Recommendation-->
     <string name="recommendations_setting_title">Recommendations</string>
     <string name="pref_send_pref_recommendations_title">Allow sharing preferences</string>
-    <string name="pref_send_pref_recommendations_sum">To provide recommendations and enhance
-        your content profile, we share with your friends some minimal preferences. </string>
+    <string name="pref_send_pref_recommendations_sum">Send interaction patterns and interests to friends (only) to improve their recommendations.</string>
     <string name="miners_setting">Select miner for Recommendations</string>
-    <string name="graph_mining_setting_gnn">Graph Neural Network Miner (recommended)</string>
-    <string name="graph_mining_settings_repeat_n_reply">Repeat and Reply Miner</string>
+    <string name="graph_mining_setting_gnn">Interaction Patterns (recommended)</string>
+    <string name="graph_mining_settings_repeat_n_reply">Chronological Order</string>
+    <string name="graph_mining_settings_ppr">Profiling Interests</string>
+    <string name="pref_graph_mining_setting_gnn_title">Interaction Patterns</string>
+    <string name="pref_graph_mining_settings_repeat_n_reply_title">Chronological Order</string>
+    <string name="pref_graph_mining_settings_ppr_title">Profiling Interests</string>
+
+    <string name="pref_graph_mining_setting_gnn_sum"></string>
+    <string name="pref_graph_mining_settings_repeat_n_reply_sum"></string>
+    <string name="pref_graph_mining_settings_ppr_sum"></string>
+
+
+    <string name="privacy">Privacy</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
 
     <!-- Settings Notifications -->
     <string name="notification_settings_title">Notifications</string>
@@ -790,7 +837,7 @@
 
     <!-- Screenshots -->
 
-    <string name="invitations">Context/Group Invitations</string>
+    <string name="invitations">Connection Notifications</string>
 
     <!--Profiling Permission Messages-->
     <string name="profiling_info">Content Aware Profiling Module runs as a foreground service when the user charging its phone. The profiler processes images in batches of 500 and intermediate calculated results can be shown below before completion. The intermediate and final results are stored in the contextual ego network. Select the algorithm you want to run and request the profiler to start the process. </string>
@@ -809,15 +856,47 @@
     <string name="STUN_URL">stun:77.231.202.135:3478</string>
     <string name="API_endpoint">https://77.231.202.135:11794</string>
     <string name="connect">Connect</string>
-    <string name="invitations_nav_btn">Invitations</string>
+    <string name="invitations_nav_btn">Connection Notifications</string>
     <string name="create_context">Create Context</string>
     <string name="rename_context">Rename Context</string>
     <string name="the_public_name_of_this_context_is">The public name of this Context is \t</string>
     <string name="dialog_title_set_context_public_name">Give a public name to this Context. This name will be visible to anyone.</string>
     <string name="group_members">Group Members</string>
+    <string name="choose_group_type">Conversation Types</string>
+
+    <string name="chat_description">Interact with one of your contacts.</string>
+    <string name="group_chat_description">Interact with multiple contacts.</string>
+    <string name="public_forum_description">Forum accessible by everyone.</string>
+    <string name="protected_forum_description">Forum with controlled join policy.</string>
+    <string name="secret_forum_description">Forum with high level of privacy.</string>
+
+    <string name="chat_hint"></string>
+    <string name="group_chat_hint">Not searchable, invitations by owner.</string>
+    <string name="public_forum_hint">Searchable, anyone can join.</string>
+    <string name="protected_forum_hint">Searchable, administrators and moderators need to accept join requests.</string>
+    <string name="secret_forum_hint">Not searchable, invitations by members.</string>
+    <string name="empty_member_list">No members found</string>
+    <string name="no_forum_search_results">No forums found</string>
+    <string name="relay_addresses_link">https://fs.gpan.site/heliosTALK/url.json</string>
+    <string name="forum_location_hint">*Location should be in Context\'s location range</string>
+
+    <string name="swarmKeyProtocol">/key/swarm/psk/1.0.0/</string>
+    <string name="swarmKeyEncoding">/base16/</string>
+    <string name="swarmKeyData">7e08ecd18b5a664359ffcd594eab4e0e0f5fc03794dd9596dbf747b5accc53a1</string>
 
     <string-array name="relay_addresses">
-        <item>/ip4/160.40.51.18/tcp/5556/ws/p2p/QmVnujWxKE6DMBJgKHyTwjyUp4yaXu6bRuo8qrxGHoTqk8</item>
+        <!--        burnt ports 5555-5561, 16864-->
+        <!--        pnet relay port-->
+        <item>/ip4/160.40.51.18/tcp/16865/ws/p2p/QmVnujWxKE6DMBJgKHyTwjyUp4yaXu6bRuo8qrxGHoTqk8</item>
+        <!--        <item>/ip4/160.40.51.18/tcp/16864/ws/p2p/QmVnujWxKE6DMBJgKHyTwjyUp4yaXu6bRuo8qrxGHoTqk8</item>-->
         <!--        <item>/ip4/130.188.225.47/tcp/28123/ws/p2p/QmXXH3QY72GaFfgRDkftFZgLnrPXrktr2UUjmpvJtVzDHq</item>-->
+        <!--vvt pnet relay-->
+        <!--        <item>/ip4/130.188.225.47/tcp/28122/ws/p2p/QmXXH3QY72GaFfgRDkftFZgLnrPXrktr2UUjmpvJtVzDHq</item>-->
+
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="get_helios_link">Share my helios link</string>
+
+
 </resources>

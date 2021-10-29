@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -36,8 +38,15 @@ import eu.h2020.helios_social.happ.helios.talk.activity.HeliosTalkActivity;
 import eu.h2020.helios_social.happ.helios.talk.forum.conversation.ForumConversationActivity;
 import eu.h2020.helios_social.happ.helios.talk.forum.creation.CreateForumActivity;
 import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
+import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
+import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.Forum;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.LocationForum;
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.sharing.ForumAccessRequest;
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.sharing.ForumAccessRequestFactory;
+import eu.h2020.helios_social.modules.groupcommunications.api.group.sharing.SharingGroupManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.peer.PeerId;
+import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.sharing.GroupInvitationFactory;
 import eu.h2020.helios_social.modules.groupcommunications.api.resourcediscovery.queries.Queryable;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
@@ -74,11 +83,15 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
     private boolean isLocationQueryInProgress;
     private FusedLocationProviderClient fusedLocationClient;
 
+    @Inject
+    ForumAccessRequestFactory forumAccessRequestFactory;
 
     @Inject
     SearchController searchController;
     @Inject
     volatile EventBus eventBus;
+    @Inject
+    SharingGroupManager sharingGroupManager;
 
     @Override
     public void injectActivity(ActivityComponent component) {
@@ -134,6 +147,8 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
         resultsList = findViewById(R.id.results_list);
         resultsList.setLayoutManager(new LinearLayoutManager(this));
         resultsList.setAdapter(resultListAdapter);
+        resultsList.setEmptyTitle(R.string.no_forum_search_results);
+        resultsList.setEmptyImage(R.drawable.ic_no_conversations);
     }
 
     @Override
@@ -259,9 +274,9 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
             resultListAdapter.clear();
             resultListAdapter.notifyDataSetChanged();
             resultsList.showData();
-            resultsList.showProgressBar();
-
         }
+        resultsList.showProgressBar();
+
         queryID = searchController.sendLocationQuery(lat, lng, RADIUS_THRESHOLD);
 
         progress.setVisibility(View.VISIBLE);
@@ -271,8 +286,12 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
             @Override
             public void run() {
                 progress.setVisibility(View.INVISIBLE);
+                if (results.size() == 0){
+                    resultsList.showEmpty();
+                }
             }
-        }, 30000);
+        }, 10000);
+
     }
 
     @Override
@@ -283,8 +302,9 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
             resultListAdapter.clear();
             resultListAdapter.notifyDataSetChanged();
             resultsList.showData();
-            resultsList.showProgressBar();
         }
+        resultsList.showProgressBar();
+
         isLocationQueryInProgress = false;
         queryID = searchController.sendTextQuery(query);
 
@@ -294,8 +314,11 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
             @Override
             public void run() {
                 progress.setVisibility(View.INVISIBLE);
+                if (results.size() == 0){
+                    resultsList.showEmpty();
+                }
             }
-        }, 30000);
+        }, 10000);
 
         return false;
     }
@@ -328,6 +351,15 @@ public class SearchActivity extends HeliosTalkActivity implements EventListener,
         i.putExtra(GROUP_ID, forum.getId());
         startActivity(i);
         finish();
+    }
+
+    @Override
+    public void onRequestJoinProtectedForum(Forum forum) throws DbException {
+        for (String s: (List<String>) forum.getModerators()){
+            // peerName is assigned in sharingGroupManager.sendGroupAccessRequest function
+            ForumAccessRequest forumAccessRequest = forumAccessRequestFactory.createOutgoingForumAccessRequest(new ContactId(s),forum,null);
+            sharingGroupManager.sendGroupAccessRequest(forumAccessRequest);
+        }
     }
 
     @Override

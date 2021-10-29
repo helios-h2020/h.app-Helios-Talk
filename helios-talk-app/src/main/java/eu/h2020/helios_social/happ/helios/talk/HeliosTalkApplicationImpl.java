@@ -137,6 +137,7 @@ public class HeliosTalkApplicationImpl extends Application
         GroupCommunicationsEagerSingletons.Helper
                 .injectEagerSingletons(androidComponent);
         AndroidEagerSingletons.Helper.injectEagerSingletons(androidComponent);
+        LOG.info("created new app component");
         return androidComponent;
     }
 
@@ -191,4 +192,12 @@ public class HeliosTalkApplicationImpl extends Application
         ActivityManager.getMyMemoryState(info);
         return (info.importance != IMPORTANCE_FOREGROUND);
     }
+
+/*    public void clearComponent() {
+        applicationComponent = null;
+    }
+
+    public void createComponent() {
+        this.applicationComponent = createApplicationComponent();
+    }*/
 }

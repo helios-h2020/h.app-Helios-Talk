@@ -198,6 +198,15 @@
                 android:text="@string/forum_location"
                 android:textSize="@dimen/text_size_medium" />
 
+            <TextView
+                android:id="@+id/location_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/forum_location_hint"
+                android:textColor="@color/red"
+                android:textSize="@dimen/text_size_medium"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

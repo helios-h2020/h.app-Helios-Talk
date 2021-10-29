@@ -10,7 +10,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbExcept
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.GeneralContextProxy;
 import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
-
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.SpatioTemporalContext;
 public interface ContextController {
 
 	void invite(String contextId, Collection<ContactId> contacts,
@@ -26,6 +26,9 @@ public interface ContextController {
 
 	void storeLocationContext(LocationContextProxy locationContext,
 							  ResultExceptionHandler<String, DbException> handler);
+
+	void storeSpatioTemporalContext(SpatioTemporalContext spatioTemporalContext,
+									ResultExceptionHandler<String, DbException> handler);
 
 	void storeGeneralContext(GeneralContextProxy generalContext,
 			ResultExceptionHandler<String, DbException> handler);

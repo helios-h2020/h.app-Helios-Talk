@@ -14,8 +14,11 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.sharing.ForumAccessRequest;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationAddedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.ContextInvitationRemovedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupAccessRequestAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupAccessRequestRemovedEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.RemovePendingContextEvent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
@@ -94,7 +97,9 @@ public class InvitationListViewModel extends AndroidViewModel
         if (e instanceof ContextInvitationRemovedEvent ||
                 e instanceof ContextInvitationAddedEvent ||
                 e instanceof RemovePendingContextEvent ||
-                e instanceof GroupInvitationAddedEvent) {
+                e instanceof GroupInvitationAddedEvent ||
+                e instanceof GroupAccessRequestAddedEvent ||
+                e instanceof GroupAccessRequestRemovedEvent) {
             loadPendingInvitations();
         }
     }
@@ -110,7 +115,7 @@ public class InvitationListViewModel extends AndroidViewModel
                 for (ContextInvitation p : pContextInvitations) {
                     Contact c = contactManager.getContact(p.getContactId());
                     items.add(new InvitationItem(p, c.getAlias(), p.getName(),
-                            InvitationItem.InvitationType.CONTEXT));
+                            InvitationItem.InvitationType.CONTEXT, null));
                 }
                 LOG.info("Start loading group invitations! ");
                 Collection<GroupInvitation> pGroupInvitations =
@@ -126,8 +131,41 @@ public class InvitationListViewModel extends AndroidViewModel
                         itemInvType = InvitationItem.InvitationType.GROUP;
                     }
                     items.add(new InvitationItem(p, c.getAlias(), contextName,
-                            itemInvType));
+                            itemInvType, null));
                 }
+
+                LOG.info("Start loading group access requests! ");
+                Collection<ForumAccessRequest> pForumAccessRequests =
+                        groupManager.getGroupAccessRequests();
+                List<String> uniqueOutgoingRequests = new ArrayList<>();
+                // we have multiple outgoing requests for the same group (all the moderators), so
+                // we must only show one request instead of all of them.
+                for (ForumAccessRequest p : pForumAccessRequests) {
+                    if (!p.isIncoming()){
+                        if (!uniqueOutgoingRequests.contains(p.getGroupId())){
+                            uniqueOutgoingRequests.add(p.getGroupId());
+                            String contextName =
+                                    contextManager.getContext(p.getContextId())
+                                            .getName();
+
+                            InvitationItem.InvitationType itemInvType = InvitationItem.InvitationType.FORUM;
+
+                            items.add(new InvitationItem(null, p.getPeerName(), contextName,
+                                    itemInvType, p));
+                        }
+
+                    } else {
+                        String contextName =
+                                contextManager.getContext(p.getContextId())
+                                        .getName();
+
+                        InvitationItem.InvitationType itemInvType = InvitationItem.InvitationType.FORUM;
+
+                        items.add(new InvitationItem(null, p.getPeerName(), contextName,
+                                itemInvType, p));
+                    }
+                }
+
                 LOG.info("Total Invitations: " + items.size());
                 pendingInvitations.postValue(items);
             } catch (DbException | FormatException e) {
@@ -183,6 +221,30 @@ public class InvitationListViewModel extends AndroidViewModel
                 e.printStackTrace();
             }
         });
+    }
+
+    void rejectPendingGroupAccessRequest(ForumAccessRequest forumAccessRequest) {
+        dbExecutor.execute(() -> {
+            try {
+                sharingGroupManager
+                        .rejectGroupAccessRequest(forumAccessRequest);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+        });
+        loadPendingInvitations();
+    }
+
+    void acceptPendingGroupAccessRequest(ForumAccessRequest forumAccessRequest) {
+        dbExecutor.execute(() -> {
+            try {
+                sharingGroupManager
+                        .acceptGroupAccessRequest(forumAccessRequest);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+        });
+        loadPendingInvitations();
     }
 
 }

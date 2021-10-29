@@ -31,7 +31,7 @@ import static android.widget.Toast.LENGTH_LONG;
 public class AddContactActivity extends HeliosTalkActivity implements
         BaseFragmentListener {
     private static Logger LOG = Logger.getLogger(AddContactActivity.class.getName());
-
+    private boolean isOutgoing = true;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     private AddContactViewModel viewModel;
@@ -45,7 +45,10 @@ public class AddContactActivity extends HeliosTalkActivity implements
     public void onCreate(@Nullable Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_fragment_container);
-
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            isOutgoing= extras.getBoolean("isOutGoing");
+        }
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
@@ -68,7 +71,12 @@ public class AddContactActivity extends HeliosTalkActivity implements
         }
 
         if (state == null) {
-            showInitialFragment(new LinkExchangeFragment());
+            LinkExchangeFragment f = new LinkExchangeFragment();
+            // Supply index input as an argument.
+            Bundle args = new Bundle();
+            args.putBoolean("isOutGoing", isOutgoing);
+            f.setArguments(args);
+            showInitialFragment(f);
         }
     }
 

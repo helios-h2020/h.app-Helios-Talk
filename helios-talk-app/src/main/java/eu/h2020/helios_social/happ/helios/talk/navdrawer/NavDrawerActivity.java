@@ -2,15 +2,22 @@ package eu.h2020.helios_social.happ.helios.talk.navdrawer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -34,7 +42,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 import androidx.work.WorkManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -42,11 +54,17 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import eu.h2020.helios_social.core.context.ContextListener;
+import eu.h2020.helios_social.core.context.ext.LocationContext;
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
+import eu.h2020.helios_social.core.sensor.ext.LocationSensor;
+import eu.h2020.helios_social.core.sensor.ext.TimeSensor;
+import eu.h2020.helios_social.happ.helios.talk.BuildConfig;
 import eu.h2020.helios_social.happ.helios.talk.HeliosTalkService;
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
@@ -62,14 +80,20 @@ import eu.h2020.helios_social.happ.helios.talk.controller.handler.UiResultHandle
 import eu.h2020.helios_social.happ.helios.talk.favourites.FavouritesFragment;
 import eu.h2020.helios_social.happ.helios.talk.fragment.BaseFragment;
 import eu.h2020.helios_social.happ.helios.talk.logout.SignOutFragment;
+import eu.h2020.helios_social.happ.helios.talk.network.NetworkChangeReceiver;
 import eu.h2020.helios_social.happ.helios.talk.profile.ProfileActivity;
 import eu.h2020.helios_social.happ.helios.talk.settings.SettingsActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.CommunicationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.context.ContextType;
 import eu.h2020.helios_social.modules.groupcommunications.api.context.DBContext;
+import eu.h2020.helios_social.modules.groupcommunications.api.conversation.ConversationManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
+import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.SpatioTemporalContext;
 import eu.h2020.helios_social.modules.groupcommunications_utils.identity.IdentityManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
@@ -80,11 +104,18 @@ import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Conte
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.Event;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventListener;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupInvitationAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.GroupMessageReceivedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.NetworkConnectionChangedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PendingContactAddedEvent;
+import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.PrivateMessageReceivedEvent;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static androidx.core.view.GravityCompat.START;
 import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
 import static androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 import static eu.h2020.helios_social.happ.helios.talk.navdrawer.IntentRouter.handleExternalIntent;
+import static eu.h2020.helios_social.happ.helios.talk.network.Constants.CONNECTIVITY_ACTION;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.RUNNING;
 import static java.util.Objects.requireNonNull;
 import static java.util.logging.Logger.getLogger;
@@ -93,10 +124,12 @@ import static java.util.logging.Logger.getLogger;
 @ParametersNotNullByDefault
 public class NavDrawerActivity extends HeliosTalkActivity implements
         BaseFragment.BaseFragmentListener,
-        NavigationView.OnNavigationItemSelectedListener, EventListener {
+        NavigationView.OnNavigationItemSelectedListener, EventListener, ContextListener/*, SensorValueListener*/ {
 
     // Code used in requesting runtime permissions
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    private static final int REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE = 34;
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 35;
+//    private static final int REQUEST_BACKGROUND_PERMISSIONS_REQUEST_CODE = 35;
 
     private static final int REQUEST_ACCESS_MEDIA_METADATA = 0;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -109,17 +142,26 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             Manifest.permission.ACCESS_MEDIA_LOCATION
     };
 
+    private static final String[] MEDIA_AND_LOCATION_PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     // Constant used in the location settings dialog
-    // private static final int REQUEST_CHECK_SETTINGS = 0x1;
+    private static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     // Tracks the status of the location updates request
-    // private Boolean mRequestingLocationUpdates;
+    private Boolean mRequestingLocationUpdates;
     // Access the location sensor
-    // private LocationSensor mLocationSensor;
-    // private ArrayList<LocationContext> locationContexts;
+    private LocationSensor mLocationSensor;
+    private TimeSensor timeSensor;
+
+    private ArrayList<LocationContextProxy> locationContexts;
+    private ArrayList<SpatioTemporalContext> spatioTemporalContexts;
 
     // Represents a geographical location
-    // private Location currentLocation;
+     private Location currentLocation;
 
     private static final Logger LOG =
             getLogger(NavDrawerActivity.class.getName());
@@ -145,11 +187,13 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     IdentityManager identityManager;
     @Inject
     CommunicationManager communicationManager;
-
+    @Inject
+    ConversationManager conversationManager;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigation;
     private SubMenu contextMenu;
+    private SubMenu contextMenu2;
 
     private BottomNavigationView bottomNav;
     private ArrayList<DBContext> contexts;
@@ -158,7 +202,10 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     private ListView lst;
     private ArrayList<DBContext> contexts_list;
     private ArrayList<String> list_items;
-
+    IntentFilter intentFilter;
+    NetworkChangeReceiver receiver;
+    private boolean isInitialNetworkChange=true;
+    private DBContext newContextBackgroundActivation = null;
     @Override
     public void injectActivity(ActivityComponent component) {
         component.inject(this);
@@ -170,16 +217,24 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         exitIfStartupFailed(getIntent());
         setContentView(R.layout.activity_nav_drawer);
 
-        // locationContexts = new ArrayList<>();
-        // mRequestingLocationUpdates = false;
+        mRequestingLocationUpdates = false;
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigation = findViewById(R.id.navigation);
         MenuItem menuNav = navigation.getMenu().findItem(R.id.contexts);
+        navigation.setItemIconTintList(null);
         contextMenu = menuNav.getSubMenu();
 
         eventBus.addListener(this);
+
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(eventBus, communicationManager);
+        registerReceiver(receiver, intentFilter);
+        LOG.info("receiverRegistered");
+        receiver.setInitial(true);
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = requireNonNull(getSupportActionBar());
@@ -200,7 +255,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                 contextsLinearLayout.setBackground(getResources().getDrawable(R.drawable.popup_shape,NavDrawerActivity.this.getTheme()));
                 // set text color
                 TextView tvTitle = contextsLinearLayout.findViewById(R.id.contexts);
-                tvTitle.setTextColor(getResources().getColor(R.color.color_primary,NavDrawerActivity.this.getTheme()));
+                tvTitle.setTextColor(getResources().getColor(R.color.m_grey_500,NavDrawerActivity.this.getTheme()));
                 lst = contextsLinearLayout.findViewById(R.id.listView1);
 
                 // get context list
@@ -233,7 +288,9 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
                         styleBasedOnContext(current.getId());
                         bottomNav.setSelectedItemId(R.id.nav_conversations);
-                        loadContexts(current.getId());
+                        //loadContexts(current.getId());
+                        navigation.setCheckedItem(i);
+                        // navigation.invalidate();
                         popupWindow.dismiss();
                     }
                 });
@@ -263,7 +320,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         lockManager.isLockable().observe(this, this::setLockVisible);
 
         if (lifecycleManager.getLifecycleState().isAfter(RUNNING)) {
-            showSignOutFragment();
+            //showSignOutFragment();
         } else if (state == null) {
             startFragment(ChatListFragment.newInstance(),
                           0);
@@ -273,56 +330,63 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             onNewIntent(getIntent());
         }
 
-        verifyStoragePermissions();
+        LOG.info("verifyStoragePermissions");
 
+        // Init LocationSensor
+        mLocationSensor = new LocationSensor(this);
+        timeSensor = new TimeSensor(3000);
+        if (signedIn()) {
+
+            //timeSensor.registerValueListener(this);
+            //mLocationSensor.registerValueListener(this);
+            LOG.info("loadLocationContextsAndRegisterSensors");
+            loadLocationContextsAndRegisterSensors();
+            loadSpatiotemporalContextsAndRegisterSensors();
+            timeSensor.startUpdates();
+            if (checkPermissions()) {
+                LOG.info("locationSensorStartedUpdates");
+                mLocationSensor.startUpdates();
+
+            } else {
+                verifyStoragePermissions();
+            }
+        }
         String message = getIntent().getExtras() != null ? getIntent().getExtras().getString("message") : null;
         if (message != null) ToastMessage(message);
 
-        //check if contexts have private names ( to be compatible with older versions of app )
-        checkContexts();
+/*        if (signedIn()) {
+            // CustomViewTarget target = new CustomViewTarget(R.id.contactIcon, this);
+            new ShowcaseView.Builder(this)
+                    .setTarget(new ActionViewTarget(this, ActionViewTarget.Type.HOME))
+                    .setContentTitle("ShowcaseView")
+                    .setContentText("This is highlighting the Home button")
+                    .hideOnTouchOutside()
+                    .build();
+        }*/
     }
 
-    // if table contexts has not the column privateName, we have to add it and set the value of
-    // publicNames to privateNames as a default value.
-    private void checkContexts(){
-        ArrayList<DBContext> contextList = new ArrayList<>();
-        try {
-            contextList = (ArrayList<DBContext>) contextManager.getContexts();
-        } catch (DbException e) {
-            e.printStackTrace();
-            try {
-                LOG.info("adding privateName column to table contexts in database");
-                contextManager.addContextPrivateNameFeature();
-                contextList = (ArrayList<DBContext>) contextManager.getContexts();
-            } catch (DbException dbException) {
-                dbException.printStackTrace();
-            }
-        }
-        try {
-            for (int i = 0; i < contextList.size(); i++) {
-                DBContext c = contextList.get(i);
 
-                String publicName = c.getName();
-                String privateName = c.getPrivateName();
-                if (privateName.equals("")){
-                    contextManager.setContextPrivateName(c.getId(),publicName);
-                }
-            }
-        } catch (DbException dbException) {
-            dbException.printStackTrace();
-        }
+    public void updateConnection() {
+        egoNetwork.save();
+        WorkManager.getInstance(getApplication()).cancelAllWork();
+        drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED);
+        reconnect();
     }
+
+
 
     private void ToastMessage(String message) {
         Toast.makeText(
                 this,
                 message,
-                Toast.LENGTH_LONG
+                LENGTH_LONG
         ).show();
     }
 
     public void loadContexts(String id) {
+        LOG.info("loading contexts...");
         contextMenu.clear();
+        LOG.info("menu cleared");
         contexts = new ArrayList<>();
         try {
             contexts = (ArrayList<DBContext>) contextManager.getContexts();
@@ -337,7 +401,31 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                 contextMenu.add(0, i,
                                 Menu.CATEGORY_SECONDARY,
                                 cname)
-                        .setIcon(R.drawable.ic_context_2);
+                        .setIcon(R.drawable.ic_context_3);
+
+                if (c.getContextType() == ContextType.GENERAL){
+                    contextMenu.findItem(i).setIcon(buildContextStateDrawable(true, R.drawable.ic_context_3));
+                }
+                else if (c.getContextType()== ContextType.LOCATION){
+                    LocationContextProxy locationContextProxy =locationContexts.stream()
+                            .filter(context -> c.getId().equals(context.getId()))
+                            .findFirst().orElse(null);
+                    if (locationContextProxy!=null){
+                        LOG.info("found a location context"+locationContextProxy.getPrivateName());
+                        contextMenu.findItem(i).setIcon(buildContextStateDrawable(locationContextProxy.isActive(), R.drawable.ic_context_3));
+                    }
+                }
+                else if (c.getContextType()== ContextType.SPATIOTEMPORAL){
+                    SpatioTemporalContext spatioTemporalContext =spatioTemporalContexts.stream()
+                            .filter(context -> c.getId().equals(context.getId()))
+                            .findFirst().orElse(null);
+                    if (spatioTemporalContext!=null){
+                        LOG.info("found a spatiotemporal context"+spatioTemporalContext.getPrivateName());
+                        contextMenu.findItem(i).setIcon(buildContextStateDrawable(spatioTemporalContext.isActive(), R.drawable.ic_context_3));
+                    }
+                }
+
+
             }
             contextMenu.setGroupCheckable(0, true, true);
 
@@ -347,9 +435,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             e.printStackTrace();
         }
         navigation.invalidate();
+        setContextUnreadMessagesIndicator();
     }
-
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -384,10 +471,27 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     @Override
     public void onStart() {
         super.onStart();
+
+//        eventBus.addListener(this);
+//        isInitialNetworkChange=true;
+//        LOG.info("receiverRegistered");
+//        receiver.setInitial(true);
+        LOG.info("onStartRunning");
         if (signedIn()) {
+            if (newContextBackgroundActivation!=null){
+                egoNetwork.setCurrent(egoNetwork.getOrCreateContext(
+                        newContextBackgroundActivation.getName() + "%" + newContextBackgroundActivation.getId()));
+            }
             String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
-            //check if contexts have private names ( to be compatible with older versions of app )
-            checkContexts();
+
+
+            if (locationContexts==null) {
+                loadLocationContextsAndRegisterSensors();
+            }
+            if (spatioTemporalContexts==null) {
+                loadSpatiotemporalContextsAndRegisterSensors();
+            }
+
 
             loadContexts(cid);
 
@@ -395,13 +499,15 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     }
 
 
-
-    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+    private Drawable buildCounterDrawable(int count, Drawable backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.counter_menu_item_layout, null);
-        view.setBackgroundResource(backgroundImageId);
-
-        if (count == 0) {
+        view.setBackground(backgroundImageId);
+        // just a red cycle, without any number
+        if (count == -1){
+            TextView textView = (TextView) view.findViewById(R.id.count);
+            textView.setText("");
+        } else if (count == 0) {
             View counterTextPanel = view.findViewById(R.id.counterValuePanel);
             counterTextPanel.setVisibility(View.GONE);
         } else {
@@ -414,10 +520,48 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                 textView.setText(countString);
             }
         }
-
+// Converts 14 dip into its equivalent px
+        float dip = 32f;
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.getDisplayMetrics()
+        )+1;
         view.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                View.MeasureSpec.makeMeasureSpec((int)px, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec((int)px, View.MeasureSpec.EXACTLY));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        return new BitmapDrawable(getResources(), bitmap);
+
+    }
+
+    private Drawable buildContextStateDrawable(boolean isActive, int backgroundImageId) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.context_state_layout, null);
+        view.setBackgroundResource(backgroundImageId);
+        ImageView iv = (ImageView) view.findViewById(R.id.stateBackground);
+        if (isActive) iv.setBackgroundResource(R.drawable.contact_connected);
+        else iv.setBackgroundResource(R.drawable.contact_disconnected);
+
+
+        // Converts 14 dip into its equivalent px
+        float dip = 32f;
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.getDisplayMetrics()
+        )+1;
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec((int)px, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec((int)px, View.MeasureSpec.EXACTLY));
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
 
         view.setDrawingCacheEnabled(true);
@@ -432,7 +576,20 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
     @Override
     public void onResume() {
         super.onResume();
-/*        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
+        LOG.info("isInitial" + isInitialNetworkChange);
+        LOG.info("needRestart" + communicationManager.getNeedRestart());
+        if (communicationManager.getNeedRestart()){
+                updateConnection();
+        }
+        if (signedIn()) {
+            setConnectAndConnectionNotificationsIndicator();
+            setContextUnreadMessagesIndicator();
+        }
+
+    }
+
+    private void setConnectAndConnectionNotificationsIndicator() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
         Menu menu = navigationView.getMenu();
         MenuItem friendRequests = menu.findItem(R.id.nav_btn_connect);
         int incomingConnectionRequests = 0;
@@ -452,11 +609,34 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
         } catch (DbException e) {
             e.printStackTrace();
         }
-        friendRequests.setIcon(buildCounterDrawable(incomingConnectionRequests,
-                R.drawable.ic_connect_with_peers));
-        MenuItem invites = menu.findItem(R.id.nav_btn_invitations);
-        invites.setIcon(buildCounterDrawable(inviteCounter, R.drawable.ic_notifications));*/
+        try {
+            inviteCounter += groupManager.pendingIncomingGroupAccessRequest();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
 
+        friendRequests.setIcon(buildCounterDrawable(incomingConnectionRequests,
+                getDrawable(R.drawable.ic_connect_with_peers_nav_bar)));
+        MenuItem invites = menu.findItem(R.id.nav_btn_invitations);
+        invites.setIcon(buildCounterDrawable(inviteCounter, getDrawable(R.drawable.ic_notifications)));
+    }
+
+
+    private void setContextUnreadMessagesIndicator() {
+        try {
+            contexts = (ArrayList<DBContext>) contextManager.getContexts();
+            for (int i = 0; i < contexts.size(); i++) {
+                DBContext c = contexts.get(i);
+                int unreadMessagesInContext = 0;
+                unreadMessagesInContext = contextManager.countUnreadMessagesInContext(c.getId());
+                if (contextMenu.findItem(i)!=null) {
+                    MenuItem contextMenuItem = contextMenu.getItem(i);
+                    contextMenuItem.setIcon(buildCounterDrawable(unreadMessagesInContext, contextMenuItem.getIcon()));
+                }
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -476,7 +656,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                                                     });
         }
 
-/*        if (request == REQUEST_CHECK_SETTINGS) {
+        if (request == REQUEST_CHECK_SETTINGS) {
             switch (request) {
                 case Activity.RESULT_OK:
                     break;
@@ -484,7 +664,7 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                     mRequestingLocationUpdates = false;
                     break;
             }
-        }*/
+        }
     }
 
     @Override
@@ -532,7 +712,8 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
             signOut();
         } else {
             int index = contextMenu.findItem(fragmentId).getItemId();
-
+//            MenuItem contextMenuItem = contextMenu.getItem(index);
+//            contextMenuItem.setIcon(buildCounterDrawable(0, R.drawable.ic_context_3));
             DBContext current = contexts.get(index);
             egoNetwork.setCurrent(egoNetwork.getOrCreateContext(
                     current.getName() + "%" + current.getId()));
@@ -650,15 +831,44 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
 
     @Override
     public void eventOccurred(Event e) {
+        LOG.info("event_occured");
         if (e instanceof ContextAddedEvent) {
             LOG.info("CONTEXT ADDED: " +
                              requireNonNull(((ContextAddedEvent) e).getContext()).getName());
+
+            updateSensorsOnAddedContext(requireNonNull(((ContextAddedEvent) e).getContext()));
             loadContexts(requireNonNull(((ContextAddedEvent) e).getContext()).getId());
         } else if (e instanceof ContextRemovedEvent) {
+            updateSensorsOnRemovedContext(((ContextRemovedEvent) e).getContextId());
             loadContexts("All");
         } else if (e instanceof ContextRenamedEvent){
             String cid = egoNetwork.getCurrentContext().getData().toString().split("%")[1];
+            LOG.info("contextRenamed" + cid);
             loadContexts(cid);
+        } else if (e instanceof PrivateMessageReceivedEvent) {
+            setContextUnreadMessagesIndicator();
+        } else if (e instanceof GroupMessageReceivedEvent) {
+            setContextUnreadMessagesIndicator();
+        } else if (e instanceof PendingContactAddedEvent ){
+            setConnectAndConnectionNotificationsIndicator();
+        } else if (e instanceof GroupInvitationAddedEvent ){
+            setConnectAndConnectionNotificationsIndicator();
+        } else if (e instanceof NetworkConnectionChangedEvent){
+            LOG.info("connection changed event");
+            if (!isInitialNetworkChange){
+                NetworkConnectionChangedEvent nc =
+                        (NetworkConnectionChangedEvent) e;
+                if (nc.isConnected()) {
+                    updateConnection();
+                    //Toast.makeText(this,"Reconnecting to TALK...",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this,"No Internet Connection",Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                isInitialNetworkChange = false;
+            }
+
         }
     }
 
@@ -678,113 +888,138 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
      *
      * @param active - a boolean value
      */
-	/*@Override
+	@Override
 	public void contextChanged(boolean active) {
-		if (active) {
-			String activeContext =
-					findActiveLocationContext(locationContexts).getName();
-			LOG.info("Context changed " + activeContext);
-			if (!egoNetwork.getCurrentContext()
-					.equals(egoNetwork.getOrCreateContext(activeContext))) {
-				egoNetwork.setCurrent(
-						egoNetwork.getOrCreateContext(activeContext));
-				String prompt = "Your context has Changed! " + activeContext +
-						" is now active!";
-				Toast.makeText(NavDrawerActivity.this,
-						prompt,
-						LENGTH_LONG)
-						.show();
-				startFragment(ChatListFragment.newInstance());
-			}
-		}
-	}*/
-
-
-    /**
-     * This method implements the SensorValueListener interface receiveValue method, which
-     * obtains values from the location sensor.
-     */
-	/*@Override
-	public void receiveValue(Object location) {
-		// updates the current location
-		currentLocation = (Location) location;
-		LOG.info("Location Receive Value");
+	    LOG.info("get context that changed state");
+        DBContext dbContext = getChangedContext();
+        LOG.info("contextStateChanged");
+        updateContextStateIndicator(dbContext);
+        if (active){
+            int positionOnMenu = getMenuItemPositionFromContextId(dbContext.getId());
+            LOG.info("got position on menu");
+            changeSelectedContext(positionOnMenu);
+            LOG.info("updated selected context");
+        } else {
+            LOG.info("updated state indicators");
+            DBContext activatedContext = getLatestActivatedContext();
+            LOG.info("got latest activated context");
+            int positionOnMenu = getMenuItemPositionFromContextId(activatedContext.getId());
+            LOG.info("got position on menu");
+            changeSelectedContext(positionOnMenu);
+            LOG.info("updated selected context");
+        }
 	}
 
-	private LocationContext findActiveLocationContext(
-			Collection<LocationContext> listOfLocationContexts) {
-		return listOfLocationContexts.stream()
-				.filter(lc -> lc.isActive())
-				.findFirst().orElse(null);
-	}
-
-	private LocationContext findLocationContextByName(
-			Collection<LocationContext> listOfLocationContexts, String name) {
-		return listOfLocationContexts.stream()
-				.filter(lc -> name.equals(lc.getName()))
-				.findFirst().orElse(null);
-	}*/
     @Override
     protected void onPause() {
         super.onPause();
-        // Remove location updates
-        //mLocationSensor.stopUpdates();
+
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        LOG.info("onStopRunning");
+//        eventBus.removeListener(this);
+//        isInitialNetworkChange=true;
+//        LOG.info("receiverUnregistered");
+//        unregisterReceiver(receiver);
         // Remove location updates
         //mLocationSensor.stopUpdates();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        eventBus.removeListener(this);
+        LOG.info("receiverUnregistered");
+        unregisterReceiver(receiver);
+        // Remove location updates
+        if (mLocationSensor!=null) mLocationSensor.stopUpdates();
+        if (timeSensor!=null) timeSensor.stopUpdates();
     }
 
     /**
      * Return the current state of the permissions needed.
      */
     private boolean checkPermissions() {
-        int permissionState = ActivityCompat.checkSelfPermission(this,
+        int permissionState = ContextCompat.checkSelfPermission(this,
                                                                  Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
+        int permissionState2 = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_MEDIA_LOCATION);
+        return (permissionState == PackageManager.PERMISSION_GRANTED) && (permissionState2 == PackageManager.PERMISSION_GRANTED);
     }
+
+
 
     public void verifyStoragePermissions() {
         // Check if we have write permission
         if (ContextCompat.checkSelfPermission(this,
                                               Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this,
-                                                  Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                                                  Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        ) {
+            LOG.info("readWriteAndLocationPermissionsGranted");
+            mLocationSensor.startUpdates();
             verifyMetadataPermissions();
             return;
         }
 
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Access Storage Permission!")
-                    .setMessage(R.string.profiling_storage_permissions)
-                    .setPositiveButton("ok", (dialogInterface, i) -> ActivityCompat.requestPermissions(
-                            NavDrawerActivity.this,
-                            PERMISSIONS_STORAGE,
-                            REQUEST_EXTERNAL_STORAGE))
-                    .setNegativeButton("cancel", (dialog, i) -> dialog.dismiss()).create().show();
+        //check if access to metadata has been granted.
+        boolean p0 = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean p1 = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean p2 = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
+        if (p1 && p2 && p0) {
+            LOG.info("PermissionsGranted");
+            verifyMetadataPermissions();
+            return;
+        } else if (p2){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Access Storage Permission!")
+                        .setMessage(R.string.profiling_storage_permissions)
+                        .setPositiveButton("ok", (dialogInterface, i) -> {
+                            ActivityCompat.requestPermissions(
+                                    NavDrawerActivity.this,
+                                    PERMISSIONS_STORAGE,
+                                    REQUEST_EXTERNAL_STORAGE);
+                        })
+                        .setNegativeButton("cancel", (dialog, i) -> dialog.dismiss()).create().show();
+
+            } else {
+                ActivityCompat.requestPermissions(
+                        this,
+                        PERMISSIONS_STORAGE,
+                        REQUEST_EXTERNAL_STORAGE);
+            }
+        } else if (p1 && p0){
+            LOG.info("READ_WRITEGranted");
+            ActivityCompat.requestPermissions(NavDrawerActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE);
         } else {
-            ActivityCompat.requestPermissions(
-                    this,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(NavDrawerActivity.this,
+                    MEDIA_AND_LOCATION_PERMISSIONS,
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
         }
+
     }
 
     public void verifyMetadataPermissions() {
         //check if access to metadata has been granted.
         if (ContextCompat.checkSelfPermission(this,
-                                              Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
+                Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) return;
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(this)
                     .setTitle("Access to Media Metadata!")
                     .setMessage(R.string.profiling_metadata_permissions)
@@ -795,37 +1030,24 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                     .setNegativeButton("cancel", (dialog, i) -> dialog.dismiss()).create().show();
 
         } else {
+            LOG.info("requestMediaPermissions");
             ActivityCompat.requestPermissions(
                     this,
                     MEDIA_LOCATION_PERMISSION,
                     REQUEST_ACCESS_MEDIA_METADATA);
         }
+
     }
 
     /**
      * Request permissions to access location
      */
-    private void requestPermissions() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                                                    Manifest.permission.ACCESS_FINE_LOCATION);
-
-        if (shouldProvideRationale) {
-            showSnackbar(R.string.location_permission_prompt,
-                         android.R.string.ok, view -> {
-                             // Request permission
-                             ActivityCompat
-                                     .requestPermissions(NavDrawerActivity.this,
-                                                         new String[]{
-                                                                 Manifest.permission.ACCESS_FINE_LOCATION},
-                                                         REQUEST_PERMISSIONS_REQUEST_CODE);
-                         });
-        } else {
+/*    private void requestPermissions() {
             ActivityCompat.requestPermissions(NavDrawerActivity.this,
                                               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                              REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
+                    REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE);
+    }*/
+
 
     /**
      * Callback received when a permissions request has been completed.
@@ -836,35 +1058,278 @@ public class NavDrawerActivity extends HeliosTalkActivity implements
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         LOG.info("onRequestPermissionResult");
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+        if (requestCode == REQUEST_LOCATION_PERMISSIONS_REQUEST_CODE || requestCode == REQUEST_PERMISSIONS_REQUEST_CODE){
             if (grantResults.length <= 0) {
                 LOG.info("User interaction was cancelled.");
             }
-            /*else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (mRequestingLocationUpdates) {
+            else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //if (mRequestingLocationUpdates) {
                     LOG.info(
                             "Permission granted, updates requested, starting location updates");
+
                     mLocationSensor.startUpdates();
-                }
+
+                //}
             }
-            else {
-                // Permission denied.
-				showSnackbar(R.string.permission_denied_explanation,
-						R.string.settings, new View.OnClickListener() {
-							@Override
-							public void onClick(View view) {
-								// Build intent that displays the App settings screen.
-								Intent intent = new Intent();
-								intent.setAction(
-										Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-								Uri uri = Uri.fromParts("package",
-										BuildConfig.APPLICATION_ID, null);
-								intent.setData(uri);
-								intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								startActivity(intent);
-							}
-						});
-            }*/
+//            else {
+//                new AlertDialog.Builder(this)
+//                        .setTitle("Access Location Permission!")
+//                        .setMessage(R.string.location_permission_prompt)
+//                        .setCancelable(false)
+//                        .setPositiveButton("ok", (dialogInterface, i) -> {
+//                            // Build intent that displays the App settings screen.
+//                            Intent intent = new Intent();
+//                            intent.setAction(
+//                                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                            Uri uri = Uri.fromParts("package",
+//                                    BuildConfig.APPLICATION_ID, null);
+//                            intent.setData(uri);
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            startActivity(intent);
+//                        }).create().show();
+//            }
         }
     }
+
+    public void updateSensorsOnRemovedContext(String contextId){
+        LocationContextProxy removedContext =locationContexts.stream()
+                .filter(context -> contextId.equals(context.getId()))
+                .findFirst().orElse(null);
+        if (removedContext!=null){
+            removedContext.unregisterContextListener(this);
+            mLocationSensor.unregisterValueListener(removedContext);
+            LOG.info("locationContextsBeforeRemove"+locationContexts.toString());
+            locationContexts.remove(removedContext);
+            LOG.info("locationContextsAfterRemove"+locationContexts.toString());
+            return;
+        }
+        SpatioTemporalContext removedSpatioTemporalContext =spatioTemporalContexts.stream()
+                .filter(context -> contextId.equals(context.getId()))
+                .findFirst().orElse(null);
+        if (removedSpatioTemporalContext!=null){
+            removedSpatioTemporalContext.unregisterContextListener(this);
+            mLocationSensor.unregisterValueListener(removedSpatioTemporalContext.getContextA());
+            timeSensor.unregisterValueListener(removedSpatioTemporalContext.getContextB());
+            LOG.info("spatioTemporalContextsBeforeRemove"+spatioTemporalContexts.toString());
+            spatioTemporalContexts.remove(removedSpatioTemporalContext);
+            LOG.info("spatioTemporalContextsAfterRemove"+spatioTemporalContexts.toString());
+            return;
+        }
+    }
+
+
+    public void updateSensorsOnAddedContext(DBContext context){
+        LOG.info("updateSensorsOnAddedContext");
+        if (context.contextType.equals(ContextType.LOCATION)) {
+            try {
+                LocationContextProxy locationContextProxy = (LocationContextProxy) contextManager.getContext(context.getId());
+                locationContexts.add(locationContextProxy);
+                locationContextProxy.registerContextListener(this);
+                mLocationSensor.registerValueListener(locationContextProxy);
+                LOG.info("registerValueListener");
+
+            } catch (DbException | FormatException dbException) {
+                dbException.printStackTrace();
+            }
+        }
+        else if(context.contextType.equals(ContextType.SPATIOTEMPORAL)){
+            try {
+                SpatioTemporalContext spatioTemporalContext = (SpatioTemporalContext) contextManager.getContext(context.getId());
+                spatioTemporalContexts.add(spatioTemporalContext);
+                spatioTemporalContext.registerContextListener(this);
+                mLocationSensor.registerValueListener((LocationContext) spatioTemporalContext.getContextA());
+                timeSensor.registerValueListener(spatioTemporalContext.getContextB());
+            } catch (DbException | FormatException dbException) {
+                dbException.printStackTrace();
+            }
+        }
+        LOG.info("checkPermissions");
+        if (checkPermissions()) {
+            LOG.info("locationSensorStartedUpdates");
+            mLocationSensor.startUpdates();
+
+        } else {
+            LOG.info("HasNotPermissions");
+            verifyStoragePermissions();
+        }
+    }
+
+    private void loadLocationContextsAndRegisterSensors(){
+        // Register location listeners for the contexts;
+        try {
+            locationContexts = (ArrayList<LocationContextProxy>) contextManager.getLocationContexts();
+            for (LocationContextProxy locationContextProxy : locationContexts) {
+                locationContextProxy.registerContextListener(this);
+                mLocationSensor.registerValueListener(locationContextProxy);
+                LOG.info("locationSensorRegistered: lat: " + locationContextProxy.getLat() + ",lon: " + locationContextProxy.getLon() );
+            }
+        } catch (DbException | FormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadSpatiotemporalContextsAndRegisterSensors(){
+        // Register spatiotemporal listeners for the contexts;
+        try {
+            spatioTemporalContexts = (ArrayList<SpatioTemporalContext>) contextManager.getSpatiotemporalContexts();
+            for (SpatioTemporalContext spatioTemporalContext : spatioTemporalContexts) {
+                spatioTemporalContext.registerContextListener(this);
+                mLocationSensor.registerValueListener((LocationContext) spatioTemporalContext.getContextA());
+                timeSensor.registerValueListener(spatioTemporalContext.getContextB());
+                LOG.info("SpatioTemporalSensorRegistered: lat: " + spatioTemporalContext.getLat() + ",lon: " + spatioTemporalContext.getLon() +
+                        ", startTime: " + spatioTemporalContext.getStartTime() + ", endTime: " + spatioTemporalContext.getEndTime());
+            }
+        } catch (DbException | FormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private DBContext getLatestActivatedContext() {
+        long maxTimestamp = 0;
+        int latestActivatedContextPosition = 0;
+        for (int i = 0; i < contexts.size(); i++) {
+            DBContext c = contexts.get(i);
+            if (c.getContextType() == ContextType.LOCATION) {
+                LocationContextProxy locationContextProxy = locationContexts.stream()
+                        .filter(context -> c.getId().equals(context.getId()))
+                        .findFirst().orElse(null);
+                LOG.info("context: "+ locationContextProxy.getPrivateName() +", timestamp: " + locationContextProxy.getContextStateChangeTimestamp() + ", isActive: " + locationContextProxy.isActive());
+                if (locationContextProxy != null) {
+                    if (locationContextProxy.getContextStateChangeTimestamp() > maxTimestamp && locationContextProxy.isActive()) {
+                        latestActivatedContextPosition = i;
+                        maxTimestamp = locationContextProxy.getContextStateChangeTimestamp();
+                    }
+                }
+            } else if (c.getContextType() == ContextType.SPATIOTEMPORAL) {
+                SpatioTemporalContext spatioTemporalContext = spatioTemporalContexts.stream()
+                        .filter(context -> c.getId().equals(context.getId()))
+                        .findFirst().orElse(null);
+                LOG.info("context: "+ spatioTemporalContext.getPrivateName() +", timestamp: " + spatioTemporalContext.getContextStateChangeTimestamp() + ", isActive: " + spatioTemporalContext.isActive());
+                if (spatioTemporalContext != null) {
+                    if (spatioTemporalContext.getContextStateChangeTimestamp() > maxTimestamp && spatioTemporalContext.isActive()) {
+                        latestActivatedContextPosition = i;
+                        maxTimestamp = spatioTemporalContext.getContextStateChangeTimestamp();
+                    }
+                }
+            }
+        }
+        return contexts.get(latestActivatedContextPosition);
+    }
+
+    private DBContext getChangedContext() {
+        long maxTimestamp = 0;
+        int latestChangedContextPosition = 0;
+        for (int i = 0; i < contexts.size(); i++) {
+            DBContext c = contexts.get(i);
+            if (c.getContextType() == ContextType.LOCATION) {
+                LocationContextProxy locationContextProxy = locationContexts.stream()
+                        .filter(context -> c.getId().equals(context.getId()))
+                        .findFirst().orElse(null);
+                if (locationContextProxy != null) {
+                    if (locationContextProxy.getContextStateChangeTimestamp() > maxTimestamp) {
+                        latestChangedContextPosition = i;
+                        maxTimestamp = locationContextProxy.getContextStateChangeTimestamp();
+                    }
+                }
+            } else if (c.getContextType() == ContextType.SPATIOTEMPORAL) {
+                SpatioTemporalContext spatioTemporalContext = spatioTemporalContexts.stream()
+                        .filter(context -> c.getId().equals(context.getId()))
+                        .findFirst().orElse(null);
+                if (spatioTemporalContext != null) {
+                    if (spatioTemporalContext.getContextStateChangeTimestamp() > maxTimestamp) {
+                        latestChangedContextPosition = i;
+                        maxTimestamp = spatioTemporalContext.getContextStateChangeTimestamp();
+                    }
+                }
+            }
+        }
+        return contexts.get(latestChangedContextPosition);
+    }
+
+    private int getMenuItemPositionFromContextId(String contextId){
+        int pos = 0;
+        for (int i = 0; i < contexts.size(); i++) {
+            DBContext c = contexts.get(i);
+            if (c.getId().equals(contextId)) pos = i;
+        }
+        return pos;
+    }
+
+    private void changeSelectedContext(int pos){
+
+        DBContext current = contexts.get(pos);
+
+        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+            LOG.info("Lifecycle.State.STARTED");
+            runOnUiThreadUnlessDestroyed(() -> {
+                egoNetwork.setCurrent(egoNetwork.getOrCreateContext(
+                        current.getName() + "%" + current.getId()));
+                styleBasedOnContext(current.getId());
+                bottomNav.setSelectedItemId(R.id.nav_conversations);
+                navigation.setCheckedItem(pos);
+            });
+
+
+        }
+        else{
+            newContextBackgroundActivation = current;
+        }
+
+    }
+
+    private void setContextStateIndicator(DBContext c){
+        int pos = getMenuItemPositionFromContextId(c.getId());
+        if (c.getContextType()== ContextType.LOCATION){
+            LocationContextProxy locationContextProxy =locationContexts.stream()
+                    .filter(context -> c.getId().equals(context.getId()))
+                    .findFirst().orElse(null);
+            if (locationContextProxy!=null){
+                LOG.info("found a location context"+locationContextProxy.getPrivateName());
+                contextMenu.findItem(pos).setIcon(buildContextStateDrawable(locationContextProxy.isActive(), R.drawable.ic_context_3));
+            }
+        }
+        else if (c.getContextType()== ContextType.SPATIOTEMPORAL){
+            SpatioTemporalContext spatioTemporalContext =spatioTemporalContexts.stream()
+                    .filter(context ->c.getId().equals(context.getId()))
+                    .findFirst().orElse(null);
+            if (spatioTemporalContext!=null){
+                LOG.info("found a spatiotemporal context"+spatioTemporalContext.getPrivateName());
+                contextMenu.findItem(pos).setIcon(buildContextStateDrawable(spatioTemporalContext.isActive(), R.drawable.ic_context_3));
+            }
+        }
+    }
+
+    private void updateContextStateIndicator(DBContext context) {
+        LOG.info("updateContextStateIndicator");
+        LOG.info("lifecycle: " + getLifecycle().getCurrentState());
+        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+            LOG.info("isresumed");
+            runOnUiThreadUnlessDestroyed(() -> {
+                LOG.info("setContextStateIndicator");
+                setContextStateIndicator(context);
+            });
+        }
+    }
+
+    // ViewPager Adapter class
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+
+        private final List<Fragment> mList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager supportFragmentManager) {
+            super(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        }
+        @Override
+        public Fragment getItem(int i) {
+            return mList.get(i);
+        }
+        @Override
+        public int getCount() {
+            return mList.size();
+        }
+        public void addFragment(Fragment fragment) {
+            mList.add(fragment);
+        }
+    }
+
 }

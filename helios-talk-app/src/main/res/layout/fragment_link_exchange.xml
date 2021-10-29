@@ -11,11 +11,18 @@
 		android:layout_height="wrap_content"
 		android:padding="@dimen/margin_large">
 
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/info"
+			app:layout_constraintTop_toTopOf="parent">
+
 		<androidx.constraintlayout.widget.Guideline
 			android:id="@+id/guideline"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
+
 			app:layout_constraintGuide_percent="0.5" />
 
 		<TextView
@@ -34,7 +41,6 @@
 			android:layout_height="wrap_content"
 			android:layout_margin="8dp"
 			android:text="@string/send_link_title"
-			app:layout_constraintBottom_toTopOf="@+id/yourLinkIcon"
 			app:layout_constraintEnd_toStartOf="@+id/guideline"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/stepOne" />
@@ -69,165 +75,187 @@
 			android:layout_margin="8dp"
 			android:alpha="0.5"
 			android:text="@string/add_contact_send_message"
-			app:layout_constraintBottom_toTopOf="@+id/yourLinkIcon"
+
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@+id/guideline"
 			app:layout_constraintTop_toBottomOf="@+id/stepTwo" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/yourLinkIcon"
-			android:layout_width="38dp"
-			android:layout_height="38dp"
-			android:layout_marginTop="32dp"
-			android:background="@drawable/bubble_accent"
-			android:scaleType="center"
-			android:src="@drawable/ic_call_made"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/stepOneText"
-			app:tint="@color/white" />
-
-		<TextView
-			android:id="@+id/yourLink"
-			android:layout_width="0dp"
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginLeft="8dp"
-			android:gravity="left|start"
-			android:text="@string/your_link"
-			android:textSize="16sp"
-			app:layout_constraintBottom_toBottomOf="@+id/yourLinkIcon"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toEndOf="@+id/yourLinkIcon"
-			app:layout_constraintTop_toTopOf="@+id/yourLinkIcon" />
+			android:id="@+id/outgoing_cl"
+			app:layout_constraintTop_toBottomOf="@+id/info">
 
-		<TextView
-			android:id="@+id/linkView"
-			android:layout_width="0dp"
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/yourLinkIcon"
+				android:layout_width="38dp"
+				android:layout_height="38dp"
+				android:layout_marginTop="32dp"
+				android:background="@drawable/bubble_accent"
+				android:scaleType="center"
+				android:src="@drawable/ic_call_made"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="@+id/outgoing_cl"
+				app:tint="@color/white" />
+
+			<TextView
+				android:id="@+id/yourLink"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginLeft="8dp"
+				android:gravity="left|start"
+				android:text="@string/your_link"
+				android:textSize="16sp"
+				app:layout_constraintBottom_toBottomOf="@+id/yourLinkIcon"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toEndOf="@+id/yourLinkIcon"
+				app:layout_constraintTop_toTopOf="@+id/yourLinkIcon" />
+
+			<TextView
+				android:id="@+id/linkView"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:background="@color/white"
+				android:ellipsize="end"
+				android:padding="8dp"
+				android:singleLine="true"
+				android:textColor="@color/helios_primary"
+				android:textIsSelectable="true"
+				android:textSize="18sp"
+				android:typeface="monospace"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/yourLinkIcon"
+				tools:text="helios://QmUArfEqxHtSNIKs9igvPtXxFEcZVJUcQsN4Bni5cwo3sk" />
+
+			<Button
+				android:id="@+id/copyButton"
+				style="@style/HeliosButtonFlat.Positive.Tiny"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:drawableStart="@drawable/ic_content_copy"
+				android:drawableLeft="@drawable/ic_content_copy"
+				android:drawablePadding="8dp"
+				android:enabled="false"
+				android:text="@string/copy_button"
+				app:layout_constraintEnd_toStartOf="@id/shareButton"
+				app:layout_constraintHorizontal_bias="1.0"
+				app:layout_constraintHorizontal_chainStyle="packed"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/linkView" />
+
+			<Button
+				android:id="@+id/shareButton"
+				style="@style/HeliosButtonFlat.Positive.Tiny"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:drawableStart="@drawable/social_share_blue"
+				android:drawableLeft="@drawable/social_share_blue"
+				android:drawablePadding="8dp"
+				android:enabled="false"
+				android:text="@string/share_button"
+				app:layout_constraintBottom_toBottomOf="@id/copyButton"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintHorizontal_bias="1.0"
+				app:layout_constraintStart_toEndOf="@id/copyButton"
+				app:layout_constraintTop_toTopOf="@id/copyButton" />
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp"
-			android:background="@color/white"
-			android:ellipsize="end"
-			android:padding="8dp"
-			android:singleLine="true"
-			android:textColor="@color/helios_primary"
-			android:textIsSelectable="true"
-			android:textSize="18sp"
-			android:typeface="monospace"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/yourLinkIcon"
-			tools:text="helios://QmUArfEqxHtSNIKs9igvPtXxFEcZVJUcQsN4Bni5cwo3sk" />
+			android:id="@+id/incoming_cl"
+			app:layout_constraintTop_toBottomOf="@+id/outgoing_cl"
+			android:layout_marginTop="16dp">
 
-		<Button
-			android:id="@+id/copyButton"
-			style="@style/HeliosButtonFlat.Positive.Tiny"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:drawableStart="@drawable/ic_content_copy"
-			android:drawableLeft="@drawable/ic_content_copy"
-			android:drawablePadding="8dp"
-			android:enabled="false"
-			android:text="@string/copy_button"
-			app:layout_constraintEnd_toStartOf="@id/shareButton"
-			app:layout_constraintHorizontal_bias="1.0"
-			app:layout_constraintHorizontal_chainStyle="packed"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/linkView" />
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/linkInputIcon"
+				android:layout_width="38dp"
+				android:layout_height="38dp"
+				android:layout_marginTop="16dp"
+				android:background="@drawable/bubble_accent"
+				android:scaleType="center"
+				android:src="@drawable/ic_call_received"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="@+id/incoming_cl"
+				app:tint="@color/white" />
 
-		<Button
-			android:id="@+id/shareButton"
-			style="@style/HeliosButtonFlat.Positive.Tiny"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:drawableStart="@drawable/social_share_blue"
-			android:drawableLeft="@drawable/social_share_blue"
-			android:drawablePadding="8dp"
-			android:enabled="false"
-			android:text="@string/share_button"
-			app:layout_constraintBottom_toBottomOf="@id/copyButton"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="1.0"
-			app:layout_constraintStart_toEndOf="@id/copyButton"
-			app:layout_constraintTop_toTopOf="@id/copyButton" />
+			<TextView
+				android:id="@+id/inputLink"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginLeft="8dp"
+				android:gravity="left|start"
+				android:text="@string/contact_link_intro"
+				android:textSize="16sp"
+				app:layout_constraintBottom_toBottomOf="@+id/linkInputIcon"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toEndOf="@+id/linkInputIcon"
+				app:layout_constraintTop_toTopOf="@+id/linkInputIcon" />
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/linkInputIcon"
-			android:layout_width="38dp"
-			android:layout_height="38dp"
-			android:layout_marginTop="16dp"
-			android:background="@drawable/bubble_accent"
-			android:scaleType="center"
-			android:src="@drawable/ic_call_received"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/copyButton"
-			app:tint="@color/white" />
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/linkInputLayout"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				app:errorEnabled="true"
+				app:hintEnabled="false"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/linkInputIcon">
 
-		<TextView
-			android:id="@+id/inputLink"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginLeft="8dp"
-			android:gravity="left|start"
-			android:text="@string/contact_link_intro"
-			android:textSize="16sp"
-			app:layout_constraintBottom_toBottomOf="@+id/linkInputIcon"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toEndOf="@+id/linkInputIcon"
-			app:layout_constraintTop_toTopOf="@+id/linkInputIcon" />
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/linkInput"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:hint="@string/contact_link_hint"
+					android:importantForAutofill="no"
+					android:inputType="textUri" />
 
-		<com.google.android.material.textfield.TextInputLayout
-			android:id="@+id/linkInputLayout"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp"
-			app:errorEnabled="true"
-			app:hintEnabled="false"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/linkInputIcon">
+			</com.google.android.material.textfield.TextInputLayout>
 
-			<com.google.android.material.textfield.TextInputEditText
-				android:id="@+id/linkInput"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:hint="@string/contact_link_hint"
-				android:importantForAutofill="no"
-				android:inputType="textUri" />
+			<Button
+				android:id="@+id/pasteButton"
+				style="@style/HeliosButtonFlat.Positive.Tiny"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:drawableStart="@drawable/ic_content_paste"
+				android:drawableLeft="@drawable/ic_content_paste"
+				android:drawablePadding="8dp"
+				android:text="@string/paste_button"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintHorizontal_bias="1.0"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/linkInputLayout"
+				app:layout_constraintVertical_bias="0.0" />
 
-		</com.google.android.material.textfield.TextInputLayout>
+			<Button
+				android:id="@+id/addButton"
+				android:background="@drawable/helios_button"
+				style="@style/BasicButton"
+				android:layout_width="250dp"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:enabled="false"
+				android:text="@string/continue_button"
 
-		<Button
-			android:id="@+id/pasteButton"
-			style="@style/HeliosButtonFlat.Positive.Tiny"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:drawableStart="@drawable/ic_content_paste"
-			android:drawableLeft="@drawable/ic_content_paste"
-			android:drawablePadding="8dp"
-			android:text="@string/paste_button"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="1.0"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/linkInputLayout"
-			app:layout_constraintVertical_bias="0.0" />
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintHorizontal_bias="0.5"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/pasteButton"
+				app:layout_constraintVertical_bias="1.0"
+				tools:enabled="true" />
 
-		<Button
-			android:id="@+id/addButton"
-			android:background="@drawable/helios_button"
-			style="@style/BasicButton"
-			android:layout_width="250dp"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp"
-			android:enabled="false"
-			android:text="@string/continue_button"
 
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/pasteButton"
-			app:layout_constraintVertical_bias="1.0"
-			tools:enabled="true" />
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
 	</androidx.constraintlayout.widget.ConstraintLayout>

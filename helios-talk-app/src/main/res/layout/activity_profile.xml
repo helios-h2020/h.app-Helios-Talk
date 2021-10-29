@@ -64,6 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
+                android:gravity="center"
                 android:background="@android:color/transparent"
                 android:enabled="false"
                 android:hint="@string/profile_alias_hint"
@@ -236,6 +237,21 @@
                 android:text="Interests:"
                 android:textSize="@dimen/text_size_small"
                 android:textStyle="bold" />
+<!--            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="State:"
+                android:textColor="@color/appColor"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/profiling_state_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Idle"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/appColor"
+                android:textSize="@dimen/text_size_small"/>-->
         </LinearLayout>
 
         <LinearLayout

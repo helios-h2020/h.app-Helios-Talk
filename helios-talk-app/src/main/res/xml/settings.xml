@@ -39,12 +39,6 @@
             app:defaultValue="0"
             app:iconSpaceReserved="false" />
 
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:layout="@layout/preferences_category"
-        android:title="@string/recommendations_setting_title">
-
         <SwitchPreference
             android:enabled="true"
             android:key="pref_key_preferences"
@@ -54,7 +48,41 @@
             android:widgetLayout="@layout/preference_switch_compat"
             app:iconSpaceReserved="false" />
 
-        <ListPreference
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/preferences_category"
+        android:title="@string/recommendations_setting_title">
+
+
+        <SwitchPreference
+            android:enabled="true"
+            android:key="graph_mining_setting_gnn"
+            android:persistent="false"
+            android:summary="@string/pref_graph_mining_setting_gnn_sum"
+            android:title="@string/pref_graph_mining_setting_gnn_title"
+            android:widgetLayout="@layout/preference_switch_compat"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreference
+            android:enabled="true"
+            android:key="graph_mining_settings_repeat_n_reply"
+            android:persistent="false"
+            android:summary="@string/pref_graph_mining_settings_repeat_n_reply_sum"
+            android:title="@string/pref_graph_mining_settings_repeat_n_reply_title"
+            android:widgetLayout="@layout/preference_switch_compat"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreference
+            android:enabled="true"
+            android:key="graph_mining_settings_ppr"
+            android:persistent="false"
+            android:summary="@string/pref_graph_mining_settings_ppr_sum"
+            android:title="@string/pref_graph_mining_settings_ppr_title"
+            android:widgetLayout="@layout/preference_switch_compat"
+            app:iconSpaceReserved="false" />
+
+<!--        <ListPreference
             android:defaultValue="0"
             android:entries="@array/graph_mining_setting_names"
             android:entryValues="@array/graph_mining_values"
@@ -63,7 +91,7 @@
             android:summary="%s"
             android:title="@string/miners_setting"
             app:defaultValue="0"
-            app:iconSpaceReserved="false" />
+            app:iconSpaceReserved="false" />-->
 
     </PreferenceCategory>
 
@@ -155,5 +183,14 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:layout="@layout/preferences_category"
+        android:title="@string/privacy">
 
+        <Preference
+            android:key="pref_key_privacy_policy"
+            android:title="@string/privacy_policy"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

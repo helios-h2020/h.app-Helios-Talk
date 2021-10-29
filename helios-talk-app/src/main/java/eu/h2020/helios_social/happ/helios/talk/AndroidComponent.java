@@ -5,6 +5,7 @@ import eu.h2020.helios_social.happ.account.HeliosTalkAccountModule;
 
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentModule;
 import eu.h2020.helios_social.modules.groupcommunications.api.attachment.AttachmentManager;
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.sharing.ForumAccessRequestFactory;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.PrivateGroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.db.GroupCommunicationsDBEagerSingletons;
 import eu.h2020.helios_social.modules.groupcommunications.db.GroupCommunicationsDBModule;
@@ -118,6 +119,8 @@ public interface AndroidComponent
     ForumMembershipManager forumMembershipManager();
 
     GroupInvitationFactory groupInviteFactory();
+
+    ForumAccessRequestFactory forumAccessRequestFactory();
 
     /*GroupInvitationManager groupInvitationManager();*/
 

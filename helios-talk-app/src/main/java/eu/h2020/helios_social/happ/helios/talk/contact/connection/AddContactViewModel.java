@@ -99,13 +99,16 @@ public class AddContactViewModel extends AndroidViewModel {
         if (remoteHeliosLink == null) throw new IllegalStateException();
         dbExecutor.execute(() -> {
                                try {
+                                   LOG.info("trying to send connection request");
                                    connectionManager.sendConnectionRequest(pendingContactFactory
                                                                                    .createOutgoingPendingContact(
                                                                                            remoteHeliosLink.replace("helios://", ""),
                                                                                            nickname,
                                                                                            message));
                                    addContactResult.postValue(new LiveResult<>(true));
+                                   LOG.info("sent");
                                } catch (DbException e) {
+                                   LOG.info("failed");
                                    addContactResult.postValue(new LiveResult<>(false));
                                }
                            }

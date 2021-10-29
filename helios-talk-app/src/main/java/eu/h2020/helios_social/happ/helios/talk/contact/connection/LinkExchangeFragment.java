@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ShareCompat.IntentBuilder;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -105,6 +106,17 @@ public class LinkExchangeFragment extends BaseFragment
             scrollView.getViewTreeObserver().addOnGlobalLayoutListener(this);
         }
 
+        ConstraintLayout infoCL = v.findViewById(R.id.info);
+        ConstraintLayout outgoingCL = v.findViewById(R.id.outgoing_cl);
+        ConstraintLayout incomingCL = v.findViewById(R.id.incoming_cl);
+        Bundle args = getArguments();
+        boolean isOutgoing = args.getBoolean("isOutGoing", true);
+        if (isOutgoing){
+            outgoingCL.setVisibility(View.GONE);
+        } else {
+            infoCL.setVisibility(View.GONE);
+            incomingCL.setVisibility(View.GONE);
+        }
         return v;
     }
 

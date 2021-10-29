@@ -32,6 +32,7 @@ public interface AndroidNotificationManager {
     int CONTACT_ADDED_NOTIFICATION_ID = 8;
     int CONNECTION_REQUESTS_NOTIFICATION_ID = 9;
     int INVITATIONS_NOTIFICATION_ID = 10;
+    int FORUM_ADDED_NOTIFICATION_ID = 11;
 
     // Channel IDs
     String CONTACT_CHANNEL_ID = "contacts";
@@ -89,4 +90,6 @@ public interface AndroidNotificationManager {
     void blockContactNotification(ContactId c, String groupId);
 
     void unblockContactNotification(ContactId c, String groupId);
+
+    void clearNewGroupNotification();
 }

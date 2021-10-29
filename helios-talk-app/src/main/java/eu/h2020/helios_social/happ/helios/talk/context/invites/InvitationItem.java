@@ -1,5 +1,6 @@
 package eu.h2020.helios_social.happ.helios.talk.context.invites;
 
+import eu.h2020.helios_social.modules.groupcommunications.api.forum.sharing.ForumAccessRequest;
 import eu.h2020.helios_social.modules.groupcommunications.api.sharing.Invitation;
 
 public class InvitationItem {
@@ -12,13 +13,15 @@ public class InvitationItem {
 	private String contactName;
 	private InvitationType invitationType;
 	private String contextName;
+	private ForumAccessRequest request;
 
 	public InvitationItem(Invitation invitation, String contactName, String contextName,
-			InvitationType type) {
+			InvitationType type, ForumAccessRequest request) {
 		this.invitation = invitation;
 		this.contactName = contactName;
 		this.contextName = contextName;
 		this.invitationType = type;
+		this.request = request;
 	}
 
 	public Invitation getInvitation() {
@@ -35,5 +38,9 @@ public class InvitationItem {
 
 	public InvitationType getInvitationType() {
 		return invitationType;
+	}
+
+	public ForumAccessRequest getRequest() {
+		return request;
 	}
 }

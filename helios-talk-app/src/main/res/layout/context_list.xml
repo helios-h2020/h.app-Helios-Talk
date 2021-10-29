@@ -12,7 +12,7 @@
         android:id="@+id/contexts"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="@color/color_primary"
+        android:textColor="@color/m_grey_500"
         android:padding="15dp" />
     <ListView
         android:id="@+id/listView1"

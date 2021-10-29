@@ -78,7 +78,10 @@ import static android.provider.Settings.System.DEFAULT_NOTIFICATION_URI;
 import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.core.view.ViewCompat.LAYOUT_DIRECTION_LTR;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_CONTENT_PROFILING;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_GNN_RECOMMENDATION_MINER;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_PPR_RECOMMENDATION_MINER;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_RECOMMENDATION_MINER;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_RNR_RECOMMENDATION_MINER;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.PREF_SHARE_PREFS;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static java.util.logging.Level.INFO;
@@ -115,7 +118,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
     private SettingsActivity listener;
     private ListPreference language;
     private ListPreference enableProfiling;
-    private ListPreference minerPref;
+    // private ListPreference minerPref;
+    private SwitchPreference minerGNN;
+    private SwitchPreference minerRnR;
+    private SwitchPreference minerPPR;
     private SwitchPreference enableSharePreferences;
     private SwitchPreference screenLock;
     private ListPreference screenLockTimeout;
@@ -157,7 +163,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 (ListPreference) findPreference("pref_key_theme");
         enableProfiling = (ListPreference) findPreference("pref_key_profiling");
         enableSharePreferences = (SwitchPreference) findPreference("pref_key_preferences");
-        minerPref = (ListPreference) findPreference("pref_key_miner");
+        // minerPref = (ListPreference) findPreference("pref_key_miner");
+        minerGNN = (SwitchPreference) findPreference("graph_mining_setting_gnn");
+        minerRnR = (SwitchPreference) findPreference("graph_mining_settings_repeat_n_reply");
+        minerPPR = (SwitchPreference) findPreference("graph_mining_settings_ppr");
         screenLock = (SwitchPreference) findPreference(PREF_SCREEN_LOCK);
         screenLockTimeout =
                 (ListPreference) findPreference(PREF_SCREEN_LOCK_TIMEOUT);
@@ -195,7 +204,11 @@ public class SettingsFragment extends PreferenceFragmentCompat
         });
         enableProfiling.setOnPreferenceChangeListener(this);
         enableSharePreferences.setOnPreferenceChangeListener(this);
-        minerPref.setOnPreferenceChangeListener(this);
+        // minerPref.setOnPreferenceChangeListener(this);
+        minerGNN.setOnPreferenceChangeListener(this);
+        minerRnR.setOnPreferenceChangeListener(this);
+        minerPPR.setOnPreferenceChangeListener(this);
+
         screenLock.setOnPreferenceChangeListener(this);
         screenLockTimeout.setOnPreferenceChangeListener(this);
 
@@ -217,6 +230,14 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 .setOnPreferenceClickListener(v -> {
                     startActivity(new Intent(getActivity(),
                                              ChangePasswordActivity.class));
+                    return true;
+                });
+
+        findPreference("pref_key_privacy_policy")
+                .setOnPreferenceClickListener(v -> {
+                    Uri uri = Uri.parse("http://www.google.com"); // missing 'http://' will cause crashed
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
                     return true;
                 });
 
@@ -314,7 +335,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
             enableProfiling.setValueIndex(settings.getInt(PREF_CONTENT_PROFILING, 0));
             enableSharePreferences.setChecked(settings.getBoolean(PREF_SHARE_PREFS, true));
-            minerPref.setValueIndex(settings.getInt(PREF_RECOMMENDATION_MINER, 0));
+            // minerPref.setValueIndex(settings.getInt(PREF_RECOMMENDATION_MINER, 0));
+            minerGNN.setChecked(settings.getBoolean(PREF_GNN_RECOMMENDATION_MINER, true));
+            minerRnR.setChecked(settings.getBoolean(PREF_RNR_RECOMMENDATION_MINER, false));
+            minerPPR.setChecked(settings.getBoolean(PREF_PPR_RECOMMENDATION_MINER, false));
 
             if (SDK_INT < 26) {
                 notifyPrivateMessages.setChecked(settings.getBoolean(
@@ -476,10 +500,22 @@ public class SettingsFragment extends PreferenceFragmentCompat
             Settings s = new Settings();
             s.putBoolean(PREF_SHARE_PREFS, (Boolean) newValue);
             storeSettings(s);
-        } else if (preference == minerPref) {
+        } /*else if (preference == minerPref) {
             Settings s = new Settings();
             String value = (String) newValue;
             s.putInt(PREF_RECOMMENDATION_MINER, Integer.valueOf(value));
+            storeSettings(s);
+        }*/ else if (preference == minerGNN) {
+            Settings s = new Settings();
+            s.putBoolean(PREF_GNN_RECOMMENDATION_MINER,  (Boolean) newValue);
+            storeSettings(s);
+        } else if (preference == minerRnR) {
+            Settings s = new Settings();
+            s.putBoolean(PREF_RNR_RECOMMENDATION_MINER, (Boolean) newValue);
+            storeSettings(s);
+        } else if (preference == minerPPR) {
+            Settings s = new Settings();
+            s.putBoolean(PREF_PPR_RECOMMENDATION_MINER, (Boolean) newValue);
             storeSettings(s);
         } else if (preference == screenLock) {
             Settings s = new Settings();

@@ -1,5 +1,7 @@
 package eu.h2020.helios_social.happ.helios.talk.context;
 
+import android.util.Log;
+
 import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.logging.Logger;
@@ -9,6 +11,7 @@ import javax.inject.Inject;
 import eu.h2020.helios_social.core.context.Context;
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.FormatException;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.SpatioTemporalContext;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.happ.helios.talk.contactselection.ContextContactSelectorControllerImpl;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.Contact;
@@ -115,6 +118,23 @@ public class ContextControllerImpl extends
     }
 
     @Override
+    public void storeSpatioTemporalContext(SpatioTemporalContext spatioTemporalContext, ResultExceptionHandler<String, DbException> handler) {
+        runOnDbThread(() -> {
+            try {
+                long start = now();
+                contextManager.addContext(spatioTemporalContext);
+                logDuration(LOG, "Storing new spatiotemporal context", start);
+                egoNetwork.setCurrent(egoNetwork
+                        .getOrCreateContext(spatioTemporalContext.getName() + "%" +
+                                spatioTemporalContext.getId()));
+            } catch (DbException e) {
+                logException(LOG, WARNING, e);
+                handler.onException(e);
+            }
+        });
+    }
+
+    @Override
     public void storeGeneralContext(GeneralContextProxy generalContext,
                                     ResultExceptionHandler<String, DbException> handler) {
         runOnDbThread(() -> {
@@ -158,6 +178,7 @@ public class ContextControllerImpl extends
         runOnDbThread(()-> {
             try {
                 long start = now();
+                Log.d("settingContextPrivateName: ","true");
                 contextManager.setContextPrivateName(contextId,name);
 
             } catch (DbException e) {

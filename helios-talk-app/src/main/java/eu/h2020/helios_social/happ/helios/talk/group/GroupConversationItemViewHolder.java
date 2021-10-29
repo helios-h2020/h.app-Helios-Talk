@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ public abstract class GroupConversationItemViewHolder extends ViewHolder impleme
     protected final TextView text;
     protected final AuthorView author;
     protected final ImageView favourite;
+    //protected final ImageButton addContactButton;
     @Nullable
     private String itemKey = null;
 
@@ -38,6 +40,7 @@ public abstract class GroupConversationItemViewHolder extends ViewHolder impleme
         text = v.findViewById(R.id.text);
         author = v.findViewById(R.id.author);
         favourite = v.findViewById(R.id.favourite);
+        //addContactButton = v.findViewById(R.id.add_contact_btn);
     }
 
     @CallSuper
@@ -65,6 +68,7 @@ public abstract class GroupConversationItemViewHolder extends ViewHolder impleme
         if (item.getText() != null) {
             text.setText(trim(item.getText()));
         }
+
     }
 
     @Nullable

@@ -4,6 +4,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -26,12 +27,13 @@ import eu.h2020.helios_social.happ.helios.talk.view.HeliosTalkRecyclerView;
 import eu.h2020.helios_social.modules.groupcommunications.api.contact.PendingContact;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import io.github.kobakei.materialfabspeeddial.FabSpeedDial;
 
 
 @MethodsNotNullByDefault
 @ParametersNotNullByDefault
 public class PendingContactListActivity extends HeliosTalkActivity
-        implements PendingContactListener {
+        implements PendingContactListener, FabSpeedDial.OnMenuItemClickListener {
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -67,32 +69,40 @@ public class PendingContactListActivity extends HeliosTalkActivity
         adapter = new PendingContactListAdapter(this, this,
                 PendingContactItem.class);
         list = findViewById(R.id.list);
-        list.setEmptyText(R.string.no_pending_connections);
+        list.setEmptyTitle(R.string.no_pending_connections);
+        list.setEmptyText("");
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(adapter);
         list.showProgressBar();
 
 
-/*        FabSpeedDial speedDial = findViewById(R.id.speedDial);
+        FabSpeedDial speedDial = findViewById(R.id.speedDial);
         speedDial.inflateMenu(R.menu.contact_list_actions);
-        speedDial.addOnMenuItemClickListener(this);*/
+        speedDial.addOnMenuItemClickListener(this);
 
         // replace speedDial with a button, there is no need of menu when we have only one option.
-        FloatingActionButton imageButton = findViewById(R.id.addImageBtn);
-        imageButton.setOnClickListener(v -> startActivity(new Intent(PendingContactListActivity.this, AddContactActivity.class)));
+/*        FloatingActionButton imageButton = findViewById(R.id.addImageBtn);
+        Intent intent = new Intent(PendingContactListActivity.this, AddContactActivity.class);
+        intent.putExtra("isOutGoing",true);
+
+        imageButton.setOnClickListener(v -> startActivity(intent));*/
 
     }
 
-/*    @Override
+    @Override
     public void onMenuItemClick(FloatingActionButton fab, @Nullable TextView v,
                                 int itemId) {
+        Intent intent = new Intent(PendingContactListActivity.this, AddContactActivity.class);
         switch (itemId) {
             case R.id.action_add_contact_remotely:
-                startActivity(
-                        new Intent(this, AddContactActivity.class));
+                intent.putExtra("isOutGoing",true);
+                startActivity(intent);
                 return;
+            case R.id.action_my_helios_link:
+                intent.putExtra("isOutGoing",false);
+                startActivity(intent);
         }
-    }*/
+    }
 
     @Override
     public void onStart() {

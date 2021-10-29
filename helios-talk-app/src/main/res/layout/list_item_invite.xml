@@ -67,6 +67,17 @@
 		app:layout_constraintVertical_bias="0.0"
 		tools:text="Dec 24" />
 
+	<ImageButton
+		android:id="@+id/deleteOutgoingButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@drawable/action_delete_white"
+		app:layout_constraintBottom_toTopOf="@+id/time"
+		app:layout_constraintEnd_toEndOf="@+id/time"
+		app:layout_constraintVertical_bias="0.0"
+		android:layout_marginBottom="5dp"
+		android:layout_marginTop="10dp" />
+
 	<TextView
 		android:id="@+id/outgoingPrompt"
 		android:layout_width="0dp"

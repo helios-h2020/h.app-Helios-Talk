@@ -8,6 +8,12 @@
 	android:icon="@drawable/ic_context"
 	tools:context="eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity">
 
+	<androidx.viewpager.widget.ViewPager
+		android:id="@+id/viewPagerOnBoarding"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="visible"/>
+
 	<!-- The first child(root) is the content view -->
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/constraintLayout"

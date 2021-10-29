@@ -1,6 +1,7 @@
 package eu.h2020.helios_social.happ.helios.talk.context.invites;
 
 
+
 public interface InvitationListener {
 
 	void onRejectGroup(InvitationItem item);
@@ -10,5 +11,9 @@ public interface InvitationListener {
 	void onRejectContext(InvitationItem item);
 
 	void onJoinContext(InvitationItem item);
+
+	void onAcceptGroupAccessRequest(InvitationItem item);
+
+	void onRejectGroupAccessRequest(InvitationItem item);
 
 }

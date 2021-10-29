@@ -23,6 +23,8 @@ import androidx.annotation.CallSuper;
 
 import eu.h2020.helios_social.happ.helios.talk.util.UiUtils;
 
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.RUNNING;
+import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.STOPPING;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.settings.SettingsConsts.SETTINGS_NAMESPACE;
 import static java.util.logging.Level.WARNING;
 import static eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager.LifecycleState.STARTING_SERVICES;
@@ -91,7 +93,8 @@ public class HeliosTalkControllerImpl implements HeliosTalkController {
 	@Override
 	public boolean accountSignedIn() {
 		return accountManager.hasDatabaseKey() &&
-				lifecycleManager.getLifecycleState().isAfter(STARTING_SERVICES);
+				lifecycleManager.getLifecycleState().isAfter(STARTING_SERVICES) &&
+				!lifecycleManager.getLifecycleState().isAfter(RUNNING);
 	}
 
 	@Override

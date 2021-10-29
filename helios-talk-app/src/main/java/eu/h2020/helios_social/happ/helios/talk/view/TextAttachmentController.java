@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import androidx.appcompat.app.AlertDialog.Builder;
 
@@ -42,11 +44,13 @@ import static android.widget.Toast.LENGTH_LONG;
 import static androidx.customview.view.AbsSavedState.EMPTY_STATE;
 import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 import static eu.h2020.helios_social.modules.groupcommunications.api.messaging.MessagingConstants.MAX_IMAGE_ATTACHMENTS_PER_MESSAGE;
+import static java.util.logging.Logger.getLogger;
 
 import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.android.util.AndroidUtils;
 import eu.h2020.helios_social.happ.helios.talk.attachment.AttachmentItem;
 import eu.h2020.helios_social.happ.helios.talk.conversation.ConversationViewModel;
+import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
 import eu.h2020.helios_social.modules.groupcommunications.api.messaging.Message;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.NotNullByDefault;
 
@@ -68,6 +72,8 @@ public class TextAttachmentController extends TextSendController implements Imag
     private boolean loadingUris = false;
     private Message.Type messageType = Message.Type.TEXT;
     private Uri capturedPhotoUri;
+    private static final Logger LOG =
+            getLogger(TextAttachmentController.class.getName());
 
     public TextAttachmentController(Context ctx, TextInputView v,
                                     ImagePreview imagePreview,
@@ -151,6 +157,7 @@ public class TextAttachmentController extends TextSendController implements Imag
     }
 
     private void onCapturePhotoClicked() {
+        LOG.info("onCapturePhotoClicked");
         Intent intent = getAttachCapturedPhotoIntent();
         if (attachmentListener.getLifecycle().getCurrentState() != DESTROYED) {
             attachmentListener.onAttachCapturedPhoto(intent);
@@ -170,9 +177,11 @@ public class TextAttachmentController extends TextSendController implements Imag
 
     private Intent getAttachCapturedPhotoIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        LOG.info("getAttachCapturedPhotoIntent");
         if (takePictureIntent.resolveActivity(ctx.getPackageManager()) != null) {
             // Create the File where the photo should go
             try {
+                LOG.info("beforeCreateImageFile");
                 File photoFile = createImageFile();
                 // Continue only if the File was successfully created
                 if (photoFile != null) {
@@ -213,8 +222,9 @@ public class TextAttachmentController extends TextSendController implements Imag
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        LOG.info("storageDir: " +storageDir);
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-
+        LOG.info("imageSaved: " + image);
         return image;
     }
 

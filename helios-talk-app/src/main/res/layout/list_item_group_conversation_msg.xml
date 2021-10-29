@@ -16,7 +16,7 @@
 
     <eu.h2020.helios_social.happ.helios.talk.view.AuthorView
         android:id="@+id/author"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
         android:paddingStart="@dimen/margin_medium"
@@ -28,6 +28,19 @@
         app:layout_constraintTop_toBottomOf="@+id/divider"
         app:layout_constraintVertical_bias="1"
         app:persona="normal" />
+
+<!--    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/message_bubble_padding_sides_inner"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="@dimen/message_bubble_padding_sides_inner"
+        android:paddingRight="6dp"
+        android:id="@+id/add_contact_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author"
+        android:background="#00000000"
+        android:src="@drawable/ic_connect_with_peers_small" />-->
 
     <LinearLayout
         android:id="@+id/attachmentsPreview"

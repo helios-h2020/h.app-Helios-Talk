@@ -12,6 +12,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.contact.ContactId;
 import eu.h2020.helios_social.modules.groupcommunications.api.exception.DbException;
 import eu.h2020.helios_social.modules.groupcommunications.api.forum.ForumMemberRole;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
+import eu.h2020.helios_social.modules.groupcommunications_utils.util.Location;
 
 @NotNullByDefault
 public interface CreateForumController
@@ -29,4 +30,5 @@ public interface CreateForumController
     void sendInvitation(String groupId, Collection<ContactId> contacts,
                         ResultExceptionHandler<Void, DbException> result);
 
+    Location getLocationRestriction();
 }

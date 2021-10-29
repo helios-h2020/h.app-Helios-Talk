@@ -194,6 +194,28 @@ public class HeliosTalkRecyclerView extends FrameLayout {
         progressBar.setVisibility(VISIBLE);
     }
 
+    public void showEmpty() {
+        if (recyclerView == null){
+            View v = LayoutInflater.from(getContext()).inflate(
+                    R.layout.helios_talk_recycler_view, this, true);
+
+            recyclerView = v.findViewById(R.id.recyclerView);
+            emptyImage = v.findViewById(R.id.emptyImage);
+            emptyTitle = v.findViewById(R.id.emptyTitle);
+            emptyText = v.findViewById(R.id.emptyText);
+            emptyAction = v.findViewById(R.id.emptyAction);
+            progressBar = v.findViewById(R.id.progressBar);
+        }
+        recyclerView.setVisibility(INVISIBLE);
+        emptyImage.setVisibility(VISIBLE);
+        emptyTitle.setVisibility(VISIBLE);
+        emptyText.setVisibility(INVISIBLE);
+        emptyAction.setVisibility(INVISIBLE);
+        progressBar.setVisibility(INVISIBLE);
+    }
+
+
+
     public void showData() {
         if (recyclerView == null) initViews();
         Adapter adapter = recyclerView.getAdapter();

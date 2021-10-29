@@ -5,7 +5,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_btn_connect"
-            android:icon="@drawable/ic_connect_with_peers"
+            android:icon="@drawable/ic_connect_with_peers_nav_bar"
             android:title="@string/connect" />
         <item
             android:id="@+id/nav_btn_invitations"
@@ -21,16 +21,16 @@
             android:title="Stats" />-->
         <item
             android:id="@+id/nav_btn_settings"
-            android:icon="@drawable/ic_settings_black_24dp"
+            android:icon="@drawable/ic_settings_nav_bar"
             android:title="@string/settings_button" />
         <item
             android:id="@+id/nav_btn_lock"
-            android:icon="@drawable/startup_lock"
+            android:icon="@drawable/startup_lock_nav_bar"
             android:title="@string/lock_button"
             android:visible="false" />
         <item
             android:id="@+id/nav_btn_signout"
-            android:icon="@drawable/ic_signout"
+            android:icon="@drawable/ic_signout_nav_bar"
             android:title="@string/sign_out_button" />
     </group>
     <group android:checkableBehavior="single">

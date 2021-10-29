@@ -8,7 +8,13 @@ import java.util.logging.Logger;
 import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 
+import eu.h2020.helios_social.core.context.Context;
 import eu.h2020.helios_social.core.contextualegonetwork.ContextualEgoNetwork;
+import eu.h2020.helios_social.modules.groupcommunications.api.context.ContextType;
+import eu.h2020.helios_social.modules.groupcommunications.api.context.DBContext;
+import eu.h2020.helios_social.modules.groupcommunications.context.ContextManager;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.LocationContextProxy;
+import eu.h2020.helios_social.modules.groupcommunications.context.proxy.SpatioTemporalContext;
 import eu.h2020.helios_social.modules.groupcommunications_utils.db.DatabaseExecutor;
 import eu.h2020.helios_social.modules.groupcommunications_utils.sync.event.EventBus;
 import eu.h2020.helios_social.modules.groupcommunications_utils.lifecycle.LifecycleManager;
@@ -28,6 +34,7 @@ import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 import eu.h2020.helios_social.modules.groupcommunications.api.group.sharing.SharingGroupManager;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.sharing.GroupInvitation;
 import eu.h2020.helios_social.modules.groupcommunications.api.privategroup.sharing.GroupInvitationFactory;
+import eu.h2020.helios_social.modules.groupcommunications_utils.util.Location;
 
 import static eu.h2020.helios_social.modules.groupcommunications_utils.util.LogUtils.logException;
 import static java.util.logging.Level.WARNING;
@@ -45,6 +52,7 @@ class CreateForumControllerImpl extends ContactSelectorControllerImpl
     private final GroupInvitationFactory groupInvitationFactory;
     private final SharingGroupManager sharingGroupManager;
     private final EventBus eventBus;
+    private final ContextManager contextManager;
 
     @Inject
     CreateForumControllerImpl(@DatabaseExecutor Executor dbExecutor,
@@ -52,13 +60,14 @@ class CreateForumControllerImpl extends ContactSelectorControllerImpl
                               GroupFactory groupFactory, GroupManager groupManager,
                               ContextualEgoNetwork egoNetwork,
                               GroupInvitationFactory groupInvitationFactory,
-                              SharingGroupManager sharingGroupManager, EventBus eventBus) {
+                              SharingGroupManager sharingGroupManager, EventBus eventBus, ContextManager contextManager) {
         super(dbExecutor, lifecycleManager, contactManager, egoNetwork);
         this.groupFactory = groupFactory;
         this.groupManager = groupManager;
         this.groupInvitationFactory = groupInvitationFactory;
         this.sharingGroupManager = sharingGroupManager;
         this.eventBus = eventBus;
+        this.contextManager = contextManager;
     }
 
     @Override
@@ -147,5 +156,31 @@ class CreateForumControllerImpl extends ContactSelectorControllerImpl
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public Location getLocationRestriction() {
+        String currentContextId =
+                egoNetwork.getCurrentContext().getData().toString()
+                        .split("%")[1];
+
+        try {
+           Collection<DBContext> contexts = contextManager.getContexts();
+           DBContext context =contexts.stream()
+                    .filter(ctx -> currentContextId.equals(ctx.getId()))
+                    .findFirst().orElse(null);
+           if (context!=null){
+               if (context.getContextType() == ContextType.LOCATION){
+                   LocationContextProxy locationContextProxy = (LocationContextProxy) contextManager.getContext(currentContextId);
+                   return new Location(locationContextProxy.getLat(),locationContextProxy.getLon(),locationContextProxy.getRadius());
+               } else if (context.getContextType() == ContextType.SPATIOTEMPORAL){
+                   SpatioTemporalContext spatioTemporalContext = (SpatioTemporalContext) contextManager.getContext(currentContextId);
+                   return new Location(spatioTemporalContext.getLat(),spatioTemporalContext.getLon(),spatioTemporalContext.getRadius());
+               }
+           }
+        } catch (DbException | FormatException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

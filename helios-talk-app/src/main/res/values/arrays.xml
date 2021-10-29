@@ -23,10 +23,12 @@
 	<string-array name="graph_mining_setting_names">
 		<item>@string/graph_mining_setting_gnn</item>
 		<item>@string/graph_mining_settings_repeat_n_reply</item>
+		<item>@string/graph_mining_settings_ppr</item>
 	</string-array>
 	<string-array name="graph_mining_values">
 		<item>0</item>
 		<item>1</item>
+		<item>2</item>
 	</string-array>
 
 	<string-array name="gender_options">
@@ -57,6 +59,27 @@
 	<string-array name="forum_types">
 		<item>@string/name_forum</item>
 		<item>@string/location_forum</item>
+	</string-array>
+
+	<string-array name="context_types">
+		<item>@string/name_context</item>
+		<item>@string/location_context</item>
+		<item>@string/spatiotemporal_context</item>
+	</string-array>
+
+	<string-array name="repeat_types_names">
+		<item>@string/daily_repeat</item>
+		<item>@string/weekly_repeat</item>
+		<item>@string/weekdays_repeat</item>
+		<item>@string/weekends_repeat</item>
+		<item>@string/none_repeat</item>
+	</string-array>
+	<string-array name="repeat_types_values">
+		<item>1</item>
+		<item>2</item>
+		<item>4</item>
+		<item>8</item>
+		<item>0</item>
 	</string-array>
 
 	<string-array name="tor_network_setting_names">

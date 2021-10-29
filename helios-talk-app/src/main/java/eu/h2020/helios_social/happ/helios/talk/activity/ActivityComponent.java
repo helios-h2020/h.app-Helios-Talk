@@ -40,12 +40,14 @@ import eu.h2020.helios_social.happ.helios.talk.forum.creation.ForumInviteActivit
 import eu.h2020.helios_social.happ.helios.talk.forum.creation.ForumInviteFragment;
 import eu.h2020.helios_social.happ.helios.talk.forum.membership.ForumMembershipListActivity;
 import eu.h2020.helios_social.happ.helios.talk.forum.membership.ForumMembershipModule;
+import eu.h2020.helios_social.happ.helios.talk.group.GroupTypeSelectionActivity;
 import eu.h2020.helios_social.happ.helios.talk.login.ChangePasswordActivity;
 import eu.h2020.helios_social.happ.helios.talk.login.OpenDatabaseFragment;
 import eu.h2020.helios_social.happ.helios.talk.login.PasswordFragment;
 import eu.h2020.helios_social.happ.helios.talk.login.StartupActivity;
 import eu.h2020.helios_social.happ.helios.talk.navdrawer.NavDrawerActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity;
+import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateChatActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroupActivity;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroupFragment;
 import eu.h2020.helios_social.happ.helios.talk.privategroup.creation.CreateGroupModule;
@@ -188,4 +190,8 @@ public interface ActivityComponent {
     void inject(ContactProfileActivity contactProfileActivity);
 
     void inject(GroupMembershipListActivity groupMembershipListActivity);
+
+    void inject(CreateChatActivity createChatActivity);
+
+    void inject(GroupTypeSelectionActivity groupTypeSelectionActivity);
 }

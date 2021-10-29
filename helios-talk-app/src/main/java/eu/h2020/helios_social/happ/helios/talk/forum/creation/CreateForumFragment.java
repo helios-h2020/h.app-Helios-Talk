@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +35,7 @@ import eu.h2020.helios_social.happ.helios.talk.R;
 import eu.h2020.helios_social.happ.helios.talk.activity.ActivityComponent;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.MethodsNotNullByDefault;
 import eu.h2020.helios_social.modules.groupcommunications_utils.nullsafety.ParametersNotNullByDefault;
+import eu.h2020.helios_social.modules.groupcommunications_utils.util.Haversine;
 import eu.h2020.helios_social.modules.groupcommunications_utils.util.StringUtils;
 import eu.h2020.helios_social.happ.helios.talk.fragment.BaseFragment;
 import eu.h2020.helios_social.happ.helios.talk.profile.TagEditText;
@@ -45,6 +47,9 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static eu.h2020.helios_social.happ.helios.talk.context.CreateContextActivity.REQUEST_CHECK_SETTINGS;
+import static eu.h2020.helios_social.happ.helios.talk.forum.creation.CreateForumActivity.LAT;
+import static eu.h2020.helios_social.happ.helios.talk.forum.creation.CreateForumActivity.LON;
+import static eu.h2020.helios_social.happ.helios.talk.forum.creation.CreateForumActivity.RADIUS;
 import static java.util.logging.Logger.getLogger;
 
 @MethodsNotNullByDefault
@@ -77,7 +82,11 @@ public class CreateForumFragment extends BaseFragment implements SensorValueList
     // Access the location sensor
     private LocationSensor mLocationSensor;
     private Location mCurrentLocation;
-
+    private int forumType;
+    private double latValue;
+    private double lonValue;
+    private double radiusValue;
+    private TextView locationHintTV;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -95,6 +104,13 @@ public class CreateForumFragment extends BaseFragment implements SensorValueList
 
         View v = inflater.inflate(R.layout.fragment_create_forum, container,
                 false);
+        Bundle args = getArguments();
+        forumType = args.getInt("type", 2);
+        latValue = args.getDouble(LAT, 0);
+        lonValue = args.getDouble(LON, 0);
+        radiusValue = args.getDouble(RADIUS, 0);
+
+        locationHintTV = v.findViewById(R.id.location_hint);
 
         nameEntry = v.findViewById(R.id.createForumNameEntry);
         nameEntry.addTextChangedListener(new TextWatcher() {
@@ -148,8 +164,8 @@ public class CreateForumFragment extends BaseFragment implements SensorValueList
 
             }
         });
-
         group_type = v.findViewById(R.id.groupType);
+        group_type.setVisibility(GONE);
 
         lat = v.findViewById(R.id.lat);
         lng = v.findViewById(R.id.lng);
@@ -253,7 +269,22 @@ public class CreateForumFragment extends BaseFragment implements SensorValueList
 
     private boolean validateLocation() {
         if (!lat.getText().toString().isEmpty() && !lng.getText().toString().isEmpty() && !radius.getText().toString().isEmpty())
+        {
+            if (latValue!=0 && lonValue!=0 && radiusValue!=0){
+                LOG.info("clat: " + latValue + ", clon: " + lonValue );
+                LOG.info("lat: " + Double.parseDouble(lat.getText().toString()) + ", lon: " + Double.parseDouble(lng.getText().toString()) );
+                Double distance = Haversine.haversine(latValue,lonValue,Double.parseDouble(lat.getText().toString()),Double.parseDouble(lng.getText().toString()));
+                LOG.info("distance: " + distance );
+                if (distance>radiusValue){
+                    locationHintTV.setVisibility(VISIBLE);
+                    return false;
+                } else{
+                    locationHintTV.setVisibility(GONE);
+                }
+
+            }
             return true;
+        }
         else
             return false;
     }
@@ -268,7 +299,8 @@ public class CreateForumFragment extends BaseFragment implements SensorValueList
 
             listener.onNamedForumChosen(
                     nameEntry.getText().toString(),
-                    GroupType.fromValue(2 + group_type.getSelectedItemPosition()),
+                    //GroupType.fromValue(2 + group_type.getSelectedItemPosition()),
+                    GroupType.fromValue(forumType),
                     tags.getTags(),
                     getForumMemberRole(defaultForumMemberRole.getSelectedItemPosition())
             );
@@ -281,7 +313,8 @@ public class CreateForumFragment extends BaseFragment implements SensorValueList
 
             listener.onLocationForumChosen(
                     nameEntry.getText().toString(),
-                    GroupType.fromValue(2 + group_type.getSelectedItemPosition()),
+                    //GroupType.fromValue(2 + group_type.getSelectedItemPosition()),
+                    GroupType.fromValue(forumType),
                     tags.getTags(),
                     Double.parseDouble(lat.getText().toString()),
                     Double.parseDouble(lng.getText().toString()),
