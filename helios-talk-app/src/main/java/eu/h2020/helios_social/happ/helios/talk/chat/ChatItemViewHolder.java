@@ -32,6 +32,9 @@ import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationA
 import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.GROUP_ID;
 import static eu.h2020.helios_social.happ.helios.talk.privategroup.conversation.PrivateGroupConversationActivity.GROUP_NAME;
 import static eu.h2020.helios_social.happ.helios.talk.util.UiUtils.formatDate;
+import static eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType.ProtectedForum;
+import static eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType.PublicForum;
+import static eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType.SecretForum;
 
 public class ChatItemViewHolder extends RecyclerView.ViewHolder {
     private final static float ALPHA = 0.42f;
@@ -156,9 +159,11 @@ public class ChatItemViewHolder extends RecyclerView.ViewHolder {
             bulb.setVisibility(View.INVISIBLE);
             avatar.setVisibility(GONE);
             groupAvatarView.setVisibility(VISIBLE);
-            groupAvatarView.setImageResource(R.drawable.ic_community_white);
 
             ForumItem forumItem = (ForumItem) item;
+            if (forumItem.getForum().getGroupType().equals(PublicForum)) groupAvatarView.setImageResource(R.drawable.ic_public_forum);
+            else if (forumItem.getForum().getGroupType().equals(ProtectedForum)) groupAvatarView.setImageResource(R.drawable.ic_protected_forum);
+            else if (forumItem.getForum().getGroupType().equals(SecretForum)) groupAvatarView.setImageResource(R.drawable.ic_secret_forum);
 
             // unread count
             int unreadCount = item.getUnreadCount();

@@ -126,7 +126,7 @@ public class InvitationViewHolder extends ViewHolder {
                             ));
                 }
             } else {
-                icon.setImageResource(R.drawable.ic_community_white);
+                icon.setImageResource(R.drawable.ic_community);
                 if (groupInvitation.isIncoming()) {
                     message.setText(String.format(prompted_incoming,
                                                   item.getContactName(),
@@ -175,7 +175,7 @@ public class InvitationViewHolder extends ViewHolder {
             String prompted_incoming =
                     "%s wants to join forum" + " \"%s\" in context \"%s\"";
 
-            icon.setImageResource(R.drawable.ic_community_white);
+            icon.setImageResource(R.drawable.ic_protected_forum);
             if (forumAccessRequest.isIncoming()) {
                 message.setText(String.format(prompted_incoming,
                         item.getContactName(),

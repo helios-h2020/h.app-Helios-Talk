@@ -20,6 +20,9 @@ import eu.h2020.helios_social.modules.groupcommunications.api.forum.LocationForu
 import eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType;
 
 import static eu.h2020.helios_social.happ.helios.talk.conversation.ConversationActivity.GROUP_ID;
+import static eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType.ProtectedForum;
+import static eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType.PublicForum;
+import static eu.h2020.helios_social.modules.groupcommunications.api.group.GroupType.SecretForum;
 
 public class ResultItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -43,7 +46,6 @@ public class ResultItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected void bind(Context ctx, ResultItem item) {
-        avatar.setImageResource(R.drawable.ic_community_white);
         title.setText(item.getTitle());
         String tagsText = "";
         for (String tag : item.getTags()) {
@@ -53,6 +55,11 @@ public class ResultItemViewHolder extends RecyclerView.ViewHolder {
         tagsText = tagsText.replaceAll(", $", "");
         tags.setText(tagsText);
         Forum forum = (Forum) item.getItem();
+        if (forum.getGroupType().equals(PublicForum)) avatar.setImageResource(R.drawable.ic_public_forum);
+        else if (forum.getGroupType().equals(ProtectedForum)) avatar.setImageResource(R.drawable.ic_protected_forum);
+        else if (forum.getGroupType().equals(SecretForum)) avatar.setImageResource(R.drawable.ic_secret_forum);
+        else avatar.setImageResource(R.drawable.ic_community_white);
+
         if (item.isLocal()) {
             joinButton.setText("OPEN");
             joinButton.setOnClickListener(l -> {

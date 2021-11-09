@@ -79,7 +79,7 @@
             android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="eu.h2020.helios_social.helios.talk.debug.provider"
+            android:authorities="eu.h2020.helios_social.helios.talk.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

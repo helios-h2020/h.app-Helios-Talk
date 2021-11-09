@@ -46,9 +46,9 @@ public class GroupTypeSelectionActivity extends HeliosTalkActivity {
     private Integer imageIds[] = {
             R.drawable.ic_chat_bubble,
             R.drawable.ic_group_add_48dp,
-            R.drawable.ic_public,
-            R.drawable.ic_protected,
-            R.drawable.ic_secret,
+            R.drawable.ic_public_forum,
+            R.drawable.ic_protected_forum,
+            R.drawable.ic_secret_forum,
     };
 
     @Override

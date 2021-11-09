@@ -141,11 +141,12 @@ public class ChatListFragment extends HeliosContextFragment
                         .split("%")[0];
 
         list.setEmptyTitle(R.string.no_conversations);
-        if (currentContext.equals("All"))
+/*        if (currentContext.equals("All"))
             list.setEmptyText(R.string.no_conversations_details);
-        else
-            list.setEmptyText("");
-        list.setEmptyAction(R.string.no_conversation_action);
+        else*/
+        list.setEmptyText("");
+        list.setEmptyText(R.string.no_conversation_action);
+        //list.setEmptyAction(R.string.no_conversation_action);
 
         ImageView searchIcon = contentView.findViewById(R.id.searchIcon);
         searchIcon.setOnClickListener(l -> {

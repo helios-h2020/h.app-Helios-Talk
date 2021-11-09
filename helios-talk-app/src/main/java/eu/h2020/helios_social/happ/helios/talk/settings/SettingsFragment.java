@@ -235,7 +235,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         findPreference("pref_key_privacy_policy")
                 .setOnPreferenceClickListener(v -> {
-                    Uri uri = Uri.parse("http://www.google.com"); // missing 'http://' will cause crashed
+                    Uri uri = Uri.parse("https://github.com/helios-h2020/h.app-Helios-Talk/blob/master/Privacy%20Policy.md"); // missing 'http://' will cause crashed
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                     return true;
